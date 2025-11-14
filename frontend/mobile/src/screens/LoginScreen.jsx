@@ -75,8 +75,8 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
       marginBottom: 20,
     },
     logoWrapper: {
-      width: 74,
-      height: 74,
+      width: 90,
+      height: 90,
       borderRadius: theme.borderRadius.full,
       backgroundColor: theme.colors.surface,
       justifyContent: 'center',
@@ -97,13 +97,13 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
     brandName: {
       fontSize: 28,
       fontWeight: '700',
-      color: theme.colors.primary,
+      color: theme.colors.surface,
     },
     universityName: {
       marginTop: theme.spacing.xs,
-      fontSize: 14,
-      fontWeight: '500',
-      color: mutedText,
+      fontSize: 20,
+      fontWeight: '800',
+      color: theme.colors.surface,
     },
     formCard: {
       backgroundColor: theme.colors.surface,

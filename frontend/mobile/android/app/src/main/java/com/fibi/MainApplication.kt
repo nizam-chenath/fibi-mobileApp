@@ -1,4 +1,4 @@
-package com.thinkal
+package com.fibi
 
 import android.app.Application
 import com.facebook.react.PackageList
