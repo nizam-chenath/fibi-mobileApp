@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "590274719139",
+    "project_id": "project-thinkal",
+    "storage_bucket": "project-thinkal.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590274719139:android:2c432ab1415f6b22d73e16",
+        "android_client_info": {
+          "package_name": "com.lsgb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLAhI8j0xhUN8OkZ8BWd6v2h11x3sxMmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590274719139:android:3218b7aa972356f3d73e16",
+        "android_client_info": {
+          "package_name": "com.samvedna"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLAhI8j0xhUN8OkZ8BWd6v2h11x3sxMmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590274719139:android:5f5a83d40feb9f51d73e16",
+        "android_client_info": {
+          "package_name": "com.thinkal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLAhI8j0xhUN8OkZ8BWd6v2h11x3sxMmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
