@@ -47,12 +47,12 @@ export const ThemeProvider = ({ children }) => {
       ...(tenantConfig.theme || {}),
     };
 
-    combinedColors.primary = BRAND_GREEN;
-    combinedColors.accent = BRAND_GREEN;
-    combinedColors.success = tenantConfig.theme?.success || BRAND_GREEN;
-    combinedColors.background = BRAND_GREEN;
-    combinedColors.surface = tenantConfig.theme?.surface || baseColors.surface;
-    combinedColors.brandPrimary = BRAND_GREEN;
+    combinedColors.primary = combinedColors.primary || baseColors.primary;
+    combinedColors.accent = combinedColors.accent || combinedColors.primary;
+    combinedColors.success = combinedColors.success || combinedColors.primary;
+    combinedColors.background = combinedColors.background || combinedColors.primary;
+    combinedColors.surface = combinedColors.surface || baseColors.surface;
+    combinedColors.brandPrimary = combinedColors.brandPrimary || combinedColors.primary;
 
     return {
       colors: combinedColors,

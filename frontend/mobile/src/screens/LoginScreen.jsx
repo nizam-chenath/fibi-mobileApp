@@ -1,5 +1,5 @@
 // screens/LoginScreen.jsx
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 import useTheme from '../hooks/useTheme.jsx';
 import useAuth from '../hooks/useAuth.jsx';
 import useTenant from '../hooks/useTenant.jsx';
 import Button from '../components/Button.jsx';
-import Card from '../components/Card.jsx';
 import SplashScreen from './SplashScreen.jsx';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const placeholderLogo = require('../assets/images/us.png');
 
@@ -27,6 +29,25 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
   const [password, setPassword] = useState('password123');
   const [showPassword, setShowPassword] = useState(false);
 
+  const brandingLogoSource = useMemo(() => {
+    if (!theme.branding?.logo) {
+      return placeholderLogo;
+    }
+
+    if (typeof theme.branding.logo === 'string') {
+      return { uri: theme.branding.logo };
+    }
+
+    if (theme.branding?.logo?.uri) {
+      return { uri: theme.branding.logo.uri };
+    }
+
+    return theme.branding.logo;
+  }, [theme.branding]);
+
+  const secondaryBackground = theme.colors?.background || '#48BD92';
+  const mutedText = 'rgba(28, 28, 28, 0.65)';
+
   const handleLogin = async () => {
     if (!email || !password) {
       alert('Please enter email and password');
@@ -36,121 +57,189 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
   };
 
   const styles = StyleSheet.create({
-    root: {
+    safeArea: {
       flex: 1,
-    },
-    container: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: secondaryBackground,
     },
     keyboardView: {
       flex: 1,
     },
     scrollContent: {
-      flexGrow: 1,
-      justifyContent: 'center',
-      paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.xxl,
+      marginTop: 90,
+      // backgroundColor: 'red',
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.xxxl,
     },
-    header: {
+    pageHeader: {
       alignItems: 'center',
-      marginBottom: theme.spacing.xxxl,
+      marginBottom: 20,
     },
     logoWrapper: {
-      width: 72,
-      height: 72,
-      borderRadius: theme.borderRadius.lg,
+      width: 74,
+      height: 74,
+      borderRadius: theme.borderRadius.full,
       backgroundColor: theme.colors.surface,
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom: theme.spacing.md,
       overflow: 'hidden',
+      shadowColor: '#000',
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 3,
     },
     logoImage: {
       width: '80%',
       height: '80%',
       resizeMode: 'contain',
     },
-    appName: {
+    brandName: {
       fontSize: 28,
       fontWeight: '700',
-      color: theme.colors.secondary,
-      marginBottom: theme.spacing.md,
+      color: theme.colors.primary,
     },
-    subtitle: {
+    universityName: {
+      marginTop: theme.spacing.xs,
       fontSize: 14,
-      color: theme.colors.secondary,
+      fontWeight: '500',
+      color: mutedText,
     },
     formCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.borderRadius.xl,
+      padding: theme.spacing.xxxl,
+      shadowColor: '#000',
+      shadowOpacity: 0.06,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
+    },
+    badge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.primary + '15',
+      marginBottom: theme.spacing.md,
+    },
+    badgeText: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: theme.colors.primary,
+      letterSpacing: 0.5,
+    },
+    formTitle: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: theme.colors.text,
+    },
+    formSubtitle: {
+      fontSize: 14,
+      color: mutedText,
+      marginTop: theme.spacing.xs,
+      marginBottom: theme.spacing.xxl,
+    },
+    inputGroup: {
       marginBottom: theme.spacing.lg,
     },
     label: {
-      fontSize: 14,
+      fontSize: 13,
       fontWeight: '600',
       color: theme.colors.text,
-      marginBottom: theme.spacing.sm,
+      marginBottom: theme.spacing.xs,
     },
     input: {
+      height: 50,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: theme.borderRadius.md,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.md,
+      borderRadius: theme.borderRadius.lg,
+      paddingHorizontal: theme.spacing.lg,
+      backgroundColor: '#FDFDFD',
       fontSize: 14,
       color: theme.colors.text,
-      marginBottom: theme.spacing.lg,
     },
-    passwordContainer: {
+    passwordRow: {
       flexDirection: 'row',
       alignItems: 'center',
       borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: theme.borderRadius.md,
-      paddingHorizontal: theme.spacing.md,
-      marginBottom: theme.spacing.lg,
+      borderRadius: theme.borderRadius.lg,
+      paddingHorizontal: theme.spacing.lg,
+      backgroundColor: '#FDFDFD',
     },
     passwordInput: {
       flex: 1,
-      paddingVertical: theme.spacing.md,
+      height: 50,
       fontSize: 14,
       color: theme.colors.text,
     },
-    showPasswordButton: {
+    togglePasswordButton: {
       padding: theme.spacing.sm,
+    },
+    tenantSummary: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: theme.spacing.sm,
+      marginBottom: theme.spacing.xxl,
+      backgroundColor: theme.colors.surface + '10',
+      padding: theme.spacing.md,
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    tenantSummaryText: {
+      marginLeft: theme.spacing.sm,
+      fontSize: 13,
+      color: theme.colors.text,
+      fontWeight: '600',
     },
     errorText: {
       color: theme.colors.error,
       fontSize: 12,
-      marginBottom: theme.spacing.md,
       fontWeight: '600',
+      marginBottom: theme.spacing.md,
     },
     loginButton: {
       marginBottom: theme.spacing.lg,
     },
-    footer: {
+    socialDivider: {
+      fontSize: 12,
+      color: mutedText,
+      textAlign: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    socialRow: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
+    },
+    socialButton: {
+      width: 48,
+      height: 48,
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      justifyContent: 'center',
       alignItems: 'center',
-      marginTop: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
     },
     footerText: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: mutedText,
+      textAlign: 'center',
     },
     footerLink: {
-      fontSize: 14,
       color: theme.colors.primary,
-      fontWeight: '600',
+      fontWeight: '700',
+    },
+    demoCredentials: {
+      fontSize: 12,
+      color: mutedText,
+      textAlign: 'center',
       marginTop: theme.spacing.sm,
-    },
-    tenantInfo: {
-      backgroundColor: theme.colors.primary + '10',
-      padding: theme.spacing.md,
-      borderRadius: theme.borderRadius.md,
-      marginBottom: theme.spacing.lg,
-    },
-    tenantInfoText: {
-      fontSize: 13,
-      color: theme.colors.text,
-      fontWeight: '600',
+      marginBottom: theme.spacing.md,
     },
     loaderOverlay: {
       ...StyleSheet.absoluteFillObject,
@@ -161,97 +250,104 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
     },
   });
 
+  const socialProviders = [
+    { icon: 'logo-facebook', name: 'Facebook', key: 'facebook' },
+    { icon: 'logo-google', name: 'Google', key: 'google' },
+    { icon: 'logo-apple', name: 'Apple', key: 'apple' },
+  ];
+
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.header}>
+          <View style={styles.pageHeader}>
             <View style={styles.logoWrapper}>
-              <Image
-                source={
-                  theme.branding?.logo
-                    ? typeof theme.branding.logo === 'string'
-                      ? { uri: theme.branding.logo }
-                      : theme.branding.logo
-                    : placeholderLogo
-                }
-                style={styles.logoImage}
-              />
+              <Image source={brandingLogoSource} style={styles.logoImage} />
             </View>
-            <Text style={styles.appName}>{theme.branding?.appName}</Text>
-            <Text style={styles.subtitle}>{theme.branding?.universityName}</Text>
+            {/* <Text style={styles.brandName}>{theme.branding?.appName}</Text> */}
+            <Text style={styles.universityName}>{theme.branding?.universityName}</Text>
           </View>
 
-          <Card style={styles.formCard}>
-            <View style={styles.tenantInfo}>
-              <Text style={styles.tenantInfoText}>
-                🏢 {theme.branding?.universityName}
-              </Text>
+          <View style={styles.formCard}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Email Address</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={email}
+                onChangeText={setEmail}
+                editable={!loading}
+                keyboardType="email-address"
+              />
             </View>
 
-            <Text style={styles.label}>Email Address</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your email"
-              placeholderTextColor={theme.colors.textSecondary}
-              value={email}
-              onChangeText={setEmail}
-              editable={!loading}
-              keyboardType="email-address"
-            />
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Password</Text>
+              <View style={styles.passwordRow}>
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder="Enter your password"
+                  placeholderTextColor={theme.colors.textSecondary}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  editable={!loading}
+                />
+                <TouchableOpacity
+                  style={styles.togglePasswordButton}
+                  onPress={() => setShowPassword((prev) => !prev)}
+                >
+                  <Icon
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color={theme.colors.textSecondary}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
 
-            <Text style={styles.label}>Password</Text>
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Enter your password"
-                placeholderTextColor={theme.colors.textSecondary}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                editable={!loading}
-              />
-              <Text
-                style={styles.showPasswordButton}
-                onPress={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
-              </Text>
+            <View style={styles.tenantSummary}>
+              <Icon name="school-outline" size={20} color={theme.colors.primary} />
+              <Text style={styles.tenantSummaryText}>{theme.branding?.universityName}</Text>
             </View>
 
             {error && <Text style={styles.errorText}>❌ {error}</Text>}
 
             <View style={styles.loginButton}>
-              <Button
-                title="Sign In"
-                onPress={handleLogin}
-                loading={loading}
-                disabled={loading}
-              />
+              <Button title="Sign In" onPress={handleLogin} loading={loading} disabled={loading} />
             </View>
 
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>Demo credentials:</Text>
-              {currentTenantId === 'stanford-001' ? (
-                <Text style={styles.footerText}>
-                  robert.wilson@stanford.edu / password123
-                </Text>
-              ) : (
-                <Text style={styles.footerText}>
-                  john.smith@harvard.edu / password123
-                </Text>
-              )}
-              <Text style={styles.footerLink} onPress={onNavigateToSignUp}>
-                Need an account? Sign up
-              </Text>
+            <Text style={styles.socialDivider}>or continue with</Text>
+            <View style={styles.socialRow}>
+              {socialProviders.map((provider) => (
+                <TouchableOpacity key={provider.key} style={styles.socialButton} activeOpacity={0.8}>
+                  <Icon name={provider.icon} size={22} color={theme.colors.text} />
+                </TouchableOpacity>
+              ))}
             </View>
-          </Card>
+
+            <Text style={styles.demoCredentials}>
+              Demo credentials:{' '}
+              {currentTenantId === 'stanford-001'
+                ? 'robert.wilson@stanford.edu / password123'
+                : 'john.smith@harvard.edu / password123'}
+            </Text>
+
+            <Text style={styles.footerText}>
+              Need an account?{' '}
+              <Text style={styles.footerLink} onPress={onNavigateToSignUp}>
+                Sign up
+              </Text>
+            </Text>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -260,7 +356,7 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
           <SplashScreen />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
