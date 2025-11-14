@@ -34,6 +34,42 @@ export default function App() {
       </header>
 
       <main>
+        <section id="benefits" className="benefits">
+          <h2>Key Benefits of the Mobile Application</h2>
+          <div className="benefits-grid">
+            <div className="benefit-card">
+              <div className="benefit-number">1</div>
+              <h3>Anytime, Anywhere Access</h3>
+              <p>Check essential research updates instantly without needing a laptop—perfect for researchers who are frequently on the move, attending conferences, or conducting fieldwork.</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-number">2</div>
+              <h3>Instant Awareness</h3>
+              <p>Real-time alerts ensure you stay informed about important activities, system changes, and time-sensitive approvals the moment they occur.</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-number">3</div>
+              <h3>Faster Decision-Making</h3>
+              <p>Quick views of proposals, service requests, and awards support faster actions and strategic planning, reducing decision bottlenecks.</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-number">1</div>
+              <h3>Improved Productivity</h3>
+              <p>Lightweight mobile access reduces delays and keeps workflows moving even whilst commuting, travelling, or working remotely.</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-number">2</div>
+              <h3>User Convenience</h3>
+              <p>Simplifies usage by presenting only the most important, relevant information in a clean, intuitive mobile interface designed for efficiency.</p>
+            </div>
+            <div className="benefit-card">
+              <div className="benefit-number">3</div>
+              <h3>Enhanced Engagement</h3>
+              <p>Encourages more frequent interaction with FIBI, improving overall research management efficiency and stakeholder collaboration.</p>
+            </div>
+          </div>
+        </section>
+
         <section id="features" className="features">
           <h2>Features</h2>
           <div className="grid">
@@ -46,15 +82,19 @@ export default function App() {
         </section>
 
         <section id="download" className="download">
-          <h2>Download Fibi</h2>
-          <p>Available on iOS and Android — tiny download, fast setup.</p>
-          <div className="stores">
-            <a className="store" href="#" aria-label="Download on the App Store">
-              <img src="/assets/badge-appstore.svg" alt="App Store" />
-            </a>
-            <a className="store" href="#" aria-label="Get it on Google Play">
-              <img src="/assets/badge-playstore.svg" alt="Google Play" />
-            </a>
+          <div className="download-content-wrapper" style={{ padding: '20px'}}>
+            <div className="download-text-section">
+              <p className="download-tagline">Ready to transform your research management?</p>
+              <a className="download-btn-single" href="#" aria-label="Download FIBI">
+                <svg className="download-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                <span>Download</span>
+              </a>
+            </div>
+            <div className="download-image-section">
+              <img src="/assets/fibiMain.png" alt="FIBI Application" className="download-app-image" />
+            </div>
           </div>
         </section>
       </main>
