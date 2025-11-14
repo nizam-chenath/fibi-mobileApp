@@ -89,7 +89,7 @@ async function findUserByUsername(username, university) {
       baseUrl = baseUrl.replace(/\/$/, '');
       
       // Construct the full API endpoint URL
-      const fullApiUrl = `${baseUrl}/api/findUser`;
+      const fullApiUrl = `${baseUrl}/api/users/findUser`;
       
       console.log(`Calling external API: ${fullApiUrl}`);
       
