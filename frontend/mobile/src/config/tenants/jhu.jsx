@@ -1,5 +1,5 @@
 // config/tenants/jhu.jsx
-import JHULOGO from '../../assets/universitylogo/MIT.png';
+import JHULOGO from '../../assets/universitylogo/Logo1.png';
 export const jhuConfig = {
   tenantId: 'jhu-001',
   name: 'Johns Hopkins University',

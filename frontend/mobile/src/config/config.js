@@ -1,0 +1,1 @@
+export const CHATBOT_BASE_URL = 'http://192.168.1.252:9000';
