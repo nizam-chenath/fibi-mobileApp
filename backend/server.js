@@ -9,10 +9,10 @@ app.use(bodyParser.json());
 
 // ✅ MySQL Connection (You’ll update this later with cloud credentials)
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "appuser",              // your MySQL username
-  password: "AppUser@123!",   // the password you set during installation
-  database: "toy_marketplace"      // name of the database you just created
+  host: "btdzq90w05lfy86nnxp4-mysql.services.clever-cloud.com",
+  user: "ulgqm5ucjjkdz1rf",              // your MySQL username
+  password: "kANdY1RbUBNYs7b43Uzi",   // the password you set during installation
+  database: "btdzq90w05lfy86nnxp4"      // name of the database you just created
 });
 
 db.connect(err => {
