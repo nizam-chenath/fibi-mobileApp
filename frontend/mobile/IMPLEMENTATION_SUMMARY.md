@@ -76,7 +76,7 @@ Your HTML/CSS loader animation has been perfectly replicated in React Native:
    After:  Fibi green background, 180dp logo
    ```
 
-5. **`android/app/src/main/java/com/projectthinkal/MainActivity.kt`**
+5. **`android/app/src/main/java/com/projectfibi/MainActivity.kt`**
    ```kotlin
    Before: Basic onCreate()
    After:  Integrated react-native-splash-screen library
@@ -92,7 +92,7 @@ Your HTML/CSS loader animation has been perfectly replicated in React Native:
 
 7. **`app.json`**
    ```json
-   Before: displayName "projectthinkal"
+   Before: displayName "projectfibi"
    After:  displayName "Fibi"
    ```
 

@@ -11,6 +11,7 @@ import {
   Image,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import useTheme from '../hooks/useTheme.jsx';
 import useAuth from '../hooks/useAuth.jsx';
@@ -21,7 +22,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 const placeholderLogo = require('../assets/images/us.png');
 
-const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
+const LoginScreen = () => {
   const theme = useTheme();
   const { login, loading, error } = useAuth();
   const { currentTenantId } = useTenant();
@@ -53,7 +54,16 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
       alert('Please enter email and password');
       return;
     }
-    await login(email, password);
+
+    const result = await login(email, password);
+
+    if (result?.success) {
+      const university = theme.branding?.universityName || currentTenantId;
+      console.log(
+        `[Auth] Sign-in successful for tenant "${currentTenantId}". Navigating to ${university} dashboard.`,
+      );
+      Alert.alert('Welcome', `Logging you into the ${university} dashboard.`);
+    }
   };
 
   const styles = StyleSheet.create({
@@ -75,8 +85,8 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
       marginBottom: 20,
     },
     logoWrapper: {
-      width: 74,
-      height: 74,
+      width: 90,
+      height: 90,
       borderRadius: theme.borderRadius.full,
       backgroundColor: theme.colors.surface,
       justifyContent: 'center',
@@ -97,13 +107,13 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
     brandName: {
       fontSize: 28,
       fontWeight: '700',
-      color: theme.colors.primary,
+      color: theme.colors.surface,
     },
     universityName: {
       marginTop: theme.spacing.xs,
-      fontSize: 14,
-      fontWeight: '500',
-      color: mutedText,
+      fontSize: 20,
+      fontWeight: '800',
+      color: theme.colors.surface,
     },
     formCard: {
       backgroundColor: theme.colors.surface,
@@ -225,15 +235,6 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
       alignItems: 'center',
       backgroundColor: theme.colors.surface,
     },
-    footerText: {
-      fontSize: 12,
-      color: mutedText,
-      textAlign: 'center',
-    },
-    footerLink: {
-      color: theme.colors.primary,
-      fontWeight: '700',
-    },
     demoCredentials: {
       fontSize: 12,
       color: mutedText,
@@ -341,12 +342,6 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
                 : 'john.smith@harvard.edu / password123'}
             </Text>
 
-            <Text style={styles.footerText}>
-              Need an account?{' '}
-              <Text style={styles.footerLink} onPress={onNavigateToSignUp}>
-                Sign up
-              </Text>
-            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

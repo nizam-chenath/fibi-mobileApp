@@ -8,32 +8,32 @@
 
 /* Begin PBXBuildFile section */
 		047DB46C2DCD2F6D00B80370 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		1DDD08EB970D36D37D5BB993 /* Pods_projectthinkal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 989B1F838CF679817E1867D2 /* Pods_projectthinkal.framework */; };
+		1DDD08EB970D36D37D5BB993 /* Pods_projectfibi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 989B1F838CF679817E1867D2 /* Pods_projectfibi.framework */; };
 		3C41028A477CB6D298AB710D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0771E178EE4241118B2D8938 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* projectthinkal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = projectthinkal.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = projectthinkal/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = projectthinkal/Info.plist; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = projectthinkal/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* projectfibi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = projectfibi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = projectfibi/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = projectfibi/Info.plist; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = projectfibi/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2875DCF4635F4F4B9606CC34 /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome6_Brands.ttf"; sourceTree = "<group>"; };
 		2A36F65CC73A4574A019B082 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		32BEAE933B1E4204A4842D7A /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		65C7777D402743469FD24EA0 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		6ED9937B871C4D14A995E5C7 /* FontAwesome6_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome6_Regular.ttf"; sourceTree = "<group>"; };
 		6F5A5AF786A74343884717B8 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
-		73E23C11644FC54AE49D26D3 /* Pods-projectthinkal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-projectthinkal.debug.xcconfig"; path = "Target Support Files/Pods-projectthinkal/Pods-projectthinkal.debug.xcconfig"; sourceTree = "<group>"; };
-		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = projectthinkal/AppDelegate.swift; sourceTree = "<group>"; };
+		73E23C11644FC54AE49D26D3 /* Pods-projectfibi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-projectfibi.debug.xcconfig"; path = "Target Support Files/Pods-projectfibi/Pods-projectfibi.debug.xcconfig"; sourceTree = "<group>"; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = projectfibi/AppDelegate.swift; sourceTree = "<group>"; };
 		7759E8A8C56743C687240C3B /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		79351D788B4741C6BD50AFE0 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		7D0BBDAF6D5A4924AB9F4CCD /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = projectthinkal/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = projectfibi/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		86ECBA36412C43B5B913F1E9 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
-		8B7357A41E2EF48F6943AC05 /* Pods-projectthinkal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-projectthinkal.release.xcconfig"; path = "Target Support Files/Pods-projectthinkal/Pods-projectthinkal.release.xcconfig"; sourceTree = "<group>"; };
-		989B1F838CF679817E1867D2 /* Pods_projectthinkal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_projectthinkal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B7357A41E2EF48F6943AC05 /* Pods-projectfibi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-projectfibi.release.xcconfig"; path = "Target Support Files/Pods-projectfibi/Pods-projectfibi.release.xcconfig"; sourceTree = "<group>"; };
+		989B1F838CF679817E1867D2 /* Pods_projectfibi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_projectfibi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EBEB0BBD1AF45BA81137E39 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		AE349BAA981F4770933D7401 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		BC2F8BC874F744F59DAE7CE5 /* FontAwesome6_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome6_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf"; sourceTree = "<group>"; };
@@ -50,14 +50,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DDD08EB970D36D37D5BB993 /* Pods_projectthinkal.framework in Frameworks */,
+				1DDD08EB970D36D37D5BB993 /* Pods_projectfibi.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* projectthinkal */ = {
+		13B07FAE1A68108700A75B9A /* projectfibi */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -66,14 +66,14 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
-			name = projectthinkal;
+			name = projectfibi;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				989B1F838CF679817E1867D2 /* Pods_projectthinkal.framework */,
+				989B1F838CF679817E1867D2 /* Pods_projectfibi.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -114,7 +114,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* projectthinkal */,
+				13B07FAE1A68108700A75B9A /* projectfibi */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -129,7 +129,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* projectthinkal.app */,
+				13B07F961A680F5B00A75B9A /* projectfibi.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,8 +137,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				73E23C11644FC54AE49D26D3 /* Pods-projectthinkal.debug.xcconfig */,
-				8B7357A41E2EF48F6943AC05 /* Pods-projectthinkal.release.xcconfig */,
+				73E23C11644FC54AE49D26D3 /* Pods-projectfibi.debug.xcconfig */,
+				8B7357A41E2EF48F6943AC05 /* Pods-projectfibi.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -146,9 +146,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* projectthinkal */ = {
+		13B07F861A680F5B00A75B9A /* projectfibi */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "projectthinkal" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "projectfibi" */;
 			buildPhases = (
 				F2F222F7BC1E318AB0B1B6F3 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -163,9 +163,9 @@
 			);
 			dependencies = (
 			);
-			name = projectthinkal;
-			productName = projectthinkal;
-			productReference = 13B07F961A680F5B00A75B9A /* projectthinkal.app */;
+			name = projectfibi;
+			productName = projectfibi;
+			productReference = 13B07F961A680F5B00A75B9A /* projectfibi.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -181,7 +181,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "projectthinkal" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "projectfibi" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -194,7 +194,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* projectthinkal */,
+				13B07F861A680F5B00A75B9A /* projectfibi */,
 			);
 		};
 /* End PBXProject section */
@@ -234,15 +234,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-projectthinkal/Pods-projectthinkal-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-projectfibi/Pods-projectfibi-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-projectthinkal/Pods-projectthinkal-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-projectfibi/Pods-projectfibi-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-projectthinkal/Pods-projectthinkal-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-projectfibi/Pods-projectfibi-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		74EA922453AACF4F032BB43D /* [CP] Copy Pods Resources */ = {
@@ -251,15 +251,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-projectthinkal/Pods-projectthinkal-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-projectfibi/Pods-projectfibi-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-projectthinkal/Pods-projectthinkal-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-projectfibi/Pods-projectfibi-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-projectthinkal/Pods-projectthinkal-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-projectfibi/Pods-projectfibi-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A79E20E5B8AAB0CF37EF4606 /* [CP-User] [RNFB] Core Configuration */ = {
@@ -290,7 +290,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-projectthinkal-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-projectfibi-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -313,7 +313,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 73E23C11644FC54AE49D26D3 /* Pods-projectthinkal.debug.xcconfig */;
+			baseConfigurationReference = 73E23C11644FC54AE49D26D3 /* Pods-projectfibi.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
@@ -321,7 +321,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = TYUD852M6L;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = projectthinkal/Info.plist;
+				INFOPLIST_FILE = projectfibi/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Thinkal;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -335,8 +335,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.projectthinkal.thinkal;
-				PRODUCT_NAME = projectthinkal;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectfibi.thinkal;
+				PRODUCT_NAME = projectfibi;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -350,14 +350,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8B7357A41E2EF48F6943AC05 /* Pods-projectthinkal.release.xcconfig */;
+			baseConfigurationReference = 8B7357A41E2EF48F6943AC05 /* Pods-projectfibi.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = TYUD852M6L;
-				INFOPLIST_FILE = projectthinkal/Info.plist;
+				INFOPLIST_FILE = projectfibi/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Thinkal;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -371,8 +371,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.projectthinkal.thinkal;
-				PRODUCT_NAME = projectthinkal;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectfibi.thinkal;
+				PRODUCT_NAME = projectfibi;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -560,7 +560,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "projectthinkal" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "projectfibi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -569,7 +569,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "projectthinkal" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "projectfibi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

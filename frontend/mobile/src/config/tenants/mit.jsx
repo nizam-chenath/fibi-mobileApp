@@ -1,5 +1,5 @@
 // config/tenants/mit.jsx
-import MITLOGO from '../../assets/universitylogo/MIT.png';
+import MITLOGO from '../../assets/universitylogo/logo3.png';
 export const mitConfig = {
   tenantId: 'mit-001',
   name: 'Massachusetts Institute of Technology',

@@ -1,5 +1,5 @@
 // config/tenants/smu.jsx
-import SMULOGO from '../../assets/universitylogo/MIT.png';
+import SMULOGO from '../../assets/universitylogo/Logo2.png';
 export const smuConfig = {
   tenantId: 'smu-001',
   name: 'Singapore Management University',

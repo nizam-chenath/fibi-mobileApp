@@ -5120,8 +5120,8 @@
 		46EB2E00032220 /* react-native-webview-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB2E00032210 /* react-native-webview-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		46EB2E00032260 /* react-native-webview-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 46EB2E00032250 /* react-native-webview-dummy.m */; };
 		46EB2E00032300 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46EB2E00016370 /* Foundation.framework */; };
-		46EB2E00032370 /* Pods-projectthinkal-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB2E00032360 /* Pods-projectthinkal-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46EB2E000323D0 /* Pods-projectthinkal-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 46EB2E000323C0 /* Pods-projectthinkal-dummy.m */; };
+		46EB2E00032370 /* Pods-projectfibi-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB2E00032360 /* Pods-projectfibi-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		46EB2E000323D0 /* Pods-projectfibi-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 46EB2E000323C0 /* Pods-projectfibi-dummy.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -20357,16 +20357,16 @@
 		46EB2E00032230 /* react-native-webview-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "react-native-webview-Info.plist"; sourceTree = "<group>"; };
 		46EB2E00032240 /* react-native-webview-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "react-native-webview-prefix.pch"; sourceTree = "<group>"; };
 		46EB2E00032250 /* react-native-webview-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "react-native-webview-dummy.m"; sourceTree = "<group>"; };
-		46EB2E00032320 /* Pods-projectthinkal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-projectthinkal.release.xcconfig"; sourceTree = "<group>"; };
-		46EB2E00032330 /* Pods-projectthinkal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-projectthinkal.debug.xcconfig"; sourceTree = "<group>"; };
-		46EB2E00032340 /* Pods-projectthinkal-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-projectthinkal-Info.plist"; sourceTree = "<group>"; };
-		46EB2E00032350 /* Pods-projectthinkal.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-projectthinkal.modulemap"; sourceTree = "<group>"; };
-		46EB2E00032360 /* Pods-projectthinkal-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-projectthinkal-umbrella.h"; sourceTree = "<group>"; };
-		46EB2E00032380 /* Pods-projectthinkal-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-projectthinkal-frameworks.sh"; sourceTree = "<group>"; };
-		46EB2E00032390 /* Pods-projectthinkal-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-projectthinkal-resources.sh"; sourceTree = "<group>"; };
-		46EB2E000323A0 /* Pods-projectthinkal-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-projectthinkal-acknowledgements.plist"; sourceTree = "<group>"; };
-		46EB2E000323B0 /* Pods-projectthinkal-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-projectthinkal-acknowledgements.markdown"; sourceTree = "<group>"; };
-		46EB2E000323C0 /* Pods-projectthinkal-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-projectthinkal-dummy.m"; sourceTree = "<group>"; };
+		46EB2E00032320 /* Pods-projectfibi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-projectfibi.release.xcconfig"; sourceTree = "<group>"; };
+		46EB2E00032330 /* Pods-projectfibi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-projectfibi.debug.xcconfig"; sourceTree = "<group>"; };
+		46EB2E00032340 /* Pods-projectfibi-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-projectfibi-Info.plist"; sourceTree = "<group>"; };
+		46EB2E00032350 /* Pods-projectfibi.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-projectfibi.modulemap"; sourceTree = "<group>"; };
+		46EB2E00032360 /* Pods-projectfibi-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-projectfibi-umbrella.h"; sourceTree = "<group>"; };
+		46EB2E00032380 /* Pods-projectfibi-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-projectfibi-frameworks.sh"; sourceTree = "<group>"; };
+		46EB2E00032390 /* Pods-projectfibi-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-projectfibi-resources.sh"; sourceTree = "<group>"; };
+		46EB2E000323A0 /* Pods-projectfibi-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-projectfibi-acknowledgements.plist"; sourceTree = "<group>"; };
+		46EB2E000323B0 /* Pods-projectfibi-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-projectfibi-acknowledgements.markdown"; sourceTree = "<group>"; };
+		46EB2E000323C0 /* Pods-projectfibi-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-projectfibi-dummy.m"; sourceTree = "<group>"; };
 		47C581450CDB4A6111CB97EEE0711A8C /* FirebaseInstallations-FirebaseInstallations_Privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "FirebaseInstallations-FirebaseInstallations_Privacy"; path = FirebaseInstallations_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CC54C79E5C34490D96A7411A3DA9565 /* RNPermissions-RNPermissionsPrivacyInfo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "RNPermissions-RNPermissionsPrivacyInfo"; path = RNPermissionsPrivacyInfo.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DB03FD262B678178A44272143846563 /* FirebaseCoreInternal-FirebaseCoreInternal_Privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "FirebaseCoreInternal-FirebaseCoreInternal_Privacy"; path = FirebaseCoreInternal_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20419,7 +20419,7 @@
 		B0B6501341FD6783C6874C54AB31A9CF /* FirebaseMessaging-FirebaseMessaging_Privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "FirebaseMessaging-FirebaseMessaging_Privacy"; path = FirebaseMessaging_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		B43874C6CBB50E7134FBEC24BABFE14F /* GoogleUtilities */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = GoogleUtilities; path = GoogleUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7610E9FDE749C16C0B1CDAAF3B2DDC2 /* React-utils */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "React-utils"; path = React_utils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B9591D18AC9DA53506860486F54D7EF2 /* Pods-projectthinkal */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-projectthinkal"; path = Pods_projectthinkal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9591D18AC9DA53506860486F54D7EF2 /* Pods-projectfibi */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-projectfibi"; path = Pods_projectfibi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA6198501C8FE4824D863DC9EF32C614 /* RCT-Folly-RCT-Folly_privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "RCT-Folly-RCT-Folly_privacy"; path = "RCT-Folly_privacy.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB214EC5C784D0D6F134C8412AE88BD7 /* React-Core-React-Core_privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "React-Core-React-Core_privacy"; path = "React-Core_privacy.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD71E2539823621820F84384064C253A /* React-Core */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "React-Core"; path = React.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -21497,7 +21497,7 @@
 				5E4674603A5D5B9215FFA0F8E69F8B71 /* libwebp */,
 				06FC5C9CF96D60C50FCD47D339C91951 /* nanopb */,
 				3227F3FC45681D7CEE5D1355A532398A /* nanopb-nanopb_Privacy */,
-				B9591D18AC9DA53506860486F54D7EF2 /* Pods-projectthinkal */,
+				B9591D18AC9DA53506860486F54D7EF2 /* Pods-projectfibi */,
 				3347A1AB6546F0A3977529B8F199DC41 /* PromisesObjC */,
 				3F238BB22C5201CE689CAF2F766AED95 /* PromisesObjC-FBLPromises_Privacy */,
 				1936453FF2A7E3A13063C4917C4D5598 /* RCT-Folly */,
@@ -21609,7 +21609,7 @@
 		46EB2E00000070 /* Targets Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				46EB2E00032310 /* Pods-projectthinkal */,
+				46EB2E00032310 /* Pods-projectfibi */,
 			);
 			name = "Targets Support Files";
 			sourceTree = "<group>";
@@ -32639,22 +32639,22 @@
 			path = "../../ios/Pods/Target Support Files/react-native-webview";
 			sourceTree = "<group>";
 		};
-		46EB2E00032310 /* Pods-projectthinkal */ = {
+		46EB2E00032310 /* Pods-projectfibi */ = {
 			isa = PBXGroup;
 			children = (
-				46EB2E00032350 /* Pods-projectthinkal.modulemap */,
-				46EB2E000323B0 /* Pods-projectthinkal-acknowledgements.markdown */,
-				46EB2E000323A0 /* Pods-projectthinkal-acknowledgements.plist */,
-				46EB2E000323C0 /* Pods-projectthinkal-dummy.m */,
-				46EB2E00032380 /* Pods-projectthinkal-frameworks.sh */,
-				46EB2E00032340 /* Pods-projectthinkal-Info.plist */,
-				46EB2E00032390 /* Pods-projectthinkal-resources.sh */,
-				46EB2E00032360 /* Pods-projectthinkal-umbrella.h */,
-				46EB2E00032330 /* Pods-projectthinkal.debug.xcconfig */,
-				46EB2E00032320 /* Pods-projectthinkal.release.xcconfig */,
+				46EB2E00032350 /* Pods-projectfibi.modulemap */,
+				46EB2E000323B0 /* Pods-projectfibi-acknowledgements.markdown */,
+				46EB2E000323A0 /* Pods-projectfibi-acknowledgements.plist */,
+				46EB2E000323C0 /* Pods-projectfibi-dummy.m */,
+				46EB2E00032380 /* Pods-projectfibi-frameworks.sh */,
+				46EB2E00032340 /* Pods-projectfibi-Info.plist */,
+				46EB2E00032390 /* Pods-projectfibi-resources.sh */,
+				46EB2E00032360 /* Pods-projectfibi-umbrella.h */,
+				46EB2E00032330 /* Pods-projectfibi.debug.xcconfig */,
+				46EB2E00032320 /* Pods-projectfibi.release.xcconfig */,
 			);
-			name = "Pods-projectthinkal";
-			path = "Target Support Files/Pods-projectthinkal";
+			name = "Pods-projectfibi";
+			path = "Target Support Files/Pods-projectfibi";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -35629,7 +35629,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				46EB2E00032370 /* Pods-projectthinkal-umbrella.h in Headers */,
+				46EB2E00032370 /* Pods-projectfibi-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37329,9 +37329,9 @@
 			productReference = EAC1043855D4BC57C81DD807D3BB1FF8 /* React-defaultsnativemodule */;
 			productType = "com.apple.product-type.framework";
 		};
-		7A8344352CC88B07B8B1091F4071C60C /* Pods-projectthinkal */ = {
+		7A8344352CC88B07B8B1091F4071C60C /* Pods-projectfibi */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 46EB2E00032280 /* Build configuration list for PBXNativeTarget "Pods-projectthinkal" */;
+			buildConfigurationList = 46EB2E00032280 /* Build configuration list for PBXNativeTarget "Pods-projectfibi" */;
 			buildPhases = (
 				46EB2E000322C0 /* Headers */,
 				46EB2E000322D0 /* Sources */,
@@ -37461,9 +37461,9 @@
 				46EB2E000332F0 /* PBXTargetDependency */,
 				46EB2E00033310 /* PBXTargetDependency */,
 			);
-			name = "Pods-projectthinkal";
-			productName = Pods_projectthinkal;
-			productReference = B9591D18AC9DA53506860486F54D7EF2 /* Pods-projectthinkal */;
+			name = "Pods-projectfibi";
+			productName = Pods_projectfibi;
+			productReference = B9591D18AC9DA53506860486F54D7EF2 /* Pods-projectfibi */;
 			productType = "com.apple.product-type.framework";
 		};
 		7ACAA9BE580DD31A5CB9D97C45D9492D /* React-Core */ = {
@@ -39082,7 +39082,7 @@
 				47D2E85A78C25869BB13521D8561A638 /* libwebp */,
 				D2B5E7DCCBBFB32341D857D01211A1A3 /* nanopb */,
 				55522A91938FF505CFEBEAD2DD85AE2D /* nanopb-nanopb_Privacy */,
-				7A8344352CC88B07B8B1091F4071C60C /* Pods-projectthinkal */,
+				7A8344352CC88B07B8B1091F4071C60C /* Pods-projectfibi */,
 				2BBF7206D7FAC92C82A042A99C4A98F8 /* PromisesObjC */,
 				1BFBEDBF7E03729D43C96530EE190825 /* PromisesObjC-FBLPromises_Privacy */,
 				EC55D52694092A9D0E6A78EB01207EB5 /* RCT-Folly */,
@@ -43233,7 +43233,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				46EB2E000323D0 /* Pods-projectthinkal-dummy.m in Sources */,
+				46EB2E000323D0 /* Pods-projectfibi-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61194,7 +61194,7 @@
 		};
 		46EB2E00032290 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 46EB2E00032320 /* Pods-projectthinkal.release.xcconfig */;
+			baseConfigurationReference = 46EB2E00032320 /* Pods-projectfibi.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -61208,7 +61208,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				INFOPLIST_FILE = "Target Support Files/Pods-projectthinkal/Pods-projectthinkal-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-projectfibi/Pods-projectfibi-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -61217,7 +61217,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-projectthinkal/Pods-projectthinkal.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-projectfibi/Pods-projectfibi.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -61234,7 +61234,7 @@
 		};
 		46EB2E000322A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 46EB2E00032330 /* Pods-projectthinkal.debug.xcconfig */;
+			baseConfigurationReference = 46EB2E00032330 /* Pods-projectfibi.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -61248,7 +61248,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				INFOPLIST_FILE = "Target Support Files/Pods-projectthinkal/Pods-projectthinkal-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-projectfibi/Pods-projectfibi-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -61257,7 +61257,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-projectthinkal/Pods-projectthinkal.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-projectfibi/Pods-projectfibi.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -62543,7 +62543,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		46EB2E00032280 /* Build configuration list for PBXNativeTarget "Pods-projectthinkal" */ = {
+		46EB2E00032280 /* Build configuration list for PBXNativeTarget "Pods-projectfibi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				46EB2E000322A0 /* Debug */,

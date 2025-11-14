@@ -29,7 +29,7 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
     // ✅ Reset badge on app launch
     UIApplication.shared.applicationIconBadgeNumber = 0
 
-    self.moduleName = "projectthinkal"
+    self.moduleName = "projectfibi"
     self.dependencyProvider = RCTAppDependencyProvider()
     self.initialProps = [:]
 
