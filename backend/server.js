@@ -1,92 +1,46 @@
-const express = require("express");
-const mysql = require("mysql2");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-
+const express = require('express');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
+const cors = require('cors');
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+require('dotenv').config();
+const PORT_CONNECTION = process.env.PORT_CONNECTION || 5000;
+const mysqlPool = require('./src/db/mysql');
+const authenticateToken = require('./src/middleware/authenticate');
 
-// ✅ MySQL Connection (You’ll update this later with cloud credentials)
-const db = mysql.createConnection({
-  host: "btdzq90w05lfy86nnxp4-mysql.services.clever-cloud.com",
-  user: "ulgqm5ucjjkdz1rf",              // your MySQL username
-  password: "kANdY1RbUBNYs7b43Uzi",   // the password you set during installation
-  database: "btdzq90w05lfy86nnxp4"      // name of the database you just created
-});
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb' }));
+app.use(cors()); // Enable CORS for all routes
 
-db.connect(err => {
-  if (err) throw err;
-  console.log("✅ MySQL Connected!");
-});
+app.set('mysqlPool', mysqlPool);
 
-// ✅ Routes
+if (process.env.SSL_ENABLED === 'true') {
+  const key = fs.readFileSync(process.env.SSL_KEY_PATH);
+  const cert = fs.readFileSync(process.env.SSL_CERT_PATH);
 
-// Create table
-app.get("/create-tables", (req, res) => {
-  const sql = `
-    CREATE TABLE IF NOT EXISTS departments (
-      dept_id INT AUTO_INCREMENT PRIMARY KEY,
-      dept_name VARCHAR(100),
-      location VARCHAR(100)
-    );
-    CREATE TABLE IF NOT EXISTS employees (
-      emp_id INT AUTO_INCREMENT PRIMARY KEY,
-      emp_name VARCHAR(100),
-      email VARCHAR(100),
-      salary DECIMAL(10,2),
-      dept_id INT,
-      FOREIGN KEY (dept_id) REFERENCES departments(dept_id)
-    );
-  `;
-  db.query(sql, err => {
-    if (err) throw err;
-    res.send("✅ Tables created");
+  https.createServer({ key, cert }, app).listen(PORT_CONNECTION, () => {
+    console.log(`Server running with SSL on port ${PORT_CONNECTION}`);
   });
-});
-
-// Add employee
-app.post("/employee", (req, res) => {
-  const { emp_name, email, salary, dept_id } = req.body;
-  const sql = "INSERT INTO employees (emp_name, email, salary, dept_id) VALUES (?, ?, ?, ?)";
-  db.query(sql, [emp_name, email, salary, dept_id], (err, result) => {
-    if (err) throw err;
-    res.json({ message: "Employee added", id: result.insertId });
+} else {
+  http.createServer(app).listen(PORT_CONNECTION, () => {
+    console.log(`Server running without SSL on port ${PORT_CONNECTION}`);
   });
-});
+}
 
-// Get all employees with department
-app.get("/employees", (req, res) => {
-  const sql = `
-    SELECT e.emp_id, e.emp_name, e.email, e.salary, d.dept_name, d.location
-    FROM employees e
-    JOIN departments d ON e.dept_id = d.dept_id;
-  `;
-  db.query(sql, (err, results) => {
-    if (err) throw err;
-    res.json(results);
-  });
-});
+const loginRoute = require('./src/routes/login');
+const logoutRoute = require('./src/routes/logout');
+const userDetailsRoute = require('./src/routes/userDetails');
+const allUsersRoute = require('./src/routes/allUsers');
+const updateRoute = require('./src/routes/update');
+const deleteRoute = require('./src/routes/delete');
+const universitiesRoute = require('./src/routes/universities');
 
-// Update employee
-app.put("/employee/:id", (req, res) => {
-  const { id } = req.params;
-  const { emp_name, email, salary, dept_id } = req.body;
-  const sql = "UPDATE employees SET emp_name=?, email=?, salary=?, dept_id=? WHERE emp_id=?";
-  db.query(sql, [emp_name, email, salary, dept_id, id], (err, result) => {
-    if (err) throw err;
-    res.json({ message: "Employee updated" });
-  });
-});
+app.use('/api/login', loginRoute);
+app.use('/api/logout', logoutRoute);
+app.use('/api/user-details', authenticateToken, userDetailsRoute);
+app.use('/api/all-users', authenticateToken, allUsersRoute);
+app.use('/api/update-user', authenticateToken, updateRoute);
+app.use('/api/delete-user', authenticateToken, deleteRoute);
+app.use('/api/universities', universitiesRoute);
 
-// Delete employee
-app.delete("/employee/:id", (req, res) => {
-  const { id } = req.params;
-  const sql = "DELETE FROM employees WHERE emp_id=?";
-  db.query(sql, [id], (err, result) => {
-    if (err) throw err;
-    res.json({ message: "Employee deleted" });
-  });
-});
-
-app.listen(3000, () => console.log("🚀 Server running on http://localhost:3000"));
