@@ -1,0 +1,1 @@
+../../../../../node_modules/react-native-drop-shadow/ios/generated/RCTModulesConformingToProtocolsProvider.h
