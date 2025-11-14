@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
-// Create a MySQL connection pool
+// Create a MySQL connection pool with better error handling
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -9,22 +9,39 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
-  connectionLimit: 20,       // adjust as needed
-  queueLimit: 0
+  connectionLimit: 20,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+  connectTimeout: 10000, // 10 seconds connection timeout
+  acquireTimeout: 10000, // 10 seconds to get connection from pool
+  timeout: 60000 // 60 seconds query timeout
+});
+
+// Handle pool errors
+pool.on('error', (err) => {
+  console.error('MySQL Pool Error:', err);
+  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+    console.log('Attempting to reconnect to MySQL...');
+  }
 });
 
 // Convert pool to promise pool for async/await support
 const promisePool = pool.promise();
 
-// Test connection
-promisePool
-  .getConnection()
-  .then((connection) => {
+// Test connection with retry logic
+async function testConnection() {
+  try {
+    const connection = await promisePool.getConnection();
     console.log('Connected to MySQL Database');
     connection.release();
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error('Error connecting to MySQL Database:', err);
-  });
+    // Retry after 2 seconds
+    setTimeout(testConnection, 2000);
+  }
+}
+
+testConnection();
 
 module.exports = promisePool;

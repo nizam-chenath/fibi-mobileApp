@@ -14,6 +14,10 @@ app.use(cors()); // Enable CORS for all routes
 
 app.set('mysqlPool', mysqlPool);
 
+// Register routes before starting server
+const UserRoutes = require('./src/routes/userRoutes');
+app.use('/api/users', UserRoutes);
+
 if (process.env.SSL_ENABLED === 'true') {
   const key = fs.readFileSync(process.env.SSL_KEY_PATH);
   const cert = fs.readFileSync(process.env.SSL_CERT_PATH);
@@ -26,7 +30,3 @@ if (process.env.SSL_ENABLED === 'true') {
     console.log(`Server running without SSL on port ${PORT_CONNECTION}`);
   });
 }
-
-const UserRoutes = require('./src/routes/userRoutes');
-
-app.use('/api/users', UserRoutes);

@@ -74,15 +74,27 @@ async function findUserByUsername(username, university) {
   // Call external API at university.ip/api/findUser
   return new Promise((resolve) => {
     try {
-      // Handle IP address or full URL
-      let baseUrl = university.ip.trim();
+      // Handle IP address or full URL - use university.ip if available, otherwise fallback to localhost
+      // Default to port 5005 if university.ip is not set (you can change this to match your university_backend port)
+      let baseUrl =  university.ip ? university.ip : 'http://localhost:5005';
+      
+      // If university.ip exists but doesn't have a port, add default port 5005
+      if (university.ip && !baseUrl.includes(':') && !baseUrl.match(/:\d+$/)) {
+        baseUrl = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') 
+          ? `${baseUrl}:5005` 
+          : baseUrl;
+      }
       
       // Check if it's already a full URL with protocol
       const hasProtocol = baseUrl.startsWith('http://') || baseUrl.startsWith('https://');
       
       if (!hasProtocol) {
-        // If no protocol, assume it's an IP address or domain and add https://
-        baseUrl = `https://${baseUrl}`;
+        // If no protocol, assume it's an IP address or domain and add http:// for localhost, https:// for others
+        if (baseUrl.includes('localhost') || baseUrl.startsWith('127.0.0.1')) {
+          baseUrl = `http://${baseUrl}`;
+        } else {
+          baseUrl = `https://${baseUrl}`;
+        }
       }
       
       // Remove trailing slash if present to avoid double slashes
@@ -117,7 +129,14 @@ async function findUserByUsername(username, university) {
         }
       };
 
+      // Create a timeout to reject the promise if connection takes too long
+      const connectionTimeout = setTimeout(() => {
+        console.error('Connection timeout - server may not be running or unreachable');
+        resolve(null);
+      }, 10000); // 10 seconds for connection
+
       const req = httpModule.request(options, (res) => {
+        clearTimeout(connectionTimeout);
         let data = '';
 
         res.on('data', (chunk) => {
@@ -128,28 +147,86 @@ async function findUserByUsername(username, university) {
           try {
             if (res.statusCode === 200) {
               const userData = JSON.parse(data);
-              resolve(userData);
+              console.log('External API returned user data. Fields:', Object.keys(userData));
+              
+              // Convert object keys to lowercase
+              const convertKeysToLowercase = (obj) => {
+                if (Array.isArray(obj)) {
+                  return obj.map(item => convertKeysToLowercase(item));
+                } else if (obj !== null && typeof obj === 'object') {
+                  const converted = {};
+                  for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                      const lowerKey = key.toLowerCase();
+                      converted[lowerKey] = typeof obj[key] === 'object' && obj[key] !== null
+                        ? convertKeysToLowercase(obj[key])
+                        : obj[key];
+                    }
+                  }
+                  return converted;
+                }
+                return obj;
+              };
+              
+              const convertedData = convertKeysToLowercase(userData);
+              console.log('Converted user data keys to lowercase. Fields:', Object.keys(convertedData));
+              
+              // If it's an array, return the first element, otherwise return the object
+              if (Array.isArray(convertedData) && convertedData.length > 0) {
+                resolve(convertedData[0]);
+              } else if (Array.isArray(convertedData) && convertedData.length === 0) {
+                resolve(null);
+              } else {
+                resolve(convertedData);
+              }
             } else {
-              console.log(`API call failed with status ${res.statusCode}: ${data}`);
+              console.log(`API call failed with status ${res.statusCode}: ${data.substring(0, 200)}`);
               resolve(null);
             }
           } catch (error) {
             console.error('Error parsing API response:', error);
+            console.error('Response data:', data.substring(0, 200));
             resolve(null);
           }
         });
       });
 
       req.on('error', (error) => {
-        console.error('Error calling external API:', error);
+        clearTimeout(connectionTimeout);
+        if (error.code === 'ECONNREFUSED') {
+          console.error(`Connection refused - is the university backend server running on ${baseUrl}?`);
+        } else if (error.code === 'ETIMEDOUT') {
+          console.error(`Connection timeout - server at ${baseUrl} is not responding`);
+        } else {
+          console.error('Error calling external API:', error);
+        }
         resolve(null);
       });
 
-      // Set timeout
-      req.setTimeout(10000, () => {
-        console.error('API call timeout');
+      // Set socket timeout (for the entire request/response cycle)
+      req.setTimeout(30000, () => {
+        clearTimeout(connectionTimeout);
+        console.error('Request timeout after 30 seconds');
         req.destroy();
         resolve(null);
+      });
+
+      // Handle timeout event
+      req.on('timeout', () => {
+        clearTimeout(connectionTimeout);
+        console.error('Request timeout - destroying connection');
+        req.destroy();
+        resolve(null);
+      });
+
+      // Set socket timeout for connection establishment
+      req.on('socket', (socket) => {
+        socket.setTimeout(10000, () => {
+          clearTimeout(connectionTimeout);
+          console.error('Socket connection timeout');
+          req.destroy();
+          resolve(null);
+        });
       });
 
       req.write(postData);
@@ -266,12 +343,31 @@ async function setLoggedInStatus(employeeId, status) {
 }
 
 async function findUserUniversity(uid) {
-  const [rows] = await pool.query(
-    'SELECT * FROM universities WHERE uid = ? LIMIT 1',
-    [uid]
-  );
+  try {
+    const [rows] = await pool.query(
+      'SELECT * FROM universities WHERE uid = ? LIMIT 1',
+      [uid]
+    );
 
-  return rows.length > 0 ? rows[0] : null;
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    console.error('Error in findUserUniversity:', error);
+    // If connection is lost, try to reconnect
+    if (error.code === 'ECONNRESET' || error.code === 'PROTOCOL_CONNECTION_LOST') {
+      console.log('Connection lost, retrying query...');
+      try {
+        const [rows] = await pool.query(
+          'SELECT * FROM universities WHERE uid = ? LIMIT 1',
+          [uid]
+        );
+        return rows.length > 0 ? rows[0] : null;
+      } catch (retryError) {
+        console.error('Retry failed:', retryError);
+        throw retryError;
+      }
+    }
+    throw error;
+  }
 }
 
 module.exports = {
