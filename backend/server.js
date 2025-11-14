@@ -7,16 +7,13 @@ const app = express();
 require('dotenv').config();
 const PORT_CONNECTION = process.env.PORT_CONNECTION || 5000;
 const mysqlPool = require('./src/db/mysql');
+const authenticateToken = require('./src/middleware/authenticate');
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb' }));
 app.use(cors()); // Enable CORS for all routes
 
 app.set('mysqlPool', mysqlPool);
-
-// Register routes before starting server
-const UserRoutes = require('./src/routes/userRoutes');
-app.use('/api/users', UserRoutes);
 
 if (process.env.SSL_ENABLED === 'true') {
   const key = fs.readFileSync(process.env.SSL_KEY_PATH);
@@ -30,3 +27,20 @@ if (process.env.SSL_ENABLED === 'true') {
     console.log(`Server running without SSL on port ${PORT_CONNECTION}`);
   });
 }
+
+const loginRoute = require('./src/routes/login');
+const logoutRoute = require('./src/routes/logout');
+const userDetailsRoute = require('./src/routes/userDetails');
+const allUsersRoute = require('./src/routes/allUsers');
+const updateRoute = require('./src/routes/update');
+const deleteRoute = require('./src/routes/delete');
+const universitiesRoute = require('./src/routes/universities');
+
+app.use('/api/login', loginRoute);
+app.use('/api/logout', logoutRoute);
+app.use('/api/user-details', authenticateToken, userDetailsRoute);
+app.use('/api/all-users', authenticateToken, allUsersRoute);
+app.use('/api/update-user', authenticateToken, updateRoute);
+app.use('/api/delete-user', authenticateToken, deleteRoute);
+app.use('/api/universities', universitiesRoute);
+
