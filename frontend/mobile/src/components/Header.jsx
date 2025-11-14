@@ -6,6 +6,8 @@ import useTheme from '../hooks/useTheme.jsx';
 const Header = ({ title, onMenuPress, showLogo = true, logo }) => {
   const theme = useTheme();
 
+  const logoSize = 40;
+
   const styles = StyleSheet.create({
     header: {
       backgroundColor: theme.colors.primary,
@@ -21,8 +23,8 @@ const Header = ({ title, onMenuPress, showLogo = true, logo }) => {
       flex: 1,
     },
     logo: {
-      width: 40,
-      height: 40,
+      width: logoSize,
+      height: logoSize,
       marginRight: theme.spacing.md,
       borderRadius: theme.borderRadius.md,
     },
@@ -36,12 +38,42 @@ const Header = ({ title, onMenuPress, showLogo = true, logo }) => {
     },
   });
 
+  const renderLogo = () => {
+    if (!logo) {
+      return null;
+    }
+
+    if (typeof logo === 'function') {
+      const LogoComponent = logo;
+      return (
+        <LogoComponent
+          width={logoSize}
+          height={logoSize}
+          preserveAspectRatio="xMidYMid meet"
+        />
+      );
+    }
+
+    const source =
+      typeof logo === 'string'
+        ? { uri: logo }
+        : logo && typeof logo.uri === 'string'
+          ? { uri: logo.uri }
+          : logo;
+
+    return (
+      <Image
+        source={source}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+    );
+  };
+
   return (
     <View style={styles.header}>
       <View style={styles.logoContainer}>
-        {showLogo && logo && (
-          <Image source={logo} style={styles.logo} />
-        )}
+        {showLogo && renderLogo()}
         <Text style={styles.title}>{title}</Text>
       </View>
       <TouchableOpacity style={styles.menuButton} onPress={onMenuPress}>

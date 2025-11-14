@@ -1,14 +1,16 @@
-// config/tenants/harvard.jsx
-export const harvardConfig = {
-  tenantId: 'harvard-001',
-  name: 'Harvard University',
-  domain: 'fibi-harvard.polussolutions.com',
-  apiBaseUrl: 'https://api-harvard.fibi.polussolutions.com',
-  databaseName: 'harvard_fibi_db',
+// config/tenants/bits.jsx
+import bitsLogo from '../../assets/universitylogo/MIT.png';
+
+export const bitsConfig = {
+  tenantId: 'bits-001',
+  name: 'Birla Institute of Technology and Science, Pilani',
+  domain: 'fibi-bits.polussolutions.com',
+  apiBaseUrl: 'https://api-bits.fibi.polussolutions.com',
+  databaseName: 'bits_fibi_db',
   branding: {
-    appName: 'Fibi @ Harvard',
-    logo: { uri: 'https://upload.wikimedia.org/wikipedia/en/2/29/Harvard_shield_wreath.svg' },
-    universityName: 'Harvard University',
+    appName: 'Fibi @ BITS Pilani',
+    logo: bitsLogo,
+    universityName: 'Birla Institute of Technology and Science, Pilani',
   },
   theme: {
     primary: '#48BD92',
@@ -30,5 +32,5 @@ export const harvardConfig = {
   },
 };
 
-export default harvardConfig;
+export default bitsConfig;
 

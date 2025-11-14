@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import useTheme from '../hooks/useTheme.jsx';
 import useAuth from '../hooks/useAuth.jsx';
@@ -15,6 +16,8 @@ import useTenant from '../hooks/useTenant.jsx';
 import Button from '../components/Button.jsx';
 import Card from '../components/Card.jsx';
 import SplashScreen from './SplashScreen.jsx';
+
+const placeholderLogo = require('../assets/images/us.png');
 
 const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
   const theme = useTheme();
@@ -52,6 +55,21 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
     header: {
       alignItems: 'center',
       marginBottom: theme.spacing.xxxl,
+    },
+    logoWrapper: {
+      width: 72,
+      height: 72,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.surface,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+      overflow: 'hidden',
+    },
+    logoImage: {
+      width: '80%',
+      height: '80%',
+      resizeMode: 'contain',
     },
     appName: {
       fontSize: 28,
@@ -154,8 +172,20 @@ const LoginScreen = ({ onNavigateToSignUp = () => {} }) => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
+            <View style={styles.logoWrapper}>
+              <Image
+                source={
+                  theme.branding?.logo
+                    ? typeof theme.branding.logo === 'string'
+                      ? { uri: theme.branding.logo }
+                      : theme.branding.logo
+                    : placeholderLogo
+                }
+                style={styles.logoImage}
+              />
+            </View>
             <Text style={styles.appName}>{theme.branding?.appName}</Text>
-            <Text style={styles.subtitle}>Research Administration Portal</Text>
+            <Text style={styles.subtitle}>{theme.branding?.universityName}</Text>
           </View>
 
           <Card style={styles.formCard}>

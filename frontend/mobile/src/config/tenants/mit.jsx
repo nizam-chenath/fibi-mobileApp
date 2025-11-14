@@ -1,4 +1,5 @@
 // config/tenants/mit.jsx
+import MITLOGO from '../../assets/universitylogo/MIT.png';
 export const mitConfig = {
   tenantId: 'mit-001',
   name: 'Massachusetts Institute of Technology',
@@ -7,7 +8,7 @@ export const mitConfig = {
   databaseName: 'mit_fibi_db',
   branding: {
     appName: 'Fibi @ MIT',
-    logo: { uri: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/MIT_logo.svg' },
+    logo: MITLOGO,
     universityName: 'Massachusetts Institute of Technology',
   },
   theme: {

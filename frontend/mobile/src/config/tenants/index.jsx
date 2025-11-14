@@ -1,14 +1,14 @@
 // config/tenants/index.jsx
-import { harvardConfig } from './harvard.jsx';
-import { stanfordConfig } from './stanford.jsx';
+import { bitsConfig } from './bits.jsx';
+import { jhuConfig } from './jhu.jsx';
+import { smuConfig } from './smu.jsx';
 import { mitConfig } from './mit.jsx';
-import { yaleConfig } from './yale.jsx';
 
 const tenantRegistry = {
-  'harvard-001': harvardConfig,
-  'stanford-001': stanfordConfig,
+  'bits-001': bitsConfig,
+  'jhu-001': jhuConfig,
+  'smu-001': smuConfig,
   'mit-001': mitConfig,
-  'yale-001': yaleConfig,
 };
 
 export const getTenantById = (tenantId) => {

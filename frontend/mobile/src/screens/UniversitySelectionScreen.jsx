@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,55 +6,52 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  useWindowDimensions,
 } from 'react-native';
 import useTheme from '../hooks/useTheme.jsx';
 import { getAllTenants } from '../config/tenants/index.jsx';
 
 const placeholderImage = require('../assets/images/us.png');
 
-const imageMap = {
-  'harvard-001': placeholderImage,
-  'stanford-001': placeholderImage,
-  'mit-001': placeholderImage,
-  'yale-001': placeholderImage,
-};
-
 const UniversitySelectionScreen = ({ onSelectUniversity }) => {
   const theme = useTheme();
   const universities = getAllTenants();
+  const { width } = useWindowDimensions();
 
   const tiles = useMemo(
     () =>
       universities.map((university) => ({
         id: university.tenantId,
         name: university.branding.universityName,
-        image: imageMap[university.tenantId] || placeholderImage,
+        logo: university.branding?.logo,
         tenant: university,
       })),
     [universities],
   );
 
-  const styles = useMemo(() => {
+  const { styles, logoDimensions } = useMemo(() => {
     const { colors, spacing, borderRadius } = theme;
-    const tileHeight = spacing.xxxl * 2 + spacing.lg;
+    const horizontalPadding = spacing.xxl * 2;
+    const columnGap = spacing.md;
+    const availableWidth = Math.max(width - horizontalPadding - columnGap, 320);
+    const tileWidth = availableWidth / 2;
+    const tileHeight = Math.max(spacing.xxxl * 2.5, tileWidth * 1.05);
+    const flagSize = Math.max(90, Math.min(tileHeight * 1, 150));
+    const flagImageSize = {
+      width: flagSize * .9,
+      height: flagSize * .9,
+    };
 
-    return StyleSheet.create({
+    const sheet = StyleSheet.create({
       container: {
         flex: 1,
         backgroundColor: colors.primary,
       },
       header: {
-        paddingTop: spacing.xxxl + spacing.lg,
-        paddingBottom: spacing.xl,
+        paddingTop: 100,
+        paddingBottom: spacing.xxl,
         paddingHorizontal: spacing.xxl,
         backgroundColor: colors.primary,
-        // borderBottomLeftRadius: borderRadius.xl * 2,
-        // borderBottomRightRadius: borderRadius.xl * 2,
-        // shadowColor: colors.primary,
-        // shadowOffset: { width: 0, height: 8 },
-        // shadowOpacity: 0.2,
-        // shadowRadius: 18,
-        // elevation: 6,
       },
       title: {
         fontSize: 32,
@@ -102,8 +99,8 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         // borderColor: 'rgba(255, 255, 255, 0.25)',
       },
       flagWrapper: {
-        width: 56,
-        height: 56,
+        width: flagSize,
+        height: flagSize,
         borderRadius: borderRadius.lg,
         backgroundColor: colors.surface,
         alignItems: 'center',
@@ -111,8 +108,6 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         marginBottom: spacing.md,
       },
       flagImage: {
-        width: 44,
-        height: 32,
         borderRadius: borderRadius.md,
       },
       tileLabel: {
@@ -123,7 +118,61 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         lineHeight: 16,
       },
     });
-  }, [theme]);
+
+    return {
+      styles: sheet,
+      logoDimensions: flagImageSize,
+    };
+  }, [theme, width]);
+
+  const renderLogo = useCallback(
+    (logo) => {
+      const imageStyle = [
+        styles.flagImage,
+        { width: logoDimensions.width, height: logoDimensions.height },
+      ];
+
+      if (!logo) {
+        return (
+          <Image
+            source={placeholderImage}
+            style={imageStyle}
+            resizeMode="contain"
+          />
+        );
+      }
+
+      if (typeof logo === 'function') {
+        const LogoComponent = logo;
+        return (
+          <LogoComponent
+            width={logoDimensions.width}
+            height={logoDimensions.height}
+            preserveAspectRatio="xMidYMid meet"
+          />
+        );
+      }
+
+      let source;
+
+      if (typeof logo === 'string') {
+        source = { uri: logo };
+      } else if (logo && typeof logo === 'object' && typeof logo.uri === 'string') {
+        source = { uri: logo.uri };
+      } else {
+        source = logo;
+      }
+
+      return (
+        <Image
+          source={source || placeholderImage}
+          style={imageStyle}
+          resizeMode="contain"
+        />
+      );
+    },
+    [logoDimensions.height, logoDimensions.width, styles.flagImage],
+  );
 
   const handleSelect = (tenant) => {
     onSelectUniversity(tenant.tenantId);
@@ -151,7 +200,7 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
             >
               <View style={styles.tile}>
                 <View style={styles.flagWrapper}>
-                  <Image source={item.image} style={styles.flagImage} resizeMode="contain" />
+                  {renderLogo(item.logo)}
                 </View>
                 <Text style={styles.tileLabel} numberOfLines={2}>
                   {item.name}
