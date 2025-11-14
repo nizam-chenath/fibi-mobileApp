@@ -6,7 +6,7 @@ export const stanfordConfig = {
   apiBaseUrl: 'https://api-stanford.fibi.polussolutions.com',
   databaseName: 'stanford_fibi_db',
   branding: {
-    appName: 'Fibi @ Stanford',
+    appName: 'Stanford',
     logo: { uri: 'https://upload.wikimedia.org/wikipedia/en/b/b7/Stanford_Cardinal_logo.svg' },
     universityName: 'Stanford University',
   },

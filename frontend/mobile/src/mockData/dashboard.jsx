@@ -1,5 +1,85 @@
 // mockData/dashboard.jsx
 
+const defaultAwardedSponsors = [
+  {
+    id: '002348',
+    label: 'British Coal Corporation (BCC)',
+    value: 47.8,
+    colorToken: 'primary',
+    color: '#2754C1',
+  },
+  {
+    id: '000101',
+    label: 'Air Force - ASD (Air)',
+    value: 7.8,
+    colorToken: 'accent',
+    color: '#EA5A2B',
+  },
+  {
+    id: '000110',
+    label: 'Air Force - Hanscom AFB (Hanscom)',
+    value: 6.1,
+    colorToken: 'warning',
+    color: '#F4B33F',
+  },
+  {
+    id: '300002',
+    label: 'Ministry of Education',
+    value: 5.4,
+    colorToken: 'success',
+    color: '#7AC29A',
+  },
+  {
+    id: '300006',
+    label: 'Latest Inc (L1)',
+    value: 4.6,
+    colorToken: 'info',
+    color: '#A45CE6',
+  },
+  {
+    id: '001000',
+    label: 'Air Force (Air)',
+    value: 3.9,
+    colorToken: 'neutral',
+    color: '#4FC3F7',
+  },
+  {
+    id: '300005',
+    label: 'Ministry of Defence',
+    value: 3.2,
+    colorToken: 'secondary',
+    color: '#B28451',
+  },
+  {
+    id: '000114',
+    label: 'United States Air Force Academy (USAFA)',
+    value: 3.0,
+    colorToken: 'tertiary',
+    color: '#3CB9D4',
+  },
+  {
+    id: '299998',
+    label: 'ASPIRE (ASPIRE)',
+    value: 2.7,
+    colorToken: 'accent',
+    color: '#FF8A65',
+  },
+  {
+    id: '300004',
+    label: 'Ministry of Health',
+    value: 2.5,
+    colorToken: 'success',
+    color: '#5C6BC0',
+  },
+  {
+    id: '000123',
+    label: 'Army Materiel - Miscellaneous (Army)',
+    value: 2.3,
+    colorToken: 'warning',
+    color: '#9E9D24',
+  },
+];
+
 const defaultDashboard = {
   overview: {
     headline: 'Welcome back!',
@@ -42,6 +122,7 @@ const defaultDashboard = {
       trend: '+$350K YTD',
     },
   ],
+  awardedBySponsor: defaultAwardedSponsors,
   modules: [
     {
       id: 'myAwards',
@@ -122,6 +203,7 @@ export const mockDashboardData = {
           trend: '+$2.8M YTD',
         },
       ],
+      awardedBySponsor: defaultAwardedSponsors,
       modules: [
         {
           id: 'grants',
@@ -199,6 +281,7 @@ export const mockDashboardData = {
           trend: '+$600K YTD',
         },
       ],
+      awardedBySponsor: defaultAwardedSponsors,
       modules: [
         {
           id: 'myAwards',
@@ -278,6 +361,7 @@ export const mockDashboardData = {
           trend: '+$5.8M YTD',
         },
       ],
+      awardedBySponsor: defaultAwardedSponsors,
       modules: [
         {
           id: 'grants',
@@ -355,6 +439,7 @@ export const mockDashboardData = {
           trend: '+$820K YTD',
         },
       ],
+      awardedBySponsor: defaultAwardedSponsors,
       modules: [
         {
           id: 'myAwards',

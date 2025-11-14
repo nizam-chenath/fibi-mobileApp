@@ -62,7 +62,6 @@ const LoginScreen = () => {
       console.log(
         `[Auth] Sign-in successful for tenant "${currentTenantId}". Navigating to ${university} dashboard.`,
       );
-      Alert.alert('Welcome', `Logging you into the ${university} dashboard.`);
     }
   };
 
@@ -334,14 +333,6 @@ const LoginScreen = () => {
                 </TouchableOpacity>
               ))}
             </View>
-
-            <Text style={styles.demoCredentials}>
-              Demo credentials:{' '}
-              {currentTenantId === 'stanford-001'
-                ? 'robert.wilson@stanford.edu / password123'
-                : 'john.smith@harvard.edu / password123'}
-            </Text>
-
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
