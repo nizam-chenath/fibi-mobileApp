@@ -41,6 +41,7 @@ const updateRoute = require('./src/routes/update');
 const deleteRoute = require('./src/routes/delete');
 const universitiesRoute = require('./src/routes/universities');
 const proposalRoutes = require('./src/routes/proposalRoutes');
+const serviceRequestRoutes = require('./src/routes/serviceRequestRoutes');
 
 app.use('/api/login', loginRoute);
 app.use('/api/logout', logoutRoute);
@@ -50,4 +51,5 @@ app.use('/api/update-user', authenticateToken, updateRoute);
 app.use('/api/delete-user', authenticateToken, deleteRoute);
 app.use('/api/universities', universitiesRoute);
 app.use('/api/proposals', authenticateToken, proposalRoutes);
+app.use('/api/service-requests', authenticateToken, serviceRequestRoutes);
 
