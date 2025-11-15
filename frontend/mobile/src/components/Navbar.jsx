@@ -8,20 +8,22 @@ import useTheme from '../hooks/useTheme.jsx';
 const Navbar = ({
   user,
   title,
- tenantLogo,
-  onLogout,
+  tenantLogo,
   onSidebarToggle,
   notificationCount = 0,
   onNotificationPress,
 }) => {
   const theme = useTheme();
   const logoSize = 40;
+  const resolvedUniversity =
+    theme.branding?.universityName || title || theme.branding?.appName || 'Fibi';
 
   const styles = StyleSheet.create({
     wrapper: {
       width: '100%',
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
+      paddingTop: theme.spacing.xl,
       backgroundColor: theme.colors.primary,
       shadowColor: '#000',
       shadowOpacity: 0.12,
@@ -30,44 +32,21 @@ const Navbar = ({
       elevation: 6,
     },
     bar: {
-        marginTop: 30,
+      marginTop: theme.spacing.lg,
       flexDirection: 'row',
-    //   backgroundColor: 'red',
-      height: 60,
       alignItems: 'center',
       justifyContent: 'space-between',
     },
-    userBadge: {
+    leftArea: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: theme.spacing.md,
+      gap: theme.spacing.sm,
       paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.md,
-      borderRadius: theme.borderRadius.full,
     },
-    avatar: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: 'rgba(255,255,255,0.2)',
-    },
-    userInfo: {
+    userName: {
       color: theme.colors.secondary,
       fontSize: 18,
       fontWeight: '700',
-    },
-    userMeta: {
-      color: theme.colors.secondary,
-      opacity: 0.75,
-      fontSize: 13,
-    },
-    logoButton: {
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-      borderRadius: theme.borderRadius.full,
-      backgroundColor: 'rgba(255,255,255,0.15)',
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     tenantLogo: {
       width: logoSize,
@@ -78,7 +57,7 @@ const Navbar = ({
       paddingVertical: theme.spacing.sm,
       borderRadius: theme.borderRadius.full,
       backgroundColor: 'rgba(255,255,255,0.15)',
-      marginRight: theme.spacing.sm,
+      marginLeft: theme.spacing.sm,
     },
     notificationIcon: {
       color: theme.colors.secondary,
@@ -99,17 +78,6 @@ const Navbar = ({
       color: theme.colors.secondary,
       fontSize: 10,
       fontWeight: '700',
-    },
-    logoutButton: {
-      marginLeft: theme.spacing.md,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-      borderRadius: theme.borderRadius.full,
-      backgroundColor: 'rgba(255,255,255,0.2)',
-    },
-    logoutText: {
-      color: theme.colors.secondary,
-      fontWeight: '600',
     },
   });
 
@@ -140,54 +108,38 @@ const Navbar = ({
     >
       <View style={styles.bar}>
         <TouchableOpacity
-          style={styles.userBadge}
+          style={styles.leftArea}
           activeOpacity={0.85}
           onPress={onSidebarToggle}
         >
-          <Image
-            source={
-              user?.avatar ? { uri: user.avatar } : require('../assets/images/us.png')
-            }
-            style={styles.avatar}
-            resizeMode="cover"
-          />
+          {renderTenantLogo()}
           <View>
-            <Text style={styles.userInfo}>
+            <Text style={styles.userName}>
               {user?.firstName || ''} {user?.lastName || ''}
             </Text>
-            <Text style={styles.userMeta}>
-              {user?.department || 'Research'} · {user?.role || 'Member'}
+            <Text style={[styles.userName, { fontSize: 12, fontWeight: '500', opacity: 0.85 }]}>
+              {resolvedUniversity}
             </Text>
           </View>
         </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity
-            style={styles.notificationButton}
-            onPress={onNotificationPress || (() => {})}
-            activeOpacity={0.85}
-          >
-            <Icon
-              name="notifications-outline"
-              size={22}
-              style={styles.notificationIcon}
-            />
-            {notificationCount > 0 && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeLabel}>
-                  {notificationCount > 99 ? '99+' : notificationCount}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
-          {/* <View style={styles.logoButton}>
-            {renderTenantLogo()}
-          </View> */}
-          {/* {onLogout && (
-            <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-              <Text style={styles.logoutText}>Logout</Text>
-            </TouchableOpacity>
-          )} */}
-        </View>
+        <TouchableOpacity
+          style={styles.notificationButton}
+          onPress={onNotificationPress || (() => {})}
+          activeOpacity={0.85}
+        >
+          <Icon
+            name="notifications-outline"
+            size={22}
+            style={styles.notificationIcon}
+          />
+          {notificationCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeLabel}>
+                {notificationCount > 99 ? '99+' : notificationCount}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );

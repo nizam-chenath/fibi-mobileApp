@@ -80,6 +80,80 @@ const defaultAwardedSponsors = [
   },
 ];
 
+const defaultNotifications = [
+  {
+    id: 'notif-001',
+    title: 'Budget revision approved',
+    message: 'Your updated budget for Award #A-2039 has been approved.',
+    source: 'Office of Research Services',
+    timestamp: '2025-11-14T09:10:00Z',
+    timeAgo: '2m ago',
+    isUnread: true,
+  },
+  {
+    id: 'notif-002',
+    title: 'Compliance reminder',
+    message: 'IRB renewal for Study #19-447 is due next week.',
+    source: 'Compliance Center',
+    timestamp: '2025-11-14T07:40:00Z',
+    timeAgo: '1h ago',
+    isUnread: false,
+  },
+  {
+    id: 'notif-003',
+    title: 'Proposal feedback',
+    message: 'Reviewer comments added to Proposal #S-1187.',
+    source: 'Submissions',
+    timestamp: '2025-11-13T18:15:00Z',
+    timeAgo: '15h ago',
+    isUnread: false,
+  },
+  {
+    id: 'notif-004',
+    title: 'New sponsor question',
+    message: 'Sponsor requested clarification on milestone dates.',
+    source: 'Grants Management',
+    timestamp: '2025-11-13T15:05:00Z',
+    timeAgo: '18h ago',
+    isUnread: false,
+  },
+];
+
+const createNotificationsPayload = (items = defaultNotifications) => {
+  const normalizedItems = Array.isArray(items) ? items : [];
+  const unreadCount = normalizedItems.filter((item) => item.isUnread).length;
+
+  return {
+    latestId: normalizedItems[0]?.id || null,
+    unreadCount,
+    items: normalizedItems,
+  };
+};
+
+const createDefaultProposalInsights = () => ({
+  incomeLabel: 'Income',
+  incomeTotal: 3092648.27,
+  incomeSeries: [
+    { id: 'inc-1', value: 42, color: '#FDBA74' },
+    { id: 'inc-2', value: 64, color: '#F97316' },
+    { id: 'inc-3', value: 88, color: '#FACC15' },
+    { id: 'inc-4', value: 120, color: '#34D399' },
+    { id: 'inc-5', value: 72, color: '#60A5FA' },
+    { id: 'inc-6', value: 96, color: '#C084FC' },
+    { id: 'inc-7', value: 54, color: '#F472B6' },
+    { id: 'inc-8', value: 38, color: '#A3A3A3' },
+  ],
+  donutLabel: 'Unpaid Invoices',
+  donutTotal: 156703.01,
+  donutSegments: [
+    { id: 'seg-1', value: 32, color: '#F87171' },
+    { id: 'seg-2', value: 24, color: '#FBBF24' },
+    { id: 'seg-3', value: 18, color: '#34D399' },
+    { id: 'seg-4', value: 14, color: '#60A5FA' },
+    { id: 'seg-5', value: 12, color: '#A855F7' },
+  ],
+});
+
 const defaultDashboard = {
   overview: {
     headline: 'Welcome back!',
@@ -157,6 +231,7 @@ const defaultDashboard = {
       accentColorToken: 'success',
     },
   ],
+  proposalInsights: createDefaultProposalInsights(),
 };
 
 export const mockDashboardData = {
@@ -478,18 +553,47 @@ export const mockDashboardData = {
   },
 };
 
+const attachProposalInsights = (data) => {
+  if (!data) return null;
+  return {
+    ...data,
+    proposalInsights: data.proposalInsights || createDefaultProposalInsights(),
+  };
+};
+
+const attachNotifications = (data) => {
+  if (!data) return null;
+  const hasCustomNotifications = Array.isArray(data.notifications?.items) && data.notifications.items.length > 0;
+  const fallbackPayload = createNotificationsPayload(
+    hasCustomNotifications ? data.notifications.items : defaultNotifications,
+  );
+
+  return {
+    ...data,
+    notifications: {
+      ...fallbackPayload,
+      ...data.notifications,
+      unreadCount: data.notifications?.unreadCount ?? fallbackPayload.unreadCount,
+      latestId: data.notifications?.latestId ?? fallbackPayload.latestId,
+      items: hasCustomNotifications ? data.notifications.items : fallbackPayload.items,
+    },
+  };
+};
+
+const enrichDashboardData = (data) => attachNotifications(attachProposalInsights(data));
+
 export const getDashboardData = (tenantId, role = 'Researcher') => {
   const tenantDashboards = mockDashboardData[tenantId];
 
   if (tenantDashboards) {
-    return (
+    return enrichDashboardData(
       tenantDashboards[role] ||
-      tenantDashboards.default ||
-      tenantDashboards.Researcher ||
-      Object.values(tenantDashboards)[0]
+        tenantDashboards.default ||
+        tenantDashboards.Researcher ||
+        Object.values(tenantDashboards)[0],
     );
   }
 
-  return defaultDashboard;
+  return enrichDashboardData(defaultDashboard);
 };
 

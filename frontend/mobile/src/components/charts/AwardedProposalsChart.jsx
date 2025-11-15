@@ -1,6 +1,13 @@
 // components/charts/AwardedProposalsChart.jsx
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  Easing,
+} from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import useTheme from '../../hooks/useTheme.jsx';
 
@@ -15,6 +22,8 @@ const AwardedProposalsChart = ({
   showMoreLabel = 'Show more',
 }) => {
   const theme = useTheme();
+  const animationProgress = useRef(new Animated.Value(0)).current;
+  const [renderProgress, setRenderProgress] = useState(0);
   const radius = (size - strokeWidth) / 2;
   const { normalizedData, total } = useMemo(() => {
     const safeData = Array.isArray(data) ? data : [];
@@ -39,6 +48,24 @@ const AwardedProposalsChart = ({
       total: totalValue,
     };
   }, [data]);
+
+  useEffect(() => {
+    animationProgress.setValue(0);
+    const listenerId = animationProgress.addListener(({ value }) => {
+      setRenderProgress(value);
+    });
+
+    Animated.timing(animationProgress, {
+      toValue: 1,
+      duration: 900,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+
+    return () => {
+      animationProgress.removeListener(listenerId);
+    };
+  }, [animationProgress, normalizedData]);
 
   if (!normalizedData.length) {
     return (
@@ -69,22 +96,27 @@ const AwardedProposalsChart = ({
       <View style={styles.content}>
         <View style={[styles.chartWrapper, { width: size, height: size }]}>
           <Svg height={size} width={size}>
-            {displayedData.map((segment) => (
-              <Path
-                key={segment.id}
-                d={describeArc(
-                  size / 2,
-                  size / 2,
-                  radius,
-                  segment.startAngle,
-                  segment.endAngle,
-                )}
-                stroke={segment.color || theme.colors.primary}
-                strokeWidth={strokeWidth}
-                fill="none"
-                strokeLinecap="round"
-              />
-            ))}
+            {displayedData.map((segment) => {
+              const animatedEnd =
+                segment.startAngle +
+                (segment.endAngle - segment.startAngle) * renderProgress;
+              return (
+                <Path
+                  key={segment.id}
+                  d={describeArc(
+                    size / 2,
+                    size / 2,
+                    radius,
+                    segment.startAngle,
+                    animatedEnd,
+                  )}
+                  stroke={segment.color || theme.colors.primary}
+                  strokeWidth={strokeWidth}
+                  fill="none"
+                  strokeLinecap="round"
+                />
+              );
+            })}
             <Circle
               cx={size / 2}
               cy={size / 2}

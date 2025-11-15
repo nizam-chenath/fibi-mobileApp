@@ -17,10 +17,9 @@ const BottomNavBar = ({
     tabs.length > 0
       ? tabs
       : [
-          { id: 'home', label: 'Home', icon: 'home-outline' },
-          { id: 'library', label: 'Library', icon: 'book-outline' },
-          { id: 'media', label: 'media', icon: 'image-outline' },
-          { id: 'calendar', label: 'Calendar', icon: 'calendar-outline' },
+          { id: 'home', label: 'Dashboard', icon: 'home-outline' },
+          { id: 'service', label: 'Tracker', icon: 'construct-outline' },
+          { id: 'awards', label: 'Awards', icon: 'trophy-outline' },
         ];
 
   const selectedId = activeTab || effectiveTabs[0]?.id;
@@ -59,7 +58,7 @@ const BottomNavBar = ({
           style={[
             styles.indicator,
             {
-              width: tabWidth - 8,
+              width: Math.max(tabWidth - 8, 0),
               backgroundColor: theme.colors.primary,
               transform: [{ translateX: indicatorAnim }],
             },
@@ -80,17 +79,22 @@ const BottomNavBar = ({
             onPress={() => onTabPress?.(tab)}
             activeOpacity={0.85}
           >
-            <Icon
-              name={tab.icon}
-              size={20}
-              color={isActive ? theme.colors.text : 'rgba(255,255,255,0.7)'}
-              style={styles.tabIcon}
-            />
-            {isActive && (
-              <Text style={[styles.tabLabel, { color: theme.colors.text }]}>
-                {tab.label}
-              </Text>
-            )}
+            <View style={styles.tabContent}>
+              <Icon
+                name={tab.icon}
+                size={20}
+                color={isActive ? theme.colors.text : 'rgba(255,255,255,0.7)'}
+                style={[
+                  styles.tabIcon,
+                  isActive ? styles.tabIconActive : styles.tabIconInactive,
+                ]}
+              />
+              {isActive && (
+                <Text style={[styles.tabLabel, { color: theme.colors.text }]}>
+                  {tab.label}
+                </Text>
+              )}
+            </View>
           </TouchableOpacity>
         );
       })}
@@ -117,14 +121,24 @@ const styles = StyleSheet.create({
     borderRadius: 28,
   },
   tab: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 28,
+    width: '100%',
   },
-  tabIcon: {
-    marginRight: 6,
+  tabIcon: {},
+  tabIconActive: {
+    marginRight: 4,
+  },
+  tabIconInactive: {
+    marginRight: 0,
   },
   tabLabel: {
     fontSize: 14,
