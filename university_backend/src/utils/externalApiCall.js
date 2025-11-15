@@ -67,6 +67,7 @@ function normalizeBaseUrl(baseUrl, defaultPort = null) {
  * @param {boolean} options.convertKeysToLowercase - Whether to convert response keys to lowercase (default: true)
  * @param {boolean} options.returnFirstArrayElement - If response is array, return first element (default: true)
  * @param {boolean} options.returnCookies - Whether to return cookies from response (default: false)
+ * @param {string|array} options.cookies - Cookies to send with request (Cookie header string or array of cookie strings)
  * @returns {Promise<*>} - API response data or null on error
  */
 async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, options = {}) {
@@ -75,8 +76,12 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
     requestTimeout = 30000,
     convertKeysToLowercase: shouldConvertKeys = true,
     returnFirstArrayElement = true,
-    returnCookies = false
+    returnCookies = false,
+    cookies = null
   } = options;
+
+  // Log cookies received
+  //console.log('callExternalApi - cookies received:', cookies ? (cookies.substring(0, 50) + '...') : 'null');
 
   return new Promise((resolve) => {
     try {
@@ -92,7 +97,7 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
       // Construct full API URL
       const fullApiUrl = `${normalizedBaseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
       
-      console.log(`Calling external API: ${fullApiUrl}`);
+      //console.log(`Calling external API: ${fullApiUrl}`);
 
       // Parse URL
       const url = new URL(fullApiUrl);
@@ -101,6 +106,11 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
 
       // Prepare request data
       const postData = JSON.stringify(data);
+      const postDataBuffer = Buffer.from(postData, 'utf8');
+      const contentLength = postDataBuffer.length;
+      
+      // console.log('External API request data:', postData);
+      // console.log('External API request data length:', contentLength);
 
       // Build path with search params if any
       let path = url.pathname;
@@ -108,16 +118,43 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
         path += url.search;
       }
 
+      // Prepare headers - ensure Content-Length matches actual buffer length
+      const headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': contentLength.toString()
+        // Don't set Connection header - let Node.js handle it automatically
+      };
+
+      // Add cookies to headers if provided (BEFORE logging)
+      console.log('Checking cookies parameter:', cookies ? 'exists' : 'null/undefined');
+      console.log('Cookies type:', typeof cookies);
+      console.log('Cookies value (first 100 chars):', cookies ? cookies.substring(0, 100) : 'N/A');
+      
+      if (cookies) {
+        if (typeof cookies === 'string' && cookies.trim().length > 0) {
+          headers['Cookie'] = cookies;
+          console.log('✓ Cookie header added successfully');
+        } else if (Array.isArray(cookies) && cookies.length > 0) {
+          // If array of cookie strings, join them
+          headers['Cookie'] = cookies.join('; ');
+          console.log('✓ Cookie header added from array');
+        } else {
+          console.log('⚠ Cookies parameter exists but is empty or invalid');
+        }
+      } else {
+        console.log('⚠ No cookies provided to external API call');
+      }
+      
+      console.log('External API headers (final):', JSON.stringify(headers, null, 2));
+
       // Request options
       const requestOptions = {
         hostname: url.hostname,
         port: url.port || (isHttps ? 443 : 80),
         path: path,
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(postData)
-        }
+        headers: headers,
+        agent: false // Disable connection pooling to avoid issues
       };
 
       // Connection timeout
@@ -126,10 +163,20 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
         resolve(null);
       }, connectionTimeout);
 
+      let requestCompleted = false;
+      let requestBodySent = false;
+
       // Make request
       const req = httpModule.request(requestOptions, (res) => {
+        if (requestCompleted) return;
+        requestCompleted = true;
         clearTimeout(connectionTimeoutId);
         let responseData = '';
+
+        // Log response status
+        // console.log('External API response status:', res.statusCode);
+        // console.log('External API response headers:', JSON.stringify(res.headers, null, 2));
+        // console.log('Request body was sent:', requestBodySent);
 
         res.on('data', (chunk) => {
           responseData += chunk;
@@ -139,7 +186,7 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
           try {
             if (res.statusCode === 200) {
               const parsedData = JSON.parse(responseData);
-              console.log('External API returned data. Fields:', Object.keys(parsedData));
+              //console.log('External API returned data. Fields:', Object.keys(parsedData));
 
               // Convert keys to lowercase if requested
               let finalData = shouldConvertKeys ? convertKeysToLowercase(parsedData) : parsedData;
@@ -160,7 +207,18 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
                 resolve(returnCookies ? { data: finalData, cookies } : finalData);
               }
             } else {
-              console.log(`API call failed with status ${res.statusCode}: ${responseData.substring(0, 200)}`);
+              console.error(`❌ API call failed with status ${res.statusCode}`);
+              console.error(`Response data (first 500 chars): ${responseData.substring(0, 500)}`);
+              console.error(`Full response data length: ${responseData.length}`);
+              
+              // Try to parse error response
+              try {
+                const errorData = JSON.parse(responseData);
+                console.error('Parsed error response:', JSON.stringify(errorData, null, 2));
+              } catch (parseErr) {
+                console.error('Could not parse error response as JSON');
+              }
+              
               resolve(null);
             }
           } catch (error) {
@@ -173,19 +231,25 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
 
       // Error handling
       req.on('error', (error) => {
+        if (requestCompleted) return;
+        requestCompleted = true;
         clearTimeout(connectionTimeoutId);
         if (error.code === 'ECONNREFUSED') {
           console.error(`Connection refused - is the external server running on ${normalizedBaseUrl}?`);
         } else if (error.code === 'ETIMEDOUT') {
           console.error(`Connection timeout - server at ${normalizedBaseUrl} is not responding`);
+        } else if (error.code === 'ECONNRESET') {
+          console.error('Connection reset by peer - server closed connection');
         } else {
-          console.error('Error calling external API:', error);
+          console.error('Error calling external API:', error.code, error.message);
         }
         resolve(null);
       });
 
       // Request timeout
       req.setTimeout(requestTimeout, () => {
+        if (requestCompleted) return;
+        requestCompleted = true;
         clearTimeout(connectionTimeoutId);
         console.error(`Request timeout after ${requestTimeout}ms`);
         req.destroy();
@@ -195,6 +259,8 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
       // Socket timeout
       req.on('socket', (socket) => {
         socket.setTimeout(connectionTimeout, () => {
+          if (requestCompleted) return;
+          requestCompleted = true;
           clearTimeout(connectionTimeoutId);
           console.error('Socket connection timeout');
           req.destroy();
@@ -202,9 +268,30 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
         });
       });
 
-      // Send request
-      req.write(postData);
-      req.end();
+      // Send request body - write first to ensure it's in the buffer
+      console.log('Sending request body, length:', contentLength);
+      console.log('Request body content:', postData.substring(0, 200));
+      
+      // Write the body first, then end
+      try {
+        // Write the body data
+        const written = req.write(postData, 'utf8');
+        requestBodySent = true;
+        console.log('Request body written, buffer returned:', written);
+        
+        // End the request after writing
+        req.end(() => {
+          console.log('✓ Request ended successfully');
+        });
+      } catch (writeError) {
+        console.error('Error writing/ending request:', writeError);
+        if (!requestCompleted) {
+          requestCompleted = true;
+          clearTimeout(connectionTimeoutId);
+          req.destroy();
+          resolve(null);
+        }
+      }
     } catch (error) {
       console.error('Error setting up API request:', error);
       resolve(null);
