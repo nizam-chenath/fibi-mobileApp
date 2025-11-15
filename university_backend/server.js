@@ -63,10 +63,12 @@ app.set('mysqlPool', mysqlPool);
 const UserRoutes = require('./src/routes/userRoutes');
 const ProposalRoutes = require('./src/routes/proposalRoutes');
 const LoginRoutes = require('./src/routes/login');
+const ServiceRequestRoutes = require('./src/routes/serviceRequestRoutes');
 
 app.use('/api/users', UserRoutes);
 app.use('/api/proposals', ProposalRoutes);
 app.use('/api/login', LoginRoutes);
+app.use('/api/service-requests', ServiceRequestRoutes);
 
 if (process.env.SSL_ENABLED === 'true') {
   const key = fs.readFileSync(process.env.SSL_KEY_PATH);
