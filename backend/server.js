@@ -3,6 +3,7 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const app = express();
 require('dotenv').config();
 const PORT_CONNECTION = process.env.PORT_CONNECTION || 5000;
@@ -11,7 +12,11 @@ const authenticateToken = require('./src/middleware/authenticate');
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb' }));
-app.use(cors()); // Enable CORS for all routes
+app.use(cookieParser()); // Parse cookies
+app.use(cors({
+  origin: true, // Allow all origins
+  credentials: true // Allow cookies to be sent
+})); // Enable CORS for all routes
 
 app.set('mysqlPool', mysqlPool);
 

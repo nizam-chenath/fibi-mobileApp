@@ -24,6 +24,13 @@ const logout = async (req, res) => {
 
     await setLoggedInStatus(existingUser.employeeId, 'N');
 
+    // Clear the accessToken cookie
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
+
     return res.status(200).json({ message: 'User logged out successfully' });
   } catch (error) {
     console.error('Error updating MySQL:', error);
