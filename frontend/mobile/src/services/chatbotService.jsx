@@ -1,6 +1,5 @@
 // services/chatbotService.jsx
 import { CHATBOT_API_URL } from '../config/constants.jsx';
-import { CHATBOT_COOKIE_TOKEN } from '../config/config.js';
 import { tokenManager } from './tokenManager.jsx';
 
 class ChatbotService {
