@@ -9,6 +9,7 @@ export const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
   const tenantId = useSelector((state) => state.tenant?.currentTenantId);
+  const isAuthenticated = useSelector((state) => state.auth?.isAuthenticated);
 
   const theme = useMemo(() => {
     const BRAND_GREEN = '#48BD92';
@@ -29,22 +30,9 @@ export const ThemeProvider = ({ children }) => {
 
     const fallbackConfig = getTenantById(DEFAULT_TENANT_ID);
     const tenantConfig = getTenantById(tenantId) || fallbackConfig;
-    if (!tenantConfig) {
-      return {
-        colors: baseColors,
-        spacing: defaultSpacing,
-        borderRadius,
-        branding: {
-          appName: 'Fibi Demo',
-          universityName: 'Demo University',
-          logo: null,
-        },
-      };
-    }
-
     const combinedColors = {
       ...baseColors,
-      ...(tenantConfig.theme || {}),
+      ...(isAuthenticated ? tenantConfig?.theme : null),
     };
 
     combinedColors.primary = combinedColors.primary || baseColors.primary;
@@ -58,9 +46,14 @@ export const ThemeProvider = ({ children }) => {
       colors: combinedColors,
       spacing: defaultSpacing,
       borderRadius,
-      branding: tenantConfig.branding,
+      branding:
+        tenantConfig?.branding || {
+          appName: 'Fibi Demo',
+          universityName: 'Demo University',
+          logo: null,
+        },
     };
-  }, [tenantId]);
+  }, [tenantId, isAuthenticated]);
 
   return (
     <ThemeContext.Provider value={theme}>
