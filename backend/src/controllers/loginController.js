@@ -26,8 +26,8 @@ const login = async (req, res) => {
 
     // Get base URL from university or use default
     // Default to localhost:5000 (university_backend default port)
-    //const baseUrl = university.ip || 'http://localhost:5000';
-    const baseUrl = 'http://localhost:5005';
+    const baseUrl = university.ip || 'http://localhost:5000';
+    //const baseUrl = 'http://localhost:5005';
 
     // Call external login API with username and password
     console.log(`Calling external login API at: ${baseUrl}/api/login`);
