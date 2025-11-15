@@ -18,8 +18,11 @@ const tenantSlice = createSlice({
     setCurrentTenant: (state, action) => {
       state.currentTenantId = action.payload.tenantId;
       state.tenantConfig = action.payload.config;
-      state.currentUniversityUid =
-        action.payload.universityUid ?? state.currentUniversityUid;
+      // Always set universityUid if provided, even if it's null/undefined
+      if (action.payload.hasOwnProperty('universityUid')) {
+        state.currentUniversityUid = action.payload.universityUid;
+        console.log('[tenantSlice] Setting universityUid:', action.payload.universityUid);
+      }
       state.error = null;
     },
     setLoading: (state, action) => {

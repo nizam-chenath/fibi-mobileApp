@@ -50,16 +50,24 @@ const LoginScreen = () => {
   const mutedText = 'rgba(28, 28, 28, 0.65)';
 
   const handleLogin = async () => {
+    console.log('[LoginScreen] Login button pressed. currentUniversityUid:', currentUniversityUid);
+    
     if (!username || !password) {
       alert('Please enter username and password');
       return;
     }
 
-    if (!currentUniversityUid) {
-      alert('Please select a university before logging in.');
+    if (!currentUniversityUid || (typeof currentUniversityUid === 'string' && currentUniversityUid.trim() === '')) {
+      console.warn('[LoginScreen] No university selected. currentUniversityUid:', currentUniversityUid);
+      Alert.alert(
+        'University Required',
+        'Please select a university before logging in.',
+        [{ text: 'OK' }]
+      );
       return;
     }
 
+    console.log('[LoginScreen] Proceeding with login. universityUid:', currentUniversityUid);
     const result = await login(username, password);
 
     if (result?.success) {
@@ -67,6 +75,8 @@ const LoginScreen = () => {
       console.log(
         `[Auth] Sign-in successful for tenant "${currentTenantId}". Navigating to ${university} dashboard.`,
       );
+    } else if (result?.error) {
+      Alert.alert('Login Failed', result.error, [{ text: 'OK' }]);
     }
   };
 
