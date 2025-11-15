@@ -1,6 +1,5 @@
 const pool = require('../db/mysql');
-const https = require('https');
-const http = require('http');
+const { callExternalApi } = require('../utils/externalApiCall');
 
 const USER_SELECT_FIELDS = [
   'id',
@@ -71,91 +70,183 @@ async function findUserByUsername(username, university) {
     return null;
   }
 
-  // Call external API at university.ip/api/findUser
+  // Use the common external API call utility
+  // Default to localhost:5000 (university_backend default port)
+  const baseUrl = university.ip || 'http://localhost:5000';
+  //const baseUrl = 'http://localhost:5005';
+  const endpoint = '/api/users/findUser';
+  const requestData = { username };
+
+  return await callExternalApi(baseUrl, endpoint, 'POST', requestData, {
+    connectionTimeout: 10000,
+    requestTimeout: 30000,
+    convertKeysToLowercase: true,
+    returnFirstArrayElement: true
+  });
+}
+
+async function callExternalLoginApi(baseUrl, username, password) {
+  const https = require('https');
+  const http = require('http');
+  const { normalizeBaseUrl, convertKeysToLowercase } = require('../utils/externalApiCall');
+
   return new Promise((resolve) => {
     try {
-      // Handle IP address or full URL
-      let baseUrl = university.ip.trim();
-      
-      // Check if it's already a full URL with protocol
-      const hasProtocol = baseUrl.startsWith('http://') || baseUrl.startsWith('https://');
-      
-      if (!hasProtocol) {
-        // If no protocol, assume it's an IP address or domain and add https://
-        baseUrl = `https://${baseUrl}`;
+      // Normalize base URL
+      const normalizedBaseUrl = normalizeBaseUrl(baseUrl);
+      if (!normalizedBaseUrl) {
+        console.error('Invalid base URL provided');
+        resolve(null);
+        return;
       }
+
+      const endpoint = '/api/login/';
+      const fullApiUrl = `${normalizedBaseUrl}${endpoint}`;
       
-      // Remove trailing slash if present to avoid double slashes
-      baseUrl = baseUrl.replace(/\/$/, '');
-      
-      // Construct the full API endpoint URL
-      const fullApiUrl = `${baseUrl}/api/findUser`;
-      
-      console.log(`Calling external API: ${fullApiUrl}`);
-      
-      // Parse the full URL - this works for any hosted URL like https://fibi-mobileapp-cgeh.onrender.com
+      console.log(`Calling external login API: ${fullApiUrl}`);
+
+      // Parse URL
       const url = new URL(fullApiUrl);
       const isHttps = url.protocol === 'https:';
       const httpModule = isHttps ? https : http;
 
-      const postData = JSON.stringify({ username });
+      // Prepare request data
+      const postData = JSON.stringify({ username, password });
 
-      // Build path with search params if any
+      // Build path
       let path = url.pathname;
       if (url.search) {
         path += url.search;
       }
 
-      const options = {
-        hostname: url.hostname, // This correctly extracts hostname from any URL format
+      // Request options with better connection handling
+      const requestOptions = {
+        hostname: url.hostname,
         port: url.port || (isHttps ? 443 : 80),
-        path: path, // Include pathname and any query parameters
+        path: path,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(postData)
-        }
+          'Content-Length': Buffer.byteLength(postData),
+          'Connection': 'keep-alive'
+        },
+        agent: false // Disable connection pooling to avoid hanging connections
       };
 
-      const req = httpModule.request(options, (res) => {
-        let data = '';
+      // Connection timeout
+      const connectionTimeoutId = setTimeout(() => {
+        console.error('Connection timeout - server may not be running or unreachable');
+        resolve(null);
+      }, 15000); // Increased to 15 seconds
+
+      let requestCompleted = false;
+
+      // Make request
+      const req = httpModule.request(requestOptions, (res) => {
+        clearTimeout(connectionTimeoutId);
+        requestCompleted = true;
+        let responseData = '';
 
         res.on('data', (chunk) => {
-          data += chunk;
+          responseData += chunk;
         });
 
         res.on('end', () => {
           try {
             if (res.statusCode === 200) {
-              const userData = JSON.parse(data);
-              resolve(userData);
+              const parsedData = JSON.parse(responseData);
+              console.log('External login API returned data. Fields:', Object.keys(parsedData));
+
+              // Extract cookies from response headers
+              const cookies = res.headers['set-cookie'] || [];
+              console.log('Cookies from external API:', cookies);
+
+              // Convert keys to lowercase
+              const convertedData = convertKeysToLowercase(parsedData);
+
+              // Return both data and cookies
+              resolve({
+                data: convertedData,
+                cookies: cookies
+              });
+            } else if (res.statusCode === 404) {
+              console.error(`External login API endpoint not found (404). URL: ${fullApiUrl}`);
+              console.error(`Response: ${responseData.substring(0, 500)}`);
+              console.error('Please check if the university_backend server is running and the endpoint is correct.');
+              resolve(null);
             } else {
-              console.log(`API call failed with status ${res.statusCode}: ${data}`);
+              console.error(`External login API failed with status ${res.statusCode}`);
+              console.error(`Response: ${responseData.substring(0, 500)}`);
               resolve(null);
             }
           } catch (error) {
-            console.error('Error parsing API response:', error);
+            console.error('Error parsing external login API response:', error);
+            console.error('Response data:', responseData.substring(0, 500));
             resolve(null);
           }
         });
       });
 
+      // Error handling - handle ECONNRESET specifically
       req.on('error', (error) => {
-        console.error('Error calling external API:', error);
-        resolve(null);
+        if (!requestCompleted) {
+          clearTimeout(connectionTimeoutId);
+          if (error.code === 'ECONNREFUSED') {
+            console.error(`Connection refused - is the external server running on ${normalizedBaseUrl}?`);
+          } else if (error.code === 'ETIMEDOUT') {
+            console.error(`Connection timeout - server at ${normalizedBaseUrl} is not responding`);
+          } else if (error.code === 'ECONNRESET') {
+            console.error(`Connection reset - server at ${normalizedBaseUrl} closed the connection unexpectedly`);
+          } else {
+            console.error('Error calling external login API:', error.code, error.message);
+          }
+          resolve(null);
+        }
       });
 
-      // Set timeout
-      req.setTimeout(10000, () => {
-        console.error('API call timeout');
-        req.destroy();
-        resolve(null);
+      // Handle socket close
+      req.on('close', () => {
+        if (!requestCompleted) {
+          clearTimeout(connectionTimeoutId);
+          console.error('Request closed before completion');
+        }
       });
 
+      // Request timeout
+      req.setTimeout(30000, () => {
+        if (!requestCompleted) {
+          clearTimeout(connectionTimeoutId);
+          console.error('Request timeout after 30 seconds');
+          req.destroy();
+          resolve(null);
+        }
+      });
+
+      // Socket timeout - handle before connection
+      req.on('socket', (socket) => {
+        socket.setTimeout(15000, () => {
+          if (!requestCompleted) {
+            clearTimeout(connectionTimeoutId);
+            console.error('Socket connection timeout');
+            req.destroy();
+            resolve(null);
+          }
+        });
+
+        socket.on('error', (error) => {
+          if (!requestCompleted) {
+            clearTimeout(connectionTimeoutId);
+            console.error('Socket error:', error.code);
+            resolve(null);
+          }
+        });
+      });
+
+      // Send request
       req.write(postData);
       req.end();
     } catch (error) {
-      console.error('Error setting up API request:', error);
+      console.error('Error setting up external login API request:', error);
       resolve(null);
     }
   });
@@ -266,12 +357,31 @@ async function setLoggedInStatus(employeeId, status) {
 }
 
 async function findUserUniversity(uid) {
-  const [rows] = await pool.query(
-    'SELECT * FROM universities WHERE uid = ? LIMIT 1',
-    [uid]
-  );
+  try {
+    const [rows] = await pool.query(
+      'SELECT * FROM universities WHERE uid = ? LIMIT 1',
+      [uid]
+    );
 
-  return rows.length > 0 ? rows[0] : null;
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    console.error('Error in findUserUniversity:', error);
+    // If connection is lost, try to reconnect
+    if (error.code === 'ECONNRESET' || error.code === 'PROTOCOL_CONNECTION_LOST') {
+      console.log('Connection lost, retrying query...');
+      try {
+        const [rows] = await pool.query(
+          'SELECT * FROM universities WHERE uid = ? LIMIT 1',
+          [uid]
+        );
+        return rows.length > 0 ? rows[0] : null;
+      } catch (retryError) {
+        console.error('Retry failed:', retryError);
+        throw retryError;
+      }
+    }
+    throw error;
+  }
 }
 
 module.exports = {
@@ -283,5 +393,6 @@ module.exports = {
   deleteUserByEmployeeId,
   getAllUsers,
   setLoggedInStatus,
-  findUserUniversity
+  findUserUniversity,
+  callExternalLoginApi
 };
