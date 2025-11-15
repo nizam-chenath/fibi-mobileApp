@@ -34,11 +34,22 @@ const getProposals = async (req, res) => {
       cookieHeader = req.headers.cookie;
     }
 
+    // Extract specific fields from request body (these are required/mostly from req.body)
+    const { 
+      uid: _, 
+      advancedSearch, 
+      currentPage, 
+      pageNumber, 
+      sortBy, 
+      tabName,
+      ...otherProperties 
+    } = req.body;
+
     // Prepare default payload with all required properties
     const defaultPayload = {
-      advancedSearch: "L",
-      currentPage: 1,
-      pageNumber: 20,
+      advancedSearch: advancedSearch !== undefined ? advancedSearch : "L",
+      currentPage: currentPage !== undefined ? currentPage : 1,
+      pageNumber: pageNumber !== undefined ? pageNumber : 20,
       property1: "",
       property2: "",
       property3: [],
@@ -57,15 +68,14 @@ const getProposals = async (req, res) => {
       property16: "",
       property17: "",
       sort: {},
-      sortBy: "updateTimeStamp",
-      tabName: "MY_PROPOSAL"
+      sortBy: sortBy !== undefined ? sortBy : "updateTimeStamp",
+      tabName: tabName !== undefined ? tabName : "MY_PROPOSAL"
     };
 
-    // Merge with any additional data from request body (excluding uid)
-    const { uid: _, ...additionalData } = req.body;
+    // Merge with any additional properties from request body
     const payload = {
       ...defaultPayload,
-      ...additionalData
+      ...otherProperties
     };
 
     // Call external API with university IP, payload, and cookies
