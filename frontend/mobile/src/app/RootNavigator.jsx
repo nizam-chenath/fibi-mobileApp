@@ -23,11 +23,15 @@ const RootNavigator = () => {
   }, []);
 
   const handleSelectUniversity = ({ universityUid }) => {
+    console.log('[RootNavigator] University selected:', universityUid);
     const tenantId = getTenantIdForUniversity(universityUid, DEFAULT_TENANT_ID);
     const config = getTenantById(tenantId);
     if (config) {
+      console.log('[RootNavigator] Dispatching setCurrentTenant with:', { tenantId, universityUid });
       dispatch(setCurrentTenant({ tenantId, config, universityUid }));
       setSelectedUniversity(universityUid);
+    } else {
+      console.warn('[RootNavigator] No config found for tenantId:', tenantId);
     }
   };
 
