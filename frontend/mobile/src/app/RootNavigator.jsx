@@ -7,6 +7,8 @@ import DashboardScreen from '../screens/DashboardScreen.jsx';
 import SplashScreen from '../screens/SplashScreen.jsx';
 import { setCurrentTenant } from '../store/tenantSlice.jsx';
 import { getTenantById } from '../config/tenants/index.jsx';
+import { DEFAULT_TENANT_ID } from '../config/constants.jsx';
+import { getTenantIdForUniversity } from '../config/universityTenantMap.js';
 import useAuth from '../hooks/useAuth.jsx';
 import ChatbotWidget from '../components/ChatbotWidget.jsx';
 
@@ -20,11 +22,12 @@ const RootNavigator = () => {
     setShowAnimatedSplash(false);
   }, []);
 
-  const handleSelectUniversity = (tenantId) => {
+  const handleSelectUniversity = ({ universityUid }) => {
+    const tenantId = getTenantIdForUniversity(universityUid, DEFAULT_TENANT_ID);
     const config = getTenantById(tenantId);
     if (config) {
-      dispatch(setCurrentTenant({ tenantId, config }));
-      setSelectedUniversity(tenantId);
+      dispatch(setCurrentTenant({ tenantId, config, universityUid }));
+      setSelectedUniversity(universityUid);
     }
   };
 

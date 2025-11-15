@@ -1,5 +1,5 @@
 // screens/DashboardScreen.jsx
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import {
   View,
   ScrollView,
@@ -12,6 +12,7 @@ import useTheme from '../hooks/useTheme.jsx';
 import useAuth from '../hooks/useAuth.jsx';
 import { getDashboardData } from '../mockData/dashboard.jsx';
 import { getActivitiesByTenant } from '../mockData/activities.jsx';
+import { fetchResearchSummaryWidget } from '../api/proposalsApi.js';
 import Navbar from '../components/Navbar.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import StatsCard from '../components/StatsCard.jsx';
@@ -96,12 +97,66 @@ const DashboardScreen = ({ onLogout }) => {
   );
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
+  const [sponsorWidgetData, setSponsorWidgetData] = useState([]);
+  const [widgetError, setWidgetError] = useState(null);
+  const [widgetLoading, setWidgetLoading] = useState(false);
+  const [widgetPage, setWidgetPage] = useState(1);
+  const [widgetHasMore, setWidgetHasMore] = useState(true);
 
   useEffect(() => {
     if (resolvedModules?.length && !resolvedModules.find((m) => m.id === activeModuleId)) {
       setActiveModuleId(resolvedModules[0].id);
     }
   }, [resolvedModules, activeModuleId]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadWidgetData = async () => {
+      try {
+        setWidgetLoading(true);
+        setWidgetError(null);
+        const result = await fetchResearchSummaryWidget({
+          unitNumber: dashboardData?.overview?.unitNumber || '000001',
+          currentPage: widgetPage,
+          pageNumber: 10,
+        });
+        if (isMounted) {
+          const widgetRows = Array.isArray(result?.widgetDatas)
+            ? result.widgetDatas.map((row, index) => ({
+                id: `${row[0] || `sponsor-${widgetPage}-${index}`}`,
+                label: row[1] || 'Unknown Sponsor',
+                value: Number(row[2]) || 0,
+              }))
+            : [];
+          setSponsorWidgetData((prev) =>
+            widgetPage === 1 ? widgetRows : [...prev, ...widgetRows],
+          );
+          const totalItems = Number(result?.pageNumbers?.[0]?.totalCount);
+          const loadedCount = (widgetPage - 1) * 10 + widgetRows.length;
+          if (Number.isFinite(totalItems)) {
+            setWidgetHasMore(loadedCount < totalItems);
+          } else {
+            setWidgetHasMore(widgetRows.length === 10);
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          setWidgetError(error.message || 'Failed to load sponsor data');
+          setSponsorWidgetData((prev) => (widgetPage === 1 ? [] : prev));
+          setWidgetHasMore(false);
+        }
+      } finally {
+        if (isMounted) {
+          setWidgetLoading(false);
+        }
+      }
+    };
+
+    loadWidgetData();
+    return () => {
+      isMounted = false;
+    };
+  }, [dashboardData?.overview?.unitNumber, widgetPage]);
 
   const handleSelectModule = (module) => {
     setActiveModuleId(module.id);
@@ -110,6 +165,8 @@ const DashboardScreen = ({ onLogout }) => {
   const handleLogoPress = () => {
     setSidebarVisible((prev) => !prev);
   };
+
+  const handleShowProposals = useCallback(() => setActiveBottomTab('awards'), []);
 
   const styles = StyleSheet.create({
     container: {
@@ -165,6 +222,7 @@ const DashboardScreen = ({ onLogout }) => {
     },
     chartWrapper: {
       marginTop: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     modulesContainer: {
       paddingHorizontal: theme.spacing.lg,
@@ -173,6 +231,19 @@ const DashboardScreen = ({ onLogout }) => {
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.sm,
       alignItems: 'center',
+    },
+    showMoreButton: {
+      marginTop: theme.spacing.sm,
+      alignSelf: 'flex-end',
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.borderRadius.full,
+      borderWidth: 1,
+      borderColor: theme.colors.primary + '55',
+    },
+    showMoreText: {
+      fontSize: 12,
+      fontWeight: '600',
     },
     logoutButton: {
       marginHorizontal: theme.spacing.lg,
@@ -214,15 +285,47 @@ const DashboardScreen = ({ onLogout }) => {
           />
         )}
 
-        {resolvedAwardedSponsors?.length > 0 && (
-          <View style={styles.chartWrapper}>
-            <AwardedProposalsChart
-              data={resolvedAwardedSponsors}
-              subtitle={`${dashboardData.awardedBySponsor?.length || 0} sponsors`}
-              onShowMore={() => console.log('Navigate to awarded sponsors detail')}
-            />
-          </View>
-        )}
+        <View style={styles.chartWrapper}>
+          <AwardedProposalsChart
+            data={
+              sponsorWidgetData.length > 0
+                ? sponsorWidgetData.map((item, index) => ({
+                    id: item.id,
+                    label: item.label,
+                    value: item.value,
+                    color: chartFallbackPalette[index % chartFallbackPalette.length],
+                  }))
+                : resolvedAwardedSponsors || []
+            }
+            subtitle={
+              widgetLoading
+                ? 'Loading sponsors...'
+                : sponsorWidgetData.length > 0
+                  ? `${sponsorWidgetData.length} sponsors`
+                  : `${dashboardData.awardedBySponsor?.length || 0} sponsors`
+            }
+            onShowMore={() => {
+              if (widgetHasMore && !widgetLoading) {
+                setWidgetPage((prev) => prev + 1);
+              }
+            }}
+          />
+          {widgetHasMore && !widgetLoading && (
+            <TouchableOpacity
+              style={styles.showMoreButton}
+              onPress={() => setWidgetPage((prev) => prev + 1)}
+            >
+              <Text style={[styles.showMoreText, { color: theme.colors.primary }]}>
+                Show more sponsors
+              </Text>
+            </TouchableOpacity>
+          )}
+          {widgetError && (
+            <Text style={[styles.sectionTitle, { color: theme.colors.error }]}>
+              {widgetError}
+            </Text>
+          )}
+        </View>
 
         <Text style={styles.sectionTitle}>Overview</Text>
         <View style={styles.statsContainer}>

@@ -25,9 +25,9 @@ const placeholderLogo = require('../assets/images/us.png');
 const LoginScreen = () => {
   const theme = useTheme();
   const { login, loading, error } = useAuth();
-  const { currentTenantId } = useTenant();
-  const [email, setEmail] = useState('john.smith@harvard.edu');
-  const [password, setPassword] = useState('password123');
+  const { currentTenantId, currentUniversityUid } = useTenant();
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('polus@123');
   const [showPassword, setShowPassword] = useState(false);
 
   const brandingLogoSource = useMemo(() => {
@@ -50,12 +50,17 @@ const LoginScreen = () => {
   const mutedText = 'rgba(28, 28, 28, 0.65)';
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      alert('Please enter email and password');
+    if (!username || !password) {
+      alert('Please enter username and password');
       return;
     }
 
-    const result = await login(email, password);
+    if (!currentUniversityUid) {
+      alert('Please select a university before logging in.');
+      return;
+    }
+
+    const result = await login(username, password);
 
     if (result?.success) {
       const university = theme.branding?.universityName || currentTenantId;
@@ -277,15 +282,16 @@ const LoginScreen = () => {
 
           <View style={styles.formCard}>
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email Address</Text>
+              <Text style={styles.label}>Username</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your email"
+                placeholder="Enter your username"
                 placeholderTextColor={theme.colors.textSecondary}
-                value={email}
-                onChangeText={setEmail}
+                value={username}
+                onChangeText={setUsername}
                 editable={!loading}
-                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
 
