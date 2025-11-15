@@ -66,6 +66,8 @@ function normalizeBaseUrl(baseUrl, defaultPort = '5000') {
  * @param {number} options.requestTimeout - Request timeout in ms (default: 30000)
  * @param {boolean} options.convertKeysToLowercase - Whether to convert response keys to lowercase (default: true)
  * @param {boolean} options.returnFirstArrayElement - If response is array, return first element (default: true)
+ * @param {boolean} options.returnCookies - Whether to return cookies from response (default: false)
+ * @param {string|array} options.cookies - Cookies to send with request (Cookie header string or array of cookie strings)
  * @returns {Promise<*>} - API response data or null on error
  */
 async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, options = {}) {
@@ -73,7 +75,9 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
     connectionTimeout = 10000,
     requestTimeout = 30000,
     convertKeysToLowercase: shouldConvertKeys = true,
-    returnFirstArrayElement = true
+    returnFirstArrayElement = true,
+    returnCookies = false,
+    cookies = null
   } = options;
 
   return new Promise((resolve) => {
@@ -100,16 +104,28 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
         path += url.search;
       }
 
+      // Prepare headers
+      const headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData)
+      };
+
+      // Add cookies to headers if provided
+      if (cookies) {
+        if (typeof cookies === 'string' && cookies.trim().length > 0) {
+          headers['Cookie'] = cookies;
+        } else if (Array.isArray(cookies) && cookies.length > 0) {
+          headers['Cookie'] = cookies.join('; ');
+        }
+      }
+
       // Request options
       const requestOptions = {
         hostname: url.hostname,
         port: url.port || (isHttps ? 443 : 80),
         path: path,
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(postData)
-        }
+        headers: headers
       };
 
       // Connection timeout
@@ -136,17 +152,20 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
               // Convert keys to lowercase if requested
               let finalData = shouldConvertKeys ? convertKeysToLowercase(parsedData) : parsedData;
 
+              // Extract cookies if requested
+              const responseCookies = returnCookies ? (res.headers['set-cookie'] || []) : null;
+
               // Handle array responses
               if (Array.isArray(finalData)) {
                 if (finalData.length === 0) {
-                  resolve(null);
+                  resolve(returnCookies ? { data: null, cookies: responseCookies } : null);
                 } else if (returnFirstArrayElement) {
-                  resolve(finalData[0]);
+                  resolve(returnCookies ? { data: finalData[0], cookies: responseCookies } : finalData[0]);
                 } else {
-                  resolve(finalData);
+                  resolve(returnCookies ? { data: finalData, cookies: responseCookies } : finalData);
                 }
               } else {
-                resolve(finalData);
+                resolve(returnCookies ? { data: finalData, cookies: responseCookies } : finalData);
               }
             } else {
               console.log(`API call failed with status ${res.statusCode}: ${responseData.substring(0, 200)}`);
