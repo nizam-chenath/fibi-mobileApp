@@ -1,5 +1,5 @@
 import { API_BASE_URL, PROPOSALS_BASE_URL } from '../config/config.js';
-import { tokenManager } from '../services/tokenManager.jsx';
+import apiClient from './apiClient.js';
 
 const PROPOSALS_ENDPOINT = '/api/proposals';
 const RESEARCH_SUMMARY_ENDPOINT = '/getResearchSummaryDatasByWidget';
@@ -23,28 +23,7 @@ export const fetchProposalsDashboard = async (overrides = {}) => {
     payload.uid = 'u100';
   }
 
-  const cookieToken = await tokenManager.getToken();
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  if (cookieToken) {
-    headers.Cookie = `Cookie_Token=${cookieToken}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}${PROPOSALS_ENDPOINT}`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Unable to fetch proposals (${response.status})`);
-  }
-
-  const data = await response.json();
+  const data = await apiClient.post(`${API_BASE_URL}${PROPOSALS_ENDPOINT}`, payload);
   if (!data || typeof data !== 'object') {
     throw new Error('Unexpected proposals response format');
   }
@@ -67,26 +46,10 @@ export const fetchResearchSummaryWidget = async ({
     pageNumber,
   };
 
-  const cookieToken = await tokenManager.getToken();
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-  if (cookieToken) {
-    headers.Cookie = `Cookie_Token=${cookieToken}`;
-  }
-
-  const response = await fetch(`${PROPOSALS_BASE_URL}${RESEARCH_SUMMARY_ENDPOINT}`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Unable to fetch research summary (${response.status})`);
-  }
-
-  const data = await response.json();
+  const data = await apiClient.post(
+    `${PROPOSALS_BASE_URL}${RESEARCH_SUMMARY_ENDPOINT}`,
+    payload,
+  );
   if (!data || typeof data !== 'object') {
     throw new Error('Unexpected research summary response format');
   }

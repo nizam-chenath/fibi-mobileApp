@@ -37,6 +37,11 @@ async function testConnection() {
     connection.release();
   } catch (err) {
     console.error('Error connecting to MySQL Database:', err);
+    if (err.code === 'ETIMEDOUT') {
+      console.error('Connection timeout - check your DB_HOST, DB_PORT, and network connectivity');
+    } else if (err.code === 'ECONNREFUSED') {
+      console.error('Connection refused - is MySQL server running?');
+    }
     // Retry after 2 seconds
     setTimeout(testConnection, 2000);
   }

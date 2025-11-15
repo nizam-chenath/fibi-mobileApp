@@ -1,6 +1,4 @@
-import { API_BASE_URL } from '../config/config.js';
-
-
+import apiClient from './apiClient.js';
 
 const extractCookieToken = (cookieHeader) => {
   if (!cookieHeader) return null;
@@ -16,30 +14,18 @@ const extractCookieToken = (cookieHeader) => {
 };
 
 export const loginRequest = async ({ username, password, uid }) => {
-  console.log('API_BASE_URL', API_BASE_URL);
-  console.log('username', username);
-  console.log('password', password);
-  console.log('uid', uid);
-  const response = await fetch(`${API_BASE_URL}/api/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username, password, uid }),
-  });
-  console.log('response', response);
+  const { data, response } = await apiClient.post(
+    '/api/login',
+    { username, password, uid },
+    { auth: false, returnResponse: true },
+  );
 
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Login failed (${response.status})`);
-  }
-
-  const data = await response.json();
   if (!data || typeof data !== 'object' || !data.user) {
     throw new Error('Unexpected login response');
   }
 
-  const cookieHeader = response.headers?.get('set-cookie');
+  const cookieHeader =
+    response.headers?.get('set-cookie') || response.headers?.get('Set-Cookie');
   const cookieToken = extractCookieToken(cookieHeader);
 
   return { data, cookieToken };

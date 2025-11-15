@@ -1,21 +1,17 @@
-const jwt = require('jsonwebtoken');
-// const { secretKey } = require('../config'); // Load your secret key from config
-const tokenBlacklist = new Set();
-
 function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    // Check if any authentication cookie exists
+    // Check multiple possible cookie names
+    const token = req.cookies?.accessToken || 
+                  req.cookies?.token || 
+                  req.cookies?.Cookie_Token ||
+                  req.headers?.cookie; // Also check Cookie header directly
     
-    if (token == null) return res.sendStatus(401);
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized: No authentication cookie found' });
+    }
     
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ message: 'Forbidden: Invalid token' });
-        }
-        
-        req.user = user; // Set the user information in the request object
-        next();
-    });
+    // Cookie exists, allow request to proceed
+    next();
 }
 
 module.exports = authenticateToken;

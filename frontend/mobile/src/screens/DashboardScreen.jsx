@@ -7,20 +7,23 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import useTheme from '../hooks/useTheme.jsx';
 import useAuth from '../hooks/useAuth.jsx';
 import { getDashboardData } from '../mockData/dashboard.jsx';
 import { getActivitiesByTenant } from '../mockData/activities.jsx';
 import { fetchResearchSummaryWidget } from '../api/proposalsApi.js';
+import { fetchActionInbox } from '../api/inboxApi.js';
+import { fetchAgreementStatusCountWidget } from '../api/agreementsApi.js';
 import Navbar from '../components/Navbar.jsx';
 import Sidebar from '../components/Sidebar.jsx';
-import StatsCard from '../components/StatsCard.jsx';
-import ModuleCard from '../components/ModuleCard.jsx';
 import ActivityFeed from '../components/ActivityFeed.jsx';
 import AwardedProposalsChart from '../components/charts/AwardedProposalsChart.jsx';
 import ProposalPerformanceSection from '../components/charts/ProposalPerformanceSection.jsx';
 import BottomNavBar from '../components/BottomNavBar.jsx';
+import ActionList from '../components/ActionList.jsx';
+import AgreementStatusChart from '../components/AgreementStatusChart.jsx';
 import ServiceTrackerScreen from './ServiceTrackerScreen.jsx';
 import AwardsScreen from './AwardsScreen.jsx';
 import NotificationList from '../components/NotificationList.jsx';
@@ -32,14 +35,6 @@ const DashboardScreen = ({ onLogout }) => {
   const dashboardData = getDashboardData(tenantId, user?.role);
   const activities = getActivitiesByTenant(tenantId);
   const proposalInsights = dashboardData?.proposalInsights;
-
-  const resolvedStats = dashboardData.stats?.map((stat) => {
-    const colorToken = stat.colorToken || stat.color;
-    return {
-      ...stat,
-      color: theme.colors[colorToken] || stat.color || theme.colors.primary,
-    };
-  });
 
   const resolvedModules = dashboardData.modules?.map((module) => {
     const accentToken = module.accentColorToken || module.accentColor;
@@ -91,6 +86,11 @@ const DashboardScreen = ({ onLogout }) => {
     { id: 'awards', label: 'Awards', icon: 'trophy-outline' },
   ];
   const [activeBottomTab, setActiveBottomTab] = useState(bottomTabs[0]?.id);
+  const dashboardTabs = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'agreements', label: 'Agreements' },
+  ];
+  const [activeDashboardTab, setActiveDashboardTab] = useState(dashboardTabs[0]?.id);
 
   const [activeModuleId, setActiveModuleId] = useState(
     resolvedModules?.[0]?.id,
@@ -102,6 +102,14 @@ const DashboardScreen = ({ onLogout }) => {
   const [widgetLoading, setWidgetLoading] = useState(false);
   const [widgetPage, setWidgetPage] = useState(1);
   const [widgetHasMore, setWidgetHasMore] = useState(true);
+  const [actions, setActions] = useState([]);
+  const [actionsLoading, setActionsLoading] = useState(false);
+  const [actionsError, setActionsError] = useState(null);
+  const [actionsRefreshKey, setActionsRefreshKey] = useState(0);
+  const [agreementStatuses, setAgreementStatuses] = useState([]);
+  const [agreementLoading, setAgreementLoading] = useState(false);
+  const [agreementError, setAgreementError] = useState(null);
+  const [agreementRefreshKey, setAgreementRefreshKey] = useState(0);
 
   useEffect(() => {
     if (resolvedModules?.length && !resolvedModules.find((m) => m.id === activeModuleId)) {
@@ -158,6 +166,87 @@ const DashboardScreen = ({ onLogout }) => {
     };
   }, [dashboardData?.overview?.unitNumber, widgetPage]);
 
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    const loadActions = async () => {
+      try {
+        setActionsLoading(true);
+        setActionsError(null);
+        const preferredPersonId =
+          user?.personId || user?.personID || user?.personIDNumber || '10000000001';
+        const result = await fetchActionInbox({
+          personId: preferredPersonId,
+          signal: controller.signal,
+        });
+        if (isMounted) {
+          setActions(result?.inboxDetails || []);
+        }
+      } catch (error) {
+        if (!isMounted || error.name === 'AbortError') {
+          return;
+        }
+        setActionsError(error.message || 'Failed to load actions');
+      } finally {
+        if (isMounted) {
+          setActionsLoading(false);
+        }
+      }
+    };
+
+    loadActions();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [user?.personId, user?.personID, user?.personIDNumber, actionsRefreshKey]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadAgreementStatuses = async () => {
+      try {
+        setAgreementLoading(true);
+        setAgreementError(null);
+        const result = await fetchAgreementStatusCountWidget({
+          unitNumber: dashboardData?.overview?.unitNumber || '000001',
+        });
+
+        if (!isMounted) {
+          return;
+        }
+
+        const rows = Array.isArray(result)
+          ? result
+          : Array.isArray(result?.widgetDatas)
+            ? result.widgetDatas
+            : [];
+
+        const normalized = rows.map((row, index) => ({
+          label: row?.[0] || `Status ${index + 1}`,
+          code: row?.[1] || null,
+          value: Number(row?.[2]) || 0,
+        }));
+
+        setAgreementStatuses(normalized);
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+        setAgreementError(error.message || 'Failed to load agreement statuses');
+      } finally {
+        if (isMounted) {
+          setAgreementLoading(false);
+        }
+      }
+    };
+
+    loadAgreementStatuses();
+    return () => {
+      isMounted = false;
+    };
+  }, [dashboardData?.overview?.unitNumber, agreementRefreshKey]);
+
   const handleSelectModule = (module) => {
     setActiveModuleId(module.id);
   };
@@ -167,6 +256,12 @@ const DashboardScreen = ({ onLogout }) => {
   };
 
   const handleShowProposals = useCallback(() => setActiveBottomTab('awards'), []);
+  const handleReloadActions = useCallback(() => {
+    setActionsRefreshKey((prev) => prev + 1);
+  }, []);
+  const handleReloadAgreementStatus = useCallback(() => {
+    setAgreementRefreshKey((prev) => prev + 1);
+  }, []);
 
   const styles = StyleSheet.create({
     container: {
@@ -217,15 +312,9 @@ const DashboardScreen = ({ onLogout }) => {
       marginTop: theme.spacing.lg,
       marginBottom: theme.spacing.md,
     },
-    statsContainer: {
-      paddingHorizontal: theme.spacing.lg,
-    },
     chartWrapper: {
       marginTop: theme.spacing.lg,
       gap: theme.spacing.md,
-    },
-    modulesContainer: {
-      paddingHorizontal: theme.spacing.lg,
     },
     bottomNavContainer: {
       paddingHorizontal: theme.spacing.lg,
@@ -244,6 +333,56 @@ const DashboardScreen = ({ onLogout }) => {
     showMoreText: {
       fontSize: 12,
       fontWeight: '600',
+    },
+    dashboardTabsWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: theme.spacing.sm,
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.lg,
+    },
+    tabToggle: {
+      flex: 1,
+      flexDirection: 'row',
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.borderRadius.full,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      padding: 4,
+    },
+    tabButton: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.borderRadius.full,
+    },
+    tabButtonActive: {
+      backgroundColor: theme.colors.primary,
+    },
+    tabButtonText: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: theme.colors.textSecondary,
+    },
+    tabButtonTextActive: {
+      color: theme.colors.secondary,
+    },
+    tabRefreshButton: {
+      padding: theme.spacing.sm,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.borderRadius.full,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    tabPanel: {
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+    },
+    actionListWrapper: {
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.lg,
     },
     logoutButton: {
       marginHorizontal: theme.spacing.lg,
@@ -274,7 +413,7 @@ const DashboardScreen = ({ onLogout }) => {
       >
         {/* <View style={styles.welcomeSection}> ... </View> */}
 
-        {proposalInsights && (
+        {/* {proposalInsights && (
           <ProposalPerformanceSection
             incomeLabel={proposalInsights.incomeLabel}
             incomeTotal={proposalInsights.incomeTotal}
@@ -283,80 +422,107 @@ const DashboardScreen = ({ onLogout }) => {
             donutTotal={computedDonutTotal}
             donutSegments={computedDonutSegments}
           />
+        )} */}
+
+        <View style={styles.dashboardTabsWrapper}>
+          <View style={styles.tabToggle}>
+            {dashboardTabs.map((tab) => {
+              const isActive = tab.id === activeDashboardTab;
+              return (
+                <TouchableOpacity
+                  key={tab.id}
+                  style={[styles.tabButton, isActive && styles.tabButtonActive]}
+                  onPress={() => setActiveDashboardTab(tab.id)}
+                >
+                  <Text
+                    style={[
+                      styles.tabButtonText,
+                      isActive && styles.tabButtonTextActive,
+                    ]}
+                  >
+                    {tab.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          {/* {activeDashboardTab === 'agreements' && (
+            <TouchableOpacity
+              style={styles.tabRefreshButton}
+              onPress={handleReloadAgreementStatus}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Icon name="refresh" size={18} color={theme.colors.primary} />
+            </TouchableOpacity>
+          )} */}
+        </View>
+
+        {activeDashboardTab === 'agreements' ? (
+          <AgreementStatusChart
+            data={agreementStatuses}
+            loading={agreementLoading}
+            error={agreementError}
+            onRetry={handleReloadAgreementStatus}
+            containerStyle={styles.tabPanel}
+            title="Agreement Status by Count"
+            subtitle="Real-time counts by agreement state"
+          />
+        ) : (
+          <>
+            <View style={styles.chartWrapper}>
+              <AwardedProposalsChart
+                data={
+                  sponsorWidgetData.length > 0
+                    ? sponsorWidgetData.map((item, index) => ({
+                        id: item.id,
+                        label: item.label,
+                        value: item.value,
+                        color: chartFallbackPalette[index % chartFallbackPalette.length],
+                      }))
+                    : resolvedAwardedSponsors || []
+                }
+                subtitle={
+                  widgetLoading
+                    ? 'Loading sponsors...'
+                    : sponsorWidgetData.length > 0
+                      ? `${sponsorWidgetData.length} sponsors`
+                      : `${dashboardData.awardedBySponsor?.length || 0} sponsors`
+                }
+                onShowMore={() => {
+                  if (widgetHasMore && !widgetLoading) {
+                    setWidgetPage((prev) => prev + 1);
+                  }
+                }}
+              />
+              {widgetHasMore && !widgetLoading && (
+                <TouchableOpacity
+                  style={styles.showMoreButton}
+                  onPress={() => setWidgetPage((prev) => prev + 1)}
+                >
+                  <Text style={[styles.showMoreText, { color: theme.colors.primary }]}>
+                    Show more sponsors
+                  </Text>
+                </TouchableOpacity>
+              )}
+              {widgetError && (
+                <Text style={[styles.sectionTitle, { color: theme.colors.error }]}>
+                  {widgetError}
+                </Text>
+              )}
+            </View>
+
+            <ActionList
+              title="Action List"
+              items={actions}
+              loading={actionsLoading}
+              error={actionsError}
+              onRetry={handleReloadActions}
+              containerStyle={styles.actionListWrapper}
+            />
+          </>
         )}
 
-        <View style={styles.chartWrapper}>
-          <AwardedProposalsChart
-            data={
-              sponsorWidgetData.length > 0
-                ? sponsorWidgetData.map((item, index) => ({
-                    id: item.id,
-                    label: item.label,
-                    value: item.value,
-                    color: chartFallbackPalette[index % chartFallbackPalette.length],
-                  }))
-                : resolvedAwardedSponsors || []
-            }
-            subtitle={
-              widgetLoading
-                ? 'Loading sponsors...'
-                : sponsorWidgetData.length > 0
-                  ? `${sponsorWidgetData.length} sponsors`
-                  : `${dashboardData.awardedBySponsor?.length || 0} sponsors`
-            }
-            onShowMore={() => {
-              if (widgetHasMore && !widgetLoading) {
-                setWidgetPage((prev) => prev + 1);
-              }
-            }}
-          />
-          {widgetHasMore && !widgetLoading && (
-            <TouchableOpacity
-              style={styles.showMoreButton}
-              onPress={() => setWidgetPage((prev) => prev + 1)}
-            >
-              <Text style={[styles.showMoreText, { color: theme.colors.primary }]}>
-                Show more sponsors
-              </Text>
-            </TouchableOpacity>
-          )}
-          {widgetError && (
-            <Text style={[styles.sectionTitle, { color: theme.colors.error }]}>
-              {widgetError}
-            </Text>
-          )}
-        </View>
-
-        <Text style={styles.sectionTitle}>Overview</Text>
-        <View style={styles.statsContainer}>
-          {resolvedStats?.map((stat) => (
-            <StatsCard
-              key={stat.id}
-              label={stat.label}
-              value={stat.value}
-              icon={stat.icon}
-              color={stat.color}
-              trend={stat.trend}
-            />
-          ))}
-        </View>
-
-        <Text style={styles.sectionTitle}>🚀 Quick Access</Text>
-        <View style={styles.modulesContainer}>
-          {resolvedModules?.map((module) => (
-            <ModuleCard
-              key={module.id}
-              name={module.name}
-              description={module.description}
-              icon={module.icon}
-              badgeCount={module.badgeCount}
-              accentColor={module.accentColor}
-              onPress={() => console.log('Module:', module.id)}
-            />
-          ))}
-        </View>
-
-        <ActivityFeed activities={activities} />
+        {/* <ActivityFeed activities={activities} /> */}
       </ScrollView>
     );
   };
