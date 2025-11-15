@@ -233,7 +233,7 @@ const ChatbotWidget = () => {
             end={{ x: 1, y: 1 }}
             style={styles.fabGradient}
           >
-            <LetoIllustration width={32} height={32} color="white" />
+            <LetoIllustration width={40} height={40} color="white" />
           </LinearGradient>
         </TouchableOpacity>
       </Animated.View>
@@ -389,12 +389,12 @@ const createStyles = (theme) =>
     fabWrapper: {
       position: 'absolute',
       top: 0,
-      left: 0,
+      left: 40,
       zIndex: 1000,
     },
     fabGradient: {
-      width: 68,
-      height: 68,
+      width: 50,
+      height: 50,
       borderRadius: 34,
       justifyContent: 'center',
       alignItems: 'center',
@@ -417,11 +417,6 @@ const createStyles = (theme) =>
       borderWidth: 1.5,
       borderColor: HEADER_GRADIENT[0],
       overflow: 'hidden',
-      shadowColor: '#000',
-      shadowOpacity: 0.2,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 8,
     },
     header: {
       paddingHorizontal: theme.spacing.lg,

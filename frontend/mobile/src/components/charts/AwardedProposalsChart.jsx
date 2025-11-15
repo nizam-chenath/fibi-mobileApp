@@ -83,6 +83,9 @@ const AwardedProposalsChart = ({
   const displayedData = normalizedData.slice(0, maxVisibleSponsors);
   const hiddenCount = normalizedData.length - displayedData.length;
 
+  const maxBarValue =
+    displayedData.reduce((max, seg) => Math.max(max, seg.value || 0), 1) || 1;
+
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.header}>
@@ -132,27 +135,47 @@ const AwardedProposalsChart = ({
           </View>
         </View>
       </View>
-      <View style={styles.legend}>
-        {displayedData.map((segment) => (
-          <View key={segment.id} style={styles.legendItem}>
-            <View
-              style={[
-                styles.legendSwatch,
-                { backgroundColor: segment.color || theme.colors.primary },
-              ]}
-            />
-            <View style={styles.legendTextContainer}>
-              <Text style={[styles.legendLabel, { color: theme.colors.text }]}>
-                {segment.id} · {segment.label}
-              </Text>
-              <Text
-                style={[styles.legendValue, { color: theme.colors.textSecondary }]}
-              >
-                {segment.value} ({Math.round(segment.percentage * 1000) / 10}%)
-              </Text>
+      <View style={styles.barList}>
+        {displayedData.map((segment) => {
+          const widthPercent = `${Math.min(
+            ((segment.value || 0) / maxBarValue) * 100,
+            100,
+          )}%`;
+
+          return (
+            <View key={segment.id} style={styles.barRow}>
+              <View style={styles.barLabel}>
+                <View
+                  style={[
+                    styles.legendSwatch,
+                    { backgroundColor: segment.color || theme.colors.primary },
+                  ]}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.legendLabel, { color: theme.colors.text }]}>
+                    {segment.id} · {segment.label}
+                  </Text>
+                  <Text
+                    style={[styles.legendValue, { color: theme.colors.textSecondary }]}
+                  >
+                    {segment.value} ({Math.round(segment.percentage * 1000) / 10}%)
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.barWrapper}>
+                <View
+                  style={[
+                    styles.barFill,
+                    {
+                      width: widthPercent,
+                      backgroundColor: segment.color || theme.colors.primary,
+                    },
+                  ]}
+                />
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
         {hiddenCount > 0 && (
           <TouchableOpacity
             style={[
@@ -217,22 +240,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  legend: {
+  barList: {
     marginTop: 24,
+    gap: 16,
   },
-  legendItem: {
+  barRow: {
+    gap: 10,
+  },
+  barLabel: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    gap: 12,
   },
   legendSwatch: {
     width: 14,
     height: 14,
     borderRadius: 4,
-    marginRight: 10,
-  },
-  legendTextContainer: {
-    flex: 1,
   },
   legendLabel: {
     fontSize: 14,
@@ -241,6 +264,16 @@ const styles = StyleSheet.create({
   legendValue: {
     fontSize: 12,
     marginTop: 2,
+  },
+  barWrapper: {
+    height: 14,
+    borderRadius: 999,
+    backgroundColor: 'rgba(0,0,0,0.08)',
+    overflow: 'hidden',
+  },
+  barFill: {
+    height: '100%',
+    borderRadius: 999,
   },
   legendOverflow: {
     fontSize: 12,

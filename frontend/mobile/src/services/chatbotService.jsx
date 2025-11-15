@@ -1,5 +1,7 @@
 // services/chatbotService.jsx
-import { CHATBOT_API_URL, CHATBOT_COOKIE_TOKEN } from '../config/constants.jsx';
+import { CHATBOT_API_URL } from '../config/constants.jsx';
+import { CHATBOT_COOKIE_TOKEN } from '../config/config.js';
+import { tokenManager } from './tokenManager.jsx';
 
 class ChatbotService {
   async sendMessage({ prompt, sessionId, personId }) {
@@ -13,11 +15,14 @@ class ChatbotService {
     }
 
     try {
+      const storedCookie = await tokenManager.getToken();
+      const cookieValue = storedCookie;
+
       const response = await fetch(CHATBOT_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: `Cookie_Token=${CHATBOT_COOKIE_TOKEN}`,
+          ...(cookieValue ? { Cookie: `Cookie_Token=${cookieValue}` } : {}),
         },
         body: JSON.stringify(payload),
       });

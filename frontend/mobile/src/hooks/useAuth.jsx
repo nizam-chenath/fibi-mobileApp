@@ -8,11 +8,12 @@ export const useAuth = () => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const tenantId = useSelector((state) => state.tenant.currentTenantId);
+  const universityUid = useSelector((state) => state.tenant.currentUniversityUid);
 
   const login = async (email, password) => {
     dispatch(setLoading(true));
     try {
-      const result = await authService.login(email, password, tenantId);
+      const result = await authService.login(email, password, tenantId, universityUid);
 
       if (result.success) {
         await tokenManager.saveToken(result.token);

@@ -24,6 +24,7 @@ export const useTenant = () => {
   return {
     currentTenantId: tenant.currentTenantId,
     tenantConfig: tenant.tenantConfig,
+    currentUniversityUid: tenant.currentUniversityUid,
     switchTenant,
   };
 };

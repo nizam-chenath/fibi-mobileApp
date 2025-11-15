@@ -6,6 +6,7 @@ import { DEFAULT_TENANT_ID } from '../config/constants.jsx';
 const initialState = {
   currentTenantId: DEFAULT_TENANT_ID,
   tenantConfig: getTenantById(DEFAULT_TENANT_ID),
+  currentUniversityUid: null,
   loading: false,
   error: null,
 };
@@ -17,6 +18,8 @@ const tenantSlice = createSlice({
     setCurrentTenant: (state, action) => {
       state.currentTenantId = action.payload.tenantId;
       state.tenantConfig = action.payload.config;
+      state.currentUniversityUid =
+        action.payload.universityUid ?? state.currentUniversityUid;
       state.error = null;
     },
     setLoading: (state, action) => {

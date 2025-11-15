@@ -8,7 +8,7 @@ import useTheme from '../hooks/useTheme.jsx';
 const Navbar = ({
   user,
   title,
-  tenantLogo,
+ tenantLogo,
   onSidebarToggle,
   notificationCount = 0,
   onNotificationPress,
@@ -122,24 +122,24 @@ const Navbar = ({
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.notificationButton}
-          onPress={onNotificationPress || (() => {})}
-          activeOpacity={0.85}
-        >
-          <Icon
-            name="notifications-outline"
-            size={22}
-            style={styles.notificationIcon}
-          />
-          {notificationCount > 0 && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeLabel}>
-                {notificationCount > 99 ? '99+' : notificationCount}
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.notificationButton}
+            onPress={onNotificationPress || (() => {})}
+            activeOpacity={0.85}
+          >
+            <Icon
+              name="notifications-outline"
+              size={22}
+              style={styles.notificationIcon}
+            />
+            {notificationCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeLabel}>
+                  {notificationCount > 99 ? '99+' : notificationCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
       </View>
     </LinearGradient>
   );
