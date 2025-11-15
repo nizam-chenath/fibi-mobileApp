@@ -1,5 +1,5 @@
 // config/tenants/bits.jsx
-import bitsLogo from '../../assets/universitylogo/MIT.png';
+import bitsLogo from '../../assets/universitylogo/Logo4.png';
 
 export const bitsConfig = {
   tenantId: 'bits-001',
@@ -8,23 +8,23 @@ export const bitsConfig = {
   apiBaseUrl: 'https://api-bits.fibi.polussolutions.com',
   databaseName: 'bits_fibi_db',
   branding: {
-    appName: 'Fibi @ BITS Pilani',
+    appName: 'BITS Pilani',
     logo: bitsLogo,
     universityName: 'Birla Institute of Technology and Science, Pilani',
   },
   theme: {
-    primary: '#48BD92',
+    primary: '#B71C1C',       // deep red
     secondary: '#FFFFFF',
-    accent: '#48BD92',
-    success: '#48BD92',
-    warning: '#FFC107',
-    error: '#DC3545',
-    background: '#48BD92',
+    accent: '#880E4F',
+    success: '#C62828',
+    warning: '#F57C00',
+    error: '#D32F2F',
+    background: '#FCE4EC',
     surface: '#FFFFFF',
-    text: '#212121',
-    textSecondary: '#1C4532',
-    border: '#E0E0E0',
-    brandPrimary: '#48BD92',
+    text: '#2D0A0A',
+    textSecondary: '#7F1D1D',
+    border: '#F8BBD0',
+    brandPrimary: '#C62828',
   },
   dashboard: {
     modules: ['grants', 'compliance', 'reports', 'analytics'],

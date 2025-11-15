@@ -52,9 +52,74 @@ export const mockUsers = {
       institution: 'Stanford University',
     },
   ],
+  'bits-001': [
+    {
+      id: 'user-005',
+      email: 'arjun.mehra@bits-pilani.ac.in',
+      password: 'password123',
+      firstName: 'Arjun',
+      lastName: 'Mehra',
+      department: 'Electrical Engineering',
+      role: 'Admin',
+      avatar: 'https://i.pravatar.cc/150?img=12',
+      phone: '+91-11-4001-2001',
+      institution: 'Birla Institute of Technology and Science, Pilani',
+    },
+  ],
+  'jhu-001': [
+    {
+      id: 'user-006',
+      email: 'melissa.hughes@jhu.edu',
+      password: 'password123',
+      firstName: 'Melissa',
+      lastName: 'Hughes',
+      department: 'Public Health',
+      role: 'Researcher',
+      avatar: 'https://i.pravatar.cc/150?img=16',
+      phone: '+1-410-555-1102',
+      institution: 'Johns Hopkins University',
+    },
+  ],
+  'smu-001': [
+    {
+      id: 'user-007',
+      email: 'darren.tan@smu.edu.sg',
+      password: 'password123',
+      firstName: 'Darren',
+      lastName: 'Tan',
+      department: 'Business Analytics',
+      role: 'Researcher',
+      avatar: 'https://i.pravatar.cc/150?img=24',
+      phone: '+65-6789-0101',
+      institution: 'Singapore Management University',
+    },
+  ],
+  'mit-001': [
+    {
+      id: 'user-008',
+      email: 'nora.kim@mit.edu',
+      password: 'password123',
+      firstName: 'Nora',
+      lastName: 'Kim',
+      department: 'Aerospace Engineering',
+      role: 'Admin',
+      avatar: 'https://i.pravatar.cc/150?img=32',
+      phone: '+1-617-555-3300',
+      institution: 'Massachusetts Institute of Technology',
+    },
+  ],
 };
 
 let userSequence = 100;
+
+const tenantInstitutionMap = {
+  'harvard-001': 'Harvard University',
+  'stanford-001': 'Stanford University',
+  'bits-001': 'Birla Institute of Technology and Science, Pilani',
+  'jhu-001': 'Johns Hopkins University',
+  'smu-001': 'Singapore Management University',
+  'mit-001': 'Massachusetts Institute of Technology',
+};
 
 export const getAuthenticatedUser = (email, password, tenantId) => {
   const tenantUsers = mockUsers[tenantId] || [];
@@ -103,11 +168,7 @@ export const registerUser = (payload, tenantId) => {
     role,
     avatar: `https://i.pravatar.cc/150?u=${encodeURIComponent(email)}`,
     phone: payload.phone || '',
-    institution: tenantId?.includes('harvard')
-      ? 'Harvard University'
-      : tenantId?.includes('stanford')
-        ? 'Stanford University'
-        : 'Fibi University',
+    institution: tenantInstitutionMap[tenantId] || 'Fibi University',
   };
 
   mockUsers[tenantId] = [...tenantUsers, newUser];

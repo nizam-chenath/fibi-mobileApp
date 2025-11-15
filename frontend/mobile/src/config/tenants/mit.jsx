@@ -1,5 +1,5 @@
 // config/tenants/mit.jsx
-import MITLOGO from '../../assets/universitylogo/MIT.png';
+import MITLOGO from '../../assets/universitylogo/logo3.png';
 export const mitConfig = {
   tenantId: 'mit-001',
   name: 'Massachusetts Institute of Technology',
@@ -7,23 +7,23 @@ export const mitConfig = {
   apiBaseUrl: 'https://api-mit.fibi.polussolutions.com',
   databaseName: 'mit_fibi_db',
   branding: {
-    appName: 'Fibi @ MIT',
+    appName: 'MIT',
     logo: MITLOGO,
     universityName: 'Massachusetts Institute of Technology',
   },
   theme: {
-    primary: '#48BD92',
+    primary: '#1565C0',        // MIT-inspired blue
     secondary: '#FFFFFF',
-    accent: '#48BD92',
-    success: '#48BD92',
-    warning: '#FFC107',
-    error: '#DC3545',
-    background: '#48BD92',
+    accent: '#0D47A1',
+    success: '#1976D2',
+    warning: '#FFA000',
+    error: '#D84315',
+    background: '#E3F2FD',
     surface: '#FFFFFF',
-    text: '#212121',
-    textSecondary: '#1C4532',
-    border: '#E0E0E0',
-    brandPrimary: '#48BD92',
+    text: '#0A1C33',
+    textSecondary: '#284a7c',
+    border: '#BBDEFB',
+    brandPrimary: '#0D47A1',
   },
   dashboard: {
     modules: ['grants', 'compliance', 'reports', 'analytics', 'publications'],

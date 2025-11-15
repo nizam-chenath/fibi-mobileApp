@@ -6,7 +6,7 @@ export const yaleConfig = {
   apiBaseUrl: 'https://api-yale.fibi.polussolutions.com',
   databaseName: 'yale_fibi_db',
   branding: {
-    appName: 'Fibi @ Yale',
+    appName: 'Yale',
     logo: { uri: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Yale_University_Shield_1.svg' },
     universityName: 'Yale University',
   },

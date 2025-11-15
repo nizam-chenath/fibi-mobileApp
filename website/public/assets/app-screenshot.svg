@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="2340" viewBox="0 0 360 780" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#0ea5a4"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="780" rx="28" fill="#071827" />
+  <rect x="18" y="36" width="324" height="708" rx="16" fill="#05222a" />
+
+  <!-- mock header -->
+  <rect x="34" y="56" width="120" height="18" rx="6" fill="#08323a" />
+  <rect x="166" y="56" width="154" height="18" rx="6" fill="#08323a" />
+
+  <!-- card 1 -->
+  <rect x="34" y="92" width="292" height="120" rx="12" fill="url(#g)" opacity="0.95" />
+  <text x="52" y="132" fill="#00221f" font-size="14" font-family="Arial,Helvetica">Welcome to Fibi</text>
+
+  <!-- small list -->
+  <g fill="#072d31">
+    <rect x="34" y="230" width="292" height="10" rx="6" />
+    <rect x="34" y="252" width="220" height="10" rx="6" />
+    <rect x="34" y="274" width="260" height="10" rx="6" />
+  </g>
+
+  <!-- chart -->
+  <polyline points="44,360 84,320 124,360 164,300 204,340 244,310 284,330" fill="none" stroke="#58fff2" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
+
+  <!-- bottom nav -->
+  <rect x="34" y="660" width="292" height="48" rx="12" fill="#0b1720" />
+  <circle cx="92" cy="684" r="10" fill="#74f1d8" />
+  <circle cx="180" cy="684" r="10" fill="#7ae2b7" />
+  <circle cx="268" cy="684" r="10" fill="#a1f7d9" />
+</svg>
