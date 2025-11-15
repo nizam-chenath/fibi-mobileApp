@@ -19,6 +19,7 @@ const AwardedProposalsChart = ({
   size = 220,
   strokeWidth = 32,
   maxVisibleSponsors = 4,
+  initialVisibleSponsors = 1,
   onShowMore,
   showMoreLabel = 'Show more',
   autoLoadRemoteData = true,
@@ -35,7 +36,9 @@ const AwardedProposalsChart = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const radius = (size - strokeWidth) / 2;
-  const [visibleCount, setVisibleCount] = useState(maxVisibleSponsors);
+  const [visibleCount, setVisibleCount] = useState(
+    Math.max(1, initialVisibleSponsors),
+  );
   const fallbackPalette = ['#2754C1', '#EA5A2B', '#F4B33F', '#7AC29A', '#A45CE6', '#34d399'];
   const chartData = useMemo(() => {
     if (Array.isArray(data) && data.length > 0) {
@@ -93,8 +96,8 @@ const AwardedProposalsChart = ({
     widgetParams?.descentFlag,
   ]);
   useEffect(() => {
-    setVisibleCount(maxVisibleSponsors);
-  }, [maxVisibleSponsors, chartData]);
+    setVisibleCount(Math.max(1, initialVisibleSponsors));
+  }, [initialVisibleSponsors, chartData]);
 
   const { normalizedData, total } = useMemo(() => {
     const safeData = Array.isArray(chartData)
@@ -123,7 +126,7 @@ const AwardedProposalsChart = ({
       normalizedData: running,
       total: totalValue,
     };
-  }, [data]);
+  }, [chartData]);
 
   useEffect(() => {
     animationProgress.setValue(0);
@@ -167,11 +170,11 @@ const AwardedProposalsChart = ({
     );
   }
 
-  const displayedData = normalizedData.slice(0, visibleCount);
-  const hiddenCount = normalizedData.length - displayedData.length;
+  const listedData = normalizedData.slice(0, visibleCount);
+  const hiddenCount = Math.max(normalizedData.length - listedData.length, 0);
 
   const maxBarValue =
-    displayedData.reduce((max, seg) => Math.max(max, seg.value || 0), 1) || 1;
+    listedData.reduce((max, seg) => Math.max(max, seg.value || 0), 1) || 1;
 
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
@@ -186,7 +189,7 @@ const AwardedProposalsChart = ({
       <View style={styles.content}>
         <View style={[styles.chartWrapper, { width: size, height: size }]}>
           <Svg height={size} width={size}>
-            {displayedData.map((segment) => {
+            {normalizedData.map((segment) => {
               const animatedEnd =
                 segment.startAngle +
                 (segment.endAngle - segment.startAngle) * renderProgress;
@@ -223,7 +226,7 @@ const AwardedProposalsChart = ({
         </View>
       </View>
       <View style={styles.barList}>
-        {displayedData.map((segment) => {
+        {listedData.map((segment) => {
           const widthPercent = `${Math.min(
             ((segment.value || 0) / maxBarValue) * 100,
             100,
@@ -271,7 +274,10 @@ const AwardedProposalsChart = ({
             ]}
             onPress={() => {
               setVisibleCount((prev) =>
-                Math.min(prev + maxVisibleSponsors, normalizedData.length),
+                Math.min(
+                  prev + Math.max(maxVisibleSponsors, 1),
+                  normalizedData.length,
+                ),
               );
               if (typeof onShowMore === 'function') {
                 onShowMore();

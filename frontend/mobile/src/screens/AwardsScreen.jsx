@@ -272,23 +272,6 @@ const AwardsScreen = () => {
           );
         })}
       </View>
-
-      <View style={styles.searchRow}>
-        <TextInput
-          style={[
-            styles.searchInput,
-            {
-              borderColor: heroBorderColor,
-              backgroundColor: theme.colors.surface,
-              color: heroTextColor,
-            },
-          ]}
-          placeholder="Search proposals"
-          placeholderTextColor={heroMutedColor}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
       <View style={styles.sortControls}>
         <TouchableOpacity
           style={[

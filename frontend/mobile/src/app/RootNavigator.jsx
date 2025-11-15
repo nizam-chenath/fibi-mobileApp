@@ -22,11 +22,19 @@ const RootNavigator = () => {
     setShowAnimatedSplash(false);
   }, []);
 
-  const handleSelectUniversity = ({ universityUid }) => {
+  const handleSelectUniversity = ({ universityUid, name, themeColor }) => {
     const tenantId = getTenantIdForUniversity(universityUid, DEFAULT_TENANT_ID);
     const config = getTenantById(tenantId);
     if (config) {
-      dispatch(setCurrentTenant({ tenantId, config, universityUid }));
+      dispatch(
+        setCurrentTenant({
+          tenantId,
+          config,
+          universityUid,
+          universityName: name,
+          universityThemeColor: themeColor,
+        }),
+      );
       setSelectedUniversity(universityUid);
     }
   };
@@ -54,7 +62,7 @@ const RootNavigator = () => {
     showAnimatedSplash,
   ]);
 
-  const shouldShowChatbot = !showAnimatedSplash && !!selectedUniversity;
+  const shouldShowChatbot = !showAnimatedSplash && isAuthenticated;
 
   return (
     <>
