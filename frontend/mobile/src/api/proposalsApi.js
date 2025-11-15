@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../config/config.js';
+import { API_BASE_URL, PROPOSALS_BASE_URL } from '../config/config.js';
 import { tokenManager } from '../services/tokenManager.jsx';
 
 const PROPOSALS_ENDPOINT = '/api/proposals';
@@ -54,7 +54,7 @@ export const fetchProposalsDashboard = async (overrides = {}) => {
 
 export const fetchResearchSummaryWidget = async ({
   unitNumber = '000001',
-  tabName = 'AWARD_BY_SPONSOR',
+  tabName = 'INPROGRESS_PROPOSALS_BY_SPONSOR',
   descentFlag = 'Y',
   currentPage = 1,
   pageNumber = 10,
@@ -75,7 +75,7 @@ export const fetchResearchSummaryWidget = async ({
     headers.Cookie = `Cookie_Token=${cookieToken}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${RESEARCH_SUMMARY_ENDPOINT}`, {
+  const response = await fetch(`${PROPOSALS_BASE_URL}${RESEARCH_SUMMARY_ENDPOINT}`, {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),

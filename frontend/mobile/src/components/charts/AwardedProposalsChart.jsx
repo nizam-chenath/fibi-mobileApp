@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import useTheme from '../../hooks/useTheme.jsx';
+import { fetchResearchSummaryWidget } from '../../api/proposalsApi.js';
 
 const AwardedProposalsChart = ({
   data = [],
@@ -20,13 +21,88 @@ const AwardedProposalsChart = ({
   maxVisibleSponsors = 4,
   onShowMore,
   showMoreLabel = 'Show more',
+  autoLoadRemoteData = true,
+  widgetParams = {
+    unitNumber: '000001',
+    tabName: 'INPROGRESS_PROPOSALS_BY_SPONSOR',
+    descentFlag: 'Y',
+  },
 }) => {
   const theme = useTheme();
   const animationProgress = useRef(new Animated.Value(0)).current;
   const [renderProgress, setRenderProgress] = useState(0);
+  const [remoteData, setRemoteData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const radius = (size - strokeWidth) / 2;
+  const [visibleCount, setVisibleCount] = useState(maxVisibleSponsors);
+  const fallbackPalette = ['#2754C1', '#EA5A2B', '#F4B33F', '#7AC29A', '#A45CE6', '#34d399'];
+  const chartData = useMemo(() => {
+    if (Array.isArray(data) && data.length > 0) {
+      return data;
+    }
+    return remoteData;
+  }, [data, remoteData]);
+
+  useEffect(() => {
+    if (!autoLoadRemoteData) return undefined;
+    let isMounted = true;
+    const loadWidgetData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetchResearchSummaryWidget({
+          unitNumber: widgetParams?.unitNumber || '000001',
+          tabName: widgetParams?.tabName || 'INPROGRESS_PROPOSALS_BY_SPONSOR',
+          descentFlag: widgetParams?.descentFlag || 'Y',
+        });
+        console.log('response', response);
+        if (!isMounted) return;
+        const rows = Array.isArray(response?.widgetDatas)
+          ? response.widgetDatas.map((row, index) => ({
+              id: row?.[0] || `sponsor-${index}`,
+              label: row?.[1] || 'Sponsor',
+              value: Number(row?.[2]) || 0,
+            }))
+          : [];
+        const coloredRows = rows.map((row, index) => ({
+          ...row,
+          color: row.color || fallbackPalette[index % fallbackPalette.length],
+        }));
+        setRemoteData(coloredRows);
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message || 'Failed to load sponsor data');
+          setRemoteData([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadWidgetData();
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    autoLoadRemoteData,
+    widgetParams?.unitNumber,
+    widgetParams?.tabName,
+    widgetParams?.descentFlag,
+  ]);
+  useEffect(() => {
+    setVisibleCount(maxVisibleSponsors);
+  }, [maxVisibleSponsors, chartData]);
+
   const { normalizedData, total } = useMemo(() => {
-    const safeData = Array.isArray(data) ? data : [];
+    const safeData = Array.isArray(chartData)
+      ? chartData.map((entry, index) => ({
+          ...entry,
+          color: entry.color || fallbackPalette[index % fallbackPalette.length],
+        }))
+      : [];
     const running = [];
     let cumulativeAngle = 0;
     const totalValue = safeData.reduce((sum, entry) => sum + (entry.value || 0), 0) || 1;
@@ -67,6 +143,17 @@ const AwardedProposalsChart = ({
     };
   }, [animationProgress, normalizedData]);
 
+  if (loading) {
+    return (
+      <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
+        <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+          Loading sponsors...
+        </Text>
+      </View>
+    );
+  }
+
   if (!normalizedData.length) {
     return (
       <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
@@ -74,13 +161,13 @@ const AwardedProposalsChart = ({
           {title}
         </Text>
         <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-          No sponsor data available yet.
+          {error || 'No sponsor data available yet.'}
         </Text>
       </View>
     );
   }
 
-  const displayedData = normalizedData.slice(0, maxVisibleSponsors);
+  const displayedData = normalizedData.slice(0, visibleCount);
   const hiddenCount = normalizedData.length - displayedData.length;
 
   const maxBarValue =
@@ -182,7 +269,14 @@ const AwardedProposalsChart = ({
               styles.showMoreButton,
               { borderColor: theme.colors.border, backgroundColor: theme.colors.surface },
             ]}
-            onPress={onShowMore || (() => {})}
+            onPress={() => {
+              setVisibleCount((prev) =>
+                Math.min(prev + maxVisibleSponsors, normalizedData.length),
+              );
+              if (typeof onShowMore === 'function') {
+                onShowMore();
+              }
+            }}
             activeOpacity={0.85}
           >
             <Text style={[styles.showMoreText, { color: theme.colors.primary }]}>
