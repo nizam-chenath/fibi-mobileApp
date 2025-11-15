@@ -81,7 +81,7 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
   } = options;
 
   // Log cookies received
-  console.log('callExternalApi - cookies received:', cookies ? (cookies.substring(0, 50) + '...') : 'null');
+  //console.log('callExternalApi - cookies received:', cookies ? (cookies.substring(0, 50) + '...') : 'null');
 
   return new Promise((resolve) => {
     try {
