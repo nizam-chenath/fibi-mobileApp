@@ -180,11 +180,11 @@ const ServiceTrackerScreen = () => {
 
         <View style={styles.cardFooter}>
           <View style={styles.footerPill}>
-            <Icon name="person-outline" size={14} color={theme.colors.textSecondary} />
+            <Icon name="person-outline" size={14} />
             <Text style={[styles.footerText, { color: '#000000' }]}>{item.assignee}</Text>
           </View>
           <View style={styles.footerPill}>
-            <Icon name="time-outline" size={14} color={theme.colors.textSecondary} />
+            <Icon name="time-outline" size={14} />
             <Text style={[styles.footerText, { color: '#000000' }]}>{formatDate(item.createDate)}</Text>
           </View>
           <TouchableOpacity
@@ -382,82 +382,82 @@ const ServiceTrackerScreen = () => {
               <View
                 style={[
                   styles.modalContent,
-                  { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                  { backgroundColor: theme.colors.surface, borderColor: '#00000033' },
                 ]}
               >
                 {selectedItem && (
                   <>
-                    <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+                    <Text style={[styles.modalTitle]}>
                       Request #{selectedItem?.serviceRequestId || selectedItem?.COL_SR_ID || selectedItem?.id}
                     </Text>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel]}>
                         Subject
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue]}>
                         {selectedItem?.COL_SR_SUBJECT || selectedItem?.subject || '—'}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel]}>
                         Status
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue]}>
                         {selectedItem?.COL_SR_STATUS || selectedItem?.status || '—'}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel]}>
                         Priority
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue]}>
                         {selectedItem?.COL_SR_PRIORITY || selectedItem?.priority || '—'}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel]}>
                         Type
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue]}>
                         {selectedItem?.COL_SR_TYPE || selectedItem?.type || '—'}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel]}>
                         Category
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue]}>
                         {selectedItem?.COL_SR_CATEGORY || selectedItem?.category || '—'}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel]}>
                         Department
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue]}>
                         {selectedItem?.COL_SR_DEPARTMENT || selectedItem?.department || '—'}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel]}>
                         Assigned To
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue]}>
                         {selectedItem?.COL_SR_ASSI_PERSON || selectedItem?.assignee || 'Unassigned'}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel]}>
                         Created
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue]}>
                         {formatDate(selectedItem?.COL_SR_CREATE_DATE || selectedItem?.createDate)}
                       </Text>
                     </View>
                     <TouchableOpacity
                       style={[
                         styles.modalCloseButton,
-                        { borderColor: theme.colors.border, backgroundColor: theme.colors.background },
+                        { borderColor: '#00000033' },
                       ]}
                       onPress={() => setSelectedItem(null)}
                       activeOpacity={0.9}
@@ -788,6 +788,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   viewButton: {
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,

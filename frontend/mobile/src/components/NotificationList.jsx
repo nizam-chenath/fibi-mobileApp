@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator }
 import Icon from 'react-native-vector-icons/Ionicons';
 import useAuth from '../hooks/useAuth.jsx';
 import { fetchActionInboxList } from '../api/inboxApi.js';
+import { useNotificationSocket } from '../context/NotificationSocketContext.jsx';
 
 const NotificationList = ({ onBack }) => {
   const { user } = useAuth();
+  const { markAllRead } = useNotificationSocket();
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
   const [notifications, setNotifications] = React.useState([]);
@@ -21,6 +23,11 @@ const NotificationList = ({ onBack }) => {
     const min = String(date.getMinutes()).padStart(2, '0');
     return `${dd}/${mm}/${yy}/ ${hh}:${min}`;
   }, []);
+
+  const unreadCount = React.useMemo(
+    () => notifications.filter((n) => n.isUnread).length,
+    [notifications],
+  );
 
   const styles = React.useMemo(
     () =>
@@ -44,7 +51,7 @@ const NotificationList = ({ onBack }) => {
           fontSize: 20,
           fontWeight: '700',
           color: '#000000',
-          flex: 1,
+          marginRight: 8,
         },
         listContent: {
           paddingBottom: 32,
@@ -64,8 +71,6 @@ const NotificationList = ({ onBack }) => {
           padding: 10,
           marginBottom: 8,
           backgroundColor: '#FFFFFF',
-          borderWidth: 1,
-          borderColor: '#D1D5DB',
         },
         unreadCard: {
           borderColor: '#D1D5DB',
@@ -75,20 +80,33 @@ const NotificationList = ({ onBack }) => {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
+          marginTop: 15,
         },
         badge: {
           paddingHorizontal: 8,
           paddingVertical: 4,
           borderRadius: 999,
           backgroundColor: '#F3F4F6',
-          borderWidth: 1,
-          borderColor: '#D1D5DB',
           maxWidth: '75%',
         },
         badgeText: {
           fontSize: 12,
           fontWeight: '600',
           color: '#111827',
+        },
+        headerBadge: {
+          minWidth: 22,
+          paddingHorizontal: 6,
+          paddingVertical: 2,
+          borderRadius: 999,
+          backgroundColor: '#ef4444',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        headerBadgeText: {
+          fontSize: 12,
+          fontWeight: '700',
+          color: '#ffffff',
         },
         title: {
           fontSize: 14,
@@ -157,6 +175,11 @@ const NotificationList = ({ onBack }) => {
     };
   }, [user?.personId, user?.personID, user?.personIDNumber, formatDateTime]);
 
+  // When the notification list screen is opened, mark all socket notifications as read
+  React.useEffect(() => {
+    markAllRead();
+  }, [markAllRead]);
+
   const renderItem = ({ item }) => (
     <View
       style={[
@@ -186,7 +209,14 @@ const NotificationList = ({ onBack }) => {
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
           <Icon name="chevron-back" size={22} color={'#000000'} />
         </TouchableOpacity>
-        <Text style={styles.screenTitle}>Notification Hub</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+          <Text style={styles.screenTitle}>Action List</Text>
+          {unreadCount > 0 && (
+            <View style={styles.headerBadge}>
+              <Text style={styles.headerBadgeText}>{unreadCount}</Text>
+            </View>
+          )}
+        </View>
         <View style={{ width: 22 }} />
       </View>
 

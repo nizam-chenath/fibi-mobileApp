@@ -43,7 +43,7 @@ const CameraScanScreen = ({ onBack, onUsePhoto }) => {
       aspectRatio: 3/4,
       borderRadius: 16,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       backgroundColor: theme.colors.surface,
       alignItems: 'center',
       justifyContent: 'center',
@@ -53,7 +53,7 @@ const CameraScanScreen = ({ onBack, onUsePhoto }) => {
       aspectRatio: 3/4,
       borderRadius: 16,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       backgroundColor: theme.colors.surface,
     },
     row: {
@@ -69,7 +69,7 @@ const CameraScanScreen = ({ onBack, onUsePhoto }) => {
       paddingVertical: 12,
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       backgroundColor: theme.colors.surface,
     },
     actionLabel: {

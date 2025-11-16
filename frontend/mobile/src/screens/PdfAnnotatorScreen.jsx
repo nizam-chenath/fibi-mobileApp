@@ -31,7 +31,9 @@ const PdfAnnotatorScreen = ({ onBack, photo, signature }) => {
   const dragStartRef = useRef({ x: 0, y: 0 });
   const startPosRef = useRef({ x: 40, y: 40 });
   const pinchStartRef = useRef({ dist: 0, imgW: 0, imgH: 0, centerX: 0, centerY: 0, posX: 0, posY: 0 });
-  const hasOverlay = !!(photo?.uri || signature?.imageBase64);
+  const [overlayEnabled, setOverlayEnabled] = useState(true);
+  const hasOverlay = overlayEnabled && !!(photo?.uri || signature?.imageBase64);
+  const [isSaving, setIsSaving] = useState(false);
   const overlayPan = useMemo(
     () =>
       PanResponder.create({
@@ -103,13 +105,19 @@ const PdfAnnotatorScreen = ({ onBack, photo, signature }) => {
     container: { flex: 1, backgroundColor: theme.colors.background, padding: 16 },
     header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
     title: { fontSize: 18, fontWeight: '800', color: theme.colors.text },
-    canvas: { flex: 1, borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: theme.colors.border },
-    controls: { flexDirection: 'row', gap: 8, marginTop: 10, flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' },
-    btn: { flexDirection: 'row', gap: 6, alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface },
+    canvas: { flex: 1, borderRadius: 12, overflow: 'hidden', borderWidth: 2, borderColor: '#E5E7EB' },
+    controls: { gap: 16, marginTop: 10, marginBottom: 12 },
+    controlsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' },
+    controlsLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    controlsLeftWide: { gap: 14 },
+    btn: { flexDirection: 'row', gap: 6, alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: theme.colors.surface },
     btnText: { fontWeight: '700', color: theme.colors.text },
-    overlay: { position: 'absolute', borderWidth: 1, borderColor: theme.colors.primary + '66', backgroundColor: '#00000010' },
-    dragOverlay: { borderColor: theme.colors.primary, backgroundColor: theme.colors.primary + '10' },
-    hint: { color: theme.colors.textSecondary, marginTop: 6 },
+    btnNeutral: { flexDirection: 'row', gap: 1, alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: '#FFFFFF' },
+    btnNeutralText: { fontWeight: '500', color: '#000000' },
+    iconBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: theme.colors.primary },
+    overlay: { position: 'absolute', borderWidth: 1, borderColor: '#00000026', backgroundColor: '#00000010' },
+    dragOverlay: { borderColor: '#000000', backgroundColor: '#00000014' },
+    hint: { marginTop: 6 },
   });
 
   const pickPdf = async () => {
@@ -180,10 +188,13 @@ const PdfAnnotatorScreen = ({ onBack, photo, signature }) => {
   };
 
   const saveToPdf = async () => {
+    if (isSaving) return;
     if (!pdfUri || (!photo?.uri && !signature?.imageBase64)) {
       Alert.alert('Missing file', 'Please choose a PDF and provide a signature or photo first.');
       return;
     }
+
+    setIsSaving(true);
     try {
       // Read PDF as base64 (support content:// via BlobUtil)
       let pdfBase64;
@@ -214,10 +225,33 @@ const PdfAnnotatorScreen = ({ onBack, photo, signature }) => {
       let embedded = null;
       try {
         if (signature?.imageBase64) {
-          const data = signature.imageBase64.startsWith('data:')
-            ? signature.imageBase64.split(',')[1]
-            : signature.imageBase64;
-          embedded = await doc.embedPng(Buffer.from(data, 'base64'));
+          const raw = String(signature.imageBase64 || '').trim();
+          const isDataUrl = raw.startsWith('data:');
+          const commaIdx = isDataUrl ? raw.indexOf(',') : -1;
+          const header = isDataUrl && commaIdx > 0 ? raw.slice(0, commaIdx) : '';
+          const mime = header.includes(';') ? header.slice(5, header.indexOf(';')) : '';
+          const data = isDataUrl ? raw.slice(commaIdx + 1) : raw;
+          const buf = Buffer.from(data, 'base64');
+          if (mime.includes('jpeg') || mime.includes('jpg')) {
+            try {
+              embedded = await doc.embedJpg(buf);
+            } catch (_) {
+              embedded = await doc.embedPng(buf);
+            }
+          } else if (mime.includes('png')) {
+            try {
+              embedded = await doc.embedPng(buf);
+            } catch (_) {
+              embedded = await doc.embedJpg(buf);
+            }
+          } else {
+            // Unknown or missing mime; try JPEG then PNG
+            try {
+              embedded = await doc.embedJpg(buf);
+            } catch (_) {
+              embedded = await doc.embedPng(buf);
+            }
+          }
         } else if (photo?.uri) {
           const imgBase64 = await readFileBase64(photo.uri);
           const isPng =
@@ -272,8 +306,11 @@ const PdfAnnotatorScreen = ({ onBack, photo, signature }) => {
         await RNFS.mkdir(dir);
         const outPath = `${dir}/annotated-${Date.now()}.pdf`;
         await RNFS.writeFile(outPath, outBase64, 'base64');
-        setSavedUri('file://' + outPath);
-        Alert.alert('Saved', 'Annotated PDF saved.');
+        const saved = 'file://' + outPath;
+        setSavedUri(saved);
+        setPdfUri(saved);
+        setOverlayEnabled(false);
+        Alert.alert('Saved', 'Annotated PDF saved and opened.');
       } catch (writeErr) {
         console.error('[PDF] Write failed:', writeErr);
         Alert.alert('Save failed', `Could not write file. ${writeErr?.message || ''}`.trim());
@@ -281,6 +318,8 @@ const PdfAnnotatorScreen = ({ onBack, photo, signature }) => {
     } catch (e) {
       console.error('[PDF] Save failed:', e);
       Alert.alert('Save failed', e?.message ? String(e.message) : 'Unknown error');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -295,52 +334,67 @@ const PdfAnnotatorScreen = ({ onBack, photo, signature }) => {
       </View>
 
       <View style={styles.controls}>
-        <TouchableOpacity style={styles.btn} onPress={pickPdf}>
-          <Icon name="document-attach-outline" size={16} color={theme.colors.text} />
-          <Text style={styles.btnText}>{pdfUri ? 'Change PDF' : 'Choose PDF'}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            const newW = imgW + 20;
-            const aspect = imgW / Math.max(1, imgH);
-            const newH = Math.round(newW / Math.max(0.1, aspect));
-            // clamp if exceeding canvas
-            const clampedW = canvasW ? Math.min(newW, canvasW) : newW;
-            const clampedH = canvasH ? Math.min(newH, canvasH) : newH;
-            setImgW(clampedW);
-            setImgH(clampedH);
-          }}
-        >
-          <Icon name="add" size={16} color={theme.colors.text} />
-          <Text style={styles.btnText}>Bigger</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            const newW = Math.max(20, imgW - 20);
-            const aspect = imgW / Math.max(1, imgH);
-            const newH = Math.max(20, Math.round(newW / Math.max(0.1, aspect)));
-            setImgW(newW);
-            setImgH(newH);
-            // also ensure position still inside bounds
-            setPosX((x) => Math.min(x, Math.max(0, (canvasW || newW) - newW)));
-            setPosY((y) => Math.min(y, Math.max(0, (canvasH || newH) - newH)));
-          }}
-        >
-          <Icon name="remove" size={16} color={theme.colors.text} />
-          <Text style={styles.btnText}>Smaller</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn} onPress={saveToPdf}>
-          <Icon name="save-outline" size={16} color={theme.colors.text} />
-          <Text style={styles.btnText}>Save to PDF</Text>
-        </TouchableOpacity>
-        {savedUri && (
-          <TouchableOpacity style={styles.btn} onPress={() => setPdfUri(savedUri)}>
-            <Icon name="eye-outline" size={16} color={theme.colors.text} />
-            <Text style={styles.btnText}>Open Saved</Text>
+        <View style={styles.controlsRow}>
+          <View style={styles.controlsLeft}>
+            <TouchableOpacity style={styles.btnNeutral} onPress={pickPdf} activeOpacity={0.85}>
+              <Icon name="document-attach-outline" size={16} color={'#000000'} />
+              <Text style={styles.btnNeutralText}>{pdfUri ? 'Change PDF' : 'Choose PDF'}</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={[styles.btnNeutral, isSaving && { opacity: 0.6 }]}
+            onPress={saveToPdf}
+            activeOpacity={0.85}
+            disabled={isSaving}
+          >
+            <Icon name="save-outline" size={16} color={'#000000'} />
+            <Text style={styles.btnNeutralText}>{isSaving ? 'Saving...' : 'Save to PDF'}</Text>
           </TouchableOpacity>
-        )}
+        </View>
+        <View style={styles.controlsRow}>
+          <View style={[styles.controlsLeft, styles.controlsLeftWide]}>
+            {overlayEnabled && (
+              <>
+                <TouchableOpacity
+                  style={styles.iconBtn}
+                  onPress={() => {
+                    const newW = imgW + 20;
+                    const aspect = imgW / Math.max(1, imgH);
+                    const newH = Math.round(newW / Math.max(0.1, aspect));
+                    const clampedW = canvasW ? Math.min(newW, canvasW) : newW;
+                    const clampedH = canvasH ? Math.min(newH, canvasH) : newH;
+                    setImgW(clampedW);
+                    setImgH(clampedH);
+                  }}
+                  activeOpacity={0.85}
+                >
+                  <Icon name="add" size={16} color={theme.colors.surface} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.iconBtn}
+                  onPress={() => {
+                    const newW = Math.max(20, imgW - 20);
+                    const aspect = imgW / Math.max(1, imgH);
+                    const newH = Math.max(20, Math.round(newW / Math.max(0.1, aspect)));
+                    setImgW(newW);
+                    setImgH(newH);
+                    setPosX((x) => Math.min(x, Math.max(0, (canvasW || newW) - newW)));
+                    setPosY((y) => Math.min(y, Math.max(0, (canvasH || newH) - newH)));
+                  }}
+                  activeOpacity={0.85}
+                >
+                  <Icon name="remove" size={16} color={theme.colors.surface} />
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+          {savedUri && (
+            <TouchableOpacity style={styles.btnNeutral} onPress={() => setPdfUri(savedUri)} activeOpacity={0.85}>
+              <Icon name="eye-outline" size={16} color={'#000000'} />
+              <Text style={styles.btnNeutralText}>Open Saved</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       <View
@@ -362,7 +416,7 @@ const PdfAnnotatorScreen = ({ onBack, photo, signature }) => {
               style={{ flex: 1 }}
               onError={(e) => Alert.alert('PDF error', e?.message || String(e))}
             />
-            {!!(photo?.uri || signature?.imageBase64) && (
+            {!!(photo?.uri || signature?.imageBase64) && overlayEnabled && (
               <View
                 {...overlayPan.panHandlers}
                 pointerEvents="auto"

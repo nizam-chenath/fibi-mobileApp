@@ -477,9 +477,10 @@ const createStyles = (theme) =>
     widgetContainer: {
       position: 'absolute',
       bottom: 24,
-      left: 16,
-      right: 16,
+      left: 0,
+      right: 0,
       zIndex: 1000,
+      paddingHorizontal: 16,
     },
     widget: {
       backgroundColor: theme.colors.surface,

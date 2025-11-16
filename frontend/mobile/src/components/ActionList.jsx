@@ -14,7 +14,6 @@ const inferStatus = (item = {}) => {
   ).toLowerCase();
 
   if (
-    item.openedFlag === 'Y' ||
     item.processedFlag === 'Y' ||
     item.actionProcessedFlag === 'Y' ||
     ['processed', 'complete', 'completed', 'done'].includes(normalizedStatus)
@@ -139,18 +138,18 @@ const ActionList = ({
     const listNodes = visibleItems.map((item) => (
       <View key={item.inboxId} style={styles.itemCard}>
         <View style={styles.itemHeader}>
-          <Text style={styles.moduleBadge}>{item?.moduleName?.description || 'Module'}</Text>
+          <Text style={[styles.itemTitle, { flex: 1 }]} numberOfLines={2}>
+            {item.message?.description || 'Action Required'}
+          </Text>
           <Text style={styles.arrivalDate}>{formatTimestamp(item.arrivalDate)}</Text>
         </View>
-        <Text style={styles.itemTitle} numberOfLines={2}>
-          {item.message?.description || 'Action Required'}
-        </Text>
         <Text style={styles.itemSubtitle} numberOfLines={3}>
           {item.userMessage || 'Tap to view details'}
         </Text>
         <View style={styles.itemFooter}>
+          <Text style={styles.moduleBadge}>{item?.moduleName?.description || 'Module'}</Text>
           <View style={styles.metaGroup}>
-          <Icon name="person-outline" size={14} color={theme.colors.textSecondary} />
+          <Icon name="person-outline" size={14}  />
             <Text style={styles.metaText}>
               {item.subjectType === 'R' ? 'Research' : item.subjectType === 'P' ? 'Proposal' : 'General'}
             </Text>
@@ -253,7 +252,7 @@ const getStyles = (theme) =>
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.xs,
       borderWidth: 1,
-      borderColor: theme.colors.primary,
+      borderColor: "#F4F4F5",
       borderRadius: theme.borderRadius.full,
     },
     retryText: {
@@ -286,8 +285,9 @@ const getStyles = (theme) =>
       color: '#000000',
     },
     filterBadge: {
-      minWidth: 22,
-      height: 22,
+      minWidth: 16,
+      height: 16,
+      borderRadius: 8,
       borderRadius: 11,
       backgroundColor: theme.colors.surface,
       justifyContent: 'center',
@@ -295,14 +295,14 @@ const getStyles = (theme) =>
       paddingHorizontal: 6,
     },
     filterBadgeText: {
-      fontSize: 12,
+      fontSize: 10,
       fontWeight: '600',
       color: '#000000',
     },
     itemCard: {
       paddingVertical: theme.spacing.md,
       borderTopWidth: 1,
-      borderTopColor: '#cccccc',
+      borderTopColor: '#F4F4F5',
     },
     itemHeader: {
       flexDirection: 'row',
@@ -314,7 +314,7 @@ const getStyles = (theme) =>
       fontSize: 12,
       fontWeight: '600',
       color: '#000000',
-      backgroundColor: '#00000015',
+      backgroundColor: '#F4F4F5',
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: 4,
       borderRadius: theme.borderRadius.full,
@@ -335,8 +335,8 @@ const getStyles = (theme) =>
     },
     itemFooter: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
-      marginTop: theme.spacing.sm,
+      justifyContent: 'space-between',
+      marginTop:15,
     },
     metaGroup: {
       flexDirection: 'row',

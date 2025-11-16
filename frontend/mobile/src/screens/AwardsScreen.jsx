@@ -235,10 +235,6 @@ const AwardsScreen = () => {
     return theme.colors.error || '#ef4444';
   };
 
-  const heroTextColor = theme.colors.text || '#0f172a';
-  const heroMutedColor = theme.colors.textSecondary || 'rgba(15,23,42,0.65)';
-  const heroBorderColor = theme.colors.border || 'rgba(15,23,42,0.2)';
-
   const activeSortOption =
     sortOptions.find((option) => option.key === sortConfig.key) || sortOptions[0];
 
@@ -302,7 +298,7 @@ const AwardsScreen = () => {
           <Icon name="chevron-down" size={16} color={'#000000'} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.clearButton, { borderColor: heroBorderColor }]}
+          style={[styles.clearButton, { borderColor: "#00000033" }]}
           onPress={() => {
             setSortConfig({
               key: 'internalDeadline',
@@ -347,44 +343,30 @@ const AwardsScreen = () => {
               },
             ]}
           >
-            <View style={styles.cardHeader}>
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={[styles.proposalId, { color: '#000000' }]}
-                >
-                  Proposal #{proposal.id}
-                </Text>
-                <Text style={[styles.proposalTitle, { color: '#000000' }]}>
-                  {proposal.title}
+            {/* Row 1: Proposal ID + "New" badge / Type badge in one row */}
+            <View style={[styles.row, { justifyContent: 'space-between',marginBottom: 6 }]}>
+              <Text style={[styles.proposalId, { color: '#000000', flex: 1 }]}>
+                Proposal #{proposal.id}
+              </Text>
+              <View
+                style={[
+                  styles.typeBadge,
+                  { borderColor: '#E5E7EB', backgroundColor: theme.colors.background },
+                ]}
+              >
+                <Text style={[styles.badgeText, { color: theme.colors.text }]}>
+                  {proposal.type}
                 </Text>
               </View>
-              <View style={styles.badgeColumn}>
-                <View
-                  style={[
-                    styles.typeBadge,
-                    { borderColor: '#E5E7EB', backgroundColor: theme.colors.background },
-                  ]}
-                >
-                  <Text style={[styles.badgeText, { color: theme.colors.text }]}>
-                    {proposal.type}
-                  </Text>
-                </View>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    { backgroundColor: `${getStatusTone(proposal.status)}26` },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.badgeText,
-                      { color: getStatusTone(proposal.status) },
-                    ]}
-                  >
-                    {proposal.status}
-                  </Text>
-                </View>
-              </View>
+            </View>
+
+            {/* Row 2: Title */}
+            <Text style={[styles.proposalTitle, { color: '#000000', marginTop: 2 }]}>
+              {proposal.title}
+            </Text>
+
+            {/* Row 3: Type badge */}
+            <View style={[styles.row, { marginTop: 8 }]}>
             </View>
 
             <View style={styles.metaGrid}>
@@ -419,7 +401,23 @@ const AwardsScreen = () => {
               </View>
             </View>
 
-            <View style={styles.cardFooter}>
+            {/* Row 4: Status badge + View button in one row */}
+            <View style={[styles.cardFooter, { justifyContent: 'space-between', alignItems: 'center' }]}>
+              <View
+                style={[
+                  styles.statusBadge,
+                  { backgroundColor: `${getStatusTone(proposal.status)}26` },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.badgeText,
+                    { color: getStatusTone(proposal.status) },
+                  ]}
+                >
+                  {proposal.status}
+                </Text>
+              </View>
               {/* <View style={styles.footerPill}>
                 <Icon
                   name="person-outline"
@@ -530,87 +528,87 @@ const AwardsScreen = () => {
               <View
                 style={[
                   styles.modalContent,
-                  { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                  { backgroundColor: '#FFFFFF', borderColor: '#E5E7EB' },
                 ]}
               >
                 {selectedProposal && (
                   <>
-                    <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+                    <Text style={[styles.modalTitle, { color: '#000000' }]}>
                       Proposal #{selectedProposal.id}
                     </Text>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel, { color: '#6B7280' }]}>
                         Title
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue, { color: '#000000' }]}>
                         {selectedProposal.title}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel, { color: '#6B7280' }]}>
                         Status
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue, { color: '#000000' }]}>
                         {selectedProposal.status}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel, { color: '#6B7280' }]}>
                         Type
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue, { color: '#000000' }]}>
                         {selectedProposal.type}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel, { color: '#6B7280' }]}>
                         Sponsor
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue, { color: '#000000' }]}>
                         {selectedProposal.sponsor}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel, { color: '#6B7280' }]}>
                         Sponsor Deadline
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue, { color: '#000000' }]}>
                         {selectedProposal.sponsorDeadline}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel, { color: '#6B7280' }]}>
                         Internal Deadline
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue, { color: '#000000' }]}>
                         {selectedProposal.internalDeadline}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel, { color: '#6B7280' }]}>
                         PI
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue, { color: '#000000' }]}>
                         {selectedProposal.principalInvestigator}
                       </Text>
                     </View>
                     <View style={styles.modalRow}>
-                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalLabel, { color: '#6B7280' }]}>
                         Lead Unit
                       </Text>
-                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                      <Text style={[styles.modalValue, { color: '#000000' }]}>
                         {selectedProposal.leadUnit}
                       </Text>
                     </View>
                     <TouchableOpacity
                       style={[
                         styles.modalCloseButton,
-                        { borderColor: theme.colors.border, backgroundColor: theme.colors.background },
+                        { borderColor: '#E5E7EB', backgroundColor: '#FFFFFF' },
                       ]}
                       onPress={() => setViewModalVisible(false)}
                       activeOpacity={0.9}
                     >
-                      <Text style={[styles.modalCloseText, { color: theme.colors.text }]}>Close</Text>
+                      <Text style={[styles.modalCloseText, { color: '#000000' }]}>Close</Text>
                     </TouchableOpacity>
                   </>
                 )}
@@ -866,6 +864,11 @@ const styles = StyleSheet.create({
   modalCloseText: {
     fontSize: 13,
     fontWeight: '700',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
 });
 

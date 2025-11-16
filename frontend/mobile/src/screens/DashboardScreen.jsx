@@ -27,6 +27,7 @@ import AgreementSummaryTable from '../components/AgreementSummaryTable.jsx';
 import ServiceTrackerScreen from './ServiceTrackerScreen.jsx';
 import AwardsScreen from './AwardsScreen.jsx';
 import NotificationList from '../components/NotificationList.jsx';
+import { useNotificationSocket } from '../context/NotificationSocketContext.jsx';
 import EmailHubScreen from './EmailHubScreen.jsx';
 import ScanHubScreen from './ScanHubScreen.jsx';
 import CameraScanScreen from './CameraScanScreen.jsx';
@@ -84,7 +85,7 @@ const DashboardScreen = ({ onLogout }) => {
     'Awarded Sponsors';
 
   const notifications = dashboardData.notifications?.items || [];
-  const notificationCount = notifications.length > 0 ? 1 : 0;
+  const { unreadCount: notificationCount } = useNotificationSocket();
   const bottomTabs = [
     { id: 'home', label: 'Home', icon: 'home-outline' },
     { id: 'service', label: 'Tracker', icon: 'construct-outline' },
@@ -468,9 +469,8 @@ const DashboardScreen = ({ onLogout }) => {
       return <NotificationList onBack={() => setNotificationsVisible(false)} />;
     }
 
-    if (activeBottomTab === 'Email') {
-      return <EmailHubScreen onClose={() => setActiveBottomTab('home')} />;
-    }
+    // Always give scan flow precedence over bottom tabs (including Email)
+    // so that the scan icon in the navbar works from any tab.
     if (scanRoute === 'hub') {
       return (
         <ScanHubScreen
@@ -490,6 +490,10 @@ const DashboardScreen = ({ onLogout }) => {
           }}
         />
       );
+    }
+
+    if (activeBottomTab === 'Email') {
+      return <EmailHubScreen onClose={() => setActiveBottomTab('home')} />;
     }
     if (scanRoute === 'pdf') {
       return (

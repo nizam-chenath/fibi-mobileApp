@@ -26,7 +26,7 @@ const ScanHubScreen = ({ onBack, onOpenCamera, onOpenSignature }) => {
     },
     card: {
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       borderRadius: 16,
       padding: 16,
       backgroundColor: theme.colors.surface,
@@ -48,7 +48,6 @@ const ScanHubScreen = ({ onBack, onOpenCamera, onOpenSignature }) => {
     },
     cardSubtitle: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
       marginTop: 4,
       maxWidth: '90%',
       flexShrink: 1,
@@ -58,8 +57,7 @@ const ScanHubScreen = ({ onBack, onOpenCamera, onOpenSignature }) => {
       paddingVertical: 10,
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.background,
+      borderColor: '#E5E7EB',
       alignSelf: 'center',
       flexShrink: 0,
     },
@@ -74,7 +72,7 @@ const ScanHubScreen = ({ onBack, onOpenCamera, onOpenSignature }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={{ padding: 8 }}>
-          <Icon name="arrow-back" size={22} color={theme.colors.text} />
+          <Icon name="arrow-back" size={22}/>
         </TouchableOpacity>
         <Text style={styles.title}>Scan & Sign</Text>
         <View style={{ width: 30 }} />
@@ -82,7 +80,7 @@ const ScanHubScreen = ({ onBack, onOpenCamera, onOpenSignature }) => {
 
       <TouchableOpacity style={styles.card} onPress={onOpenCamera} activeOpacity={0.9}>
         <View style={styles.cardLeft}>
-          <Icon name="camera-outline" size={26} color={theme.colors.primary} />
+          <Icon name="camera-outline" size={26}  />
           <View>
             <Text style={styles.cardTitle}>Camera Scan</Text>
             <Text style={styles.cardSubtitle}>Open camera to scan a document or signature.</Text>
@@ -95,7 +93,7 @@ const ScanHubScreen = ({ onBack, onOpenCamera, onOpenSignature }) => {
 
       <TouchableOpacity style={styles.card} onPress={onOpenSignature} activeOpacity={0.9}>
         <View style={styles.cardLeft}>
-          <Icon name="create-outline" size={26} color={theme.colors.primary} />
+          <Icon name="create-outline" size={26} />
           <View>
             <Text style={styles.cardTitle}>Signature Pad</Text>
             <Text style={styles.cardSubtitle}>Open a white space to draw your signature.</Text>

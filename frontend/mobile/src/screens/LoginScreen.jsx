@@ -93,10 +93,11 @@ const LoginScreen = () => {
       flex: 1,
     },
     scrollContent: {
-      marginTop: 150,
+      marginTop: 90,
       // backgroundColor: 'red',
       paddingHorizontal: theme.spacing.xl,
       paddingVertical: theme.spacing.xxxl,
+      alignItems: 'center',
     },
     pageHeader: {
       alignItems: 'center',
@@ -142,6 +143,9 @@ const LoginScreen = () => {
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },
       elevation: 4,
+      width: '100%',
+      maxWidth: 520,
+      alignSelf: 'center',
     },
     badge: {
       alignSelf: 'flex-start',
@@ -377,16 +381,25 @@ const LoginScreen = () => {
               {error && <Text style={styles.errorText}>❌ {error}</Text>}
 
               <View style={styles.loginButton}>
-                <Button title="Sign In" onPress={handleLogin} loading={loading} disabled={loading} />
+                <Button
+                  title="Sign In"
+                  onPress={handleLogin}
+                  loading={loading}
+                  disabled={loading}
+                  gradientColors={['#48bd92', '#26a699']}
+                  gradientStart={{ x: 0, y: 0 }}
+                  gradientEnd={{ x: 1, y: 0 }}
+                />
               </View>
 
               <Text style={styles.socialDivider}>or continue with</Text>
               <View style={styles.socialRow}>
-                {socialProviders.map((provider) => (
+                {/* {socialProviders.map((provider) => (
                   <TouchableOpacity key={provider.key} style={styles.socialButton} activeOpacity={0.8}>
                     <Icon name={provider.icon} size={22} color={theme.colors.text} />
                   </TouchableOpacity>
-                ))}
+                ))} */}
+                <Text>Sign in with SSO</Text>
               </View>
             </View>
           </ScrollView>

@@ -131,7 +131,6 @@ const EmailHubScreen = ({ onClose }) => {
       <View style={[styles.card, item.isUnread ? styles.unreadCard : null]}>
         <View style={styles.cardHeader}>
           <Text style={styles.title}>{cleanSubject}</Text>
-          {!!displayDate && <Text style={styles.timeAgo}>{displayDate}</Text>}
         </View>
         {item.message_type ? (
           <View style={styles.pill}>
@@ -140,6 +139,7 @@ const EmailHubScreen = ({ onClose }) => {
         ) : null}
         {cleanMessage ? <Text style={styles.message} numberOfLines={1}>{cleanMessage}</Text> : null}
         <View style={styles.cardFooter}>
+        {!!displayDate && <Text style={styles.timeAgo}>{displayDate}</Text>}
           <TouchableOpacity
             style={styles.viewButton}
             activeOpacity={0.9}
@@ -397,7 +397,7 @@ const getStyles = (theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: 14,
+      marginBottom: 6,
     },
     title: {
       fontSize: 16,
@@ -418,7 +418,8 @@ const getStyles = (theme) =>
     },
     cardFooter: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginTop: 10,
     },
     viewButton: {
@@ -437,8 +438,8 @@ const getStyles = (theme) =>
       fontWeight: '700',
     },
     pill: {
+      marginBottom: 4,
       alignSelf: 'flex-start',
-      marginTop: 8,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 999,

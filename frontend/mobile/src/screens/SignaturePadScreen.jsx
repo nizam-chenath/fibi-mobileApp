@@ -4,7 +4,15 @@ import { View, Text, TouchableOpacity, StyleSheet, PanResponder } from 'react-na
 import Icon from 'react-native-vector-icons/Ionicons';
 import useTheme from '../hooks/useTheme.jsx';
 import Svg, { Path, Rect, G } from 'react-native-svg';
-import ViewShot from 'react-native-view-shot';
+// Lazy require to avoid crashing if the native module isn't installed yet
+let ViewShotModule = null;
+try {
+  // eslint-disable-next-line global-require
+  const mod = require('react-native-view-shot');
+  ViewShotModule = mod?.default || mod;
+} catch (e) {
+  ViewShotModule = null;
+}
 
 const SignaturePadScreen = ({ onBack, onSave }) => {
   const theme = useTheme();
@@ -18,6 +26,7 @@ const SignaturePadScreen = ({ onBack, onSave }) => {
   const [scale, setScale] = useState(1);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const startOffsetRef = useRef({ x: 0, y: 0 });
+  const [padSize, setPadSize] = useState({ width: 0, height: 0 });
 
   const panResponder = useMemo(
     () =>
@@ -82,14 +91,19 @@ const SignaturePadScreen = ({ onBack, onSave }) => {
   const handleSave = async () => {
     try {
       // capture as PNG base64
-      const base64Png = await shotRef.current?.capture?.({
-        format: 'png',
-        quality: 1,
-        result: 'base64',
-      });
+      const base64Png = ViewShotModule
+        ? await shotRef.current?.capture?.({
+            format: 'jpg',
+            quality: 1,
+            backgroundColor: '#ffffff',
+            result: 'base64',
+          })
+        : null;
       const payload = {
         paths: [...strokes, currentStroke].filter((s) => s.length).map(pathFromPoints),
-        imageBase64: base64Png ? `data:image/png;base64,${base64Png}` : null,
+        imageBase64: base64Png ? `data:image/jpeg;base64,${base64Png}` : null,
+        imageWidth: padSize.width || null,
+        imageHeight: padSize.height || null,
       };
       onSave && onSave(payload);
     } catch (e) {
@@ -119,7 +133,7 @@ const SignaturePadScreen = ({ onBack, onSave }) => {
       flex: 1,
       borderRadius: 16,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       backgroundColor: theme.colors.surface,
       overflow: 'hidden',
     },
@@ -147,7 +161,7 @@ const SignaturePadScreen = ({ onBack, onSave }) => {
       paddingVertical: 8,
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       backgroundColor: theme.colors.surface,
     },
     btnText: {
@@ -167,10 +181,21 @@ const SignaturePadScreen = ({ onBack, onSave }) => {
       </View>
 
       <View style={styles.padWrapper}>
-        <ViewShot ref={shotRef} style={{ flex: 1 }} options={{ format: 'png', quality: 1 }}>
-          <View style={styles.pad} ref={padRef} {...panResponder.panHandlers}>
+        {(ViewShotModule || View) && (
+          // Use ViewShot when available; otherwise fall back to plain View so app doesn't crash
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          React.createElement(ViewShotModule || View, { ref: shotRef, style: { flex: 1 }, options: { format: 'jpg', quality: 1, backgroundColor: '#ffffff' } },
+          <View
+            style={styles.pad}
+            ref={padRef}
+            onLayout={(e) => {
+              const { width, height } = e.nativeEvent.layout;
+              if (width && height) setPadSize({ width, height });
+            }}
+            {...panResponder.panHandlers}
+          >
             <Svg ref={svgRef} style={{ flex: 1 }}>
-              <Rect x="0" y="0" width="100%" height="100%" fill="transparent" />
+              <Rect x="0" y="0" width="100%" height="100%" fill="#ffffff" />
               <G transform={`translate(${offset.x},${offset.y}) scale(${scale})`}>
                 {strokes.map((stroke, idx) => (
                   <Path
@@ -196,7 +221,8 @@ const SignaturePadScreen = ({ onBack, onSave }) => {
               </G>
             </Svg>
           </View>
-        </ViewShot>
+          )
+        )}
       </View>
 
       <View style={styles.controls}>

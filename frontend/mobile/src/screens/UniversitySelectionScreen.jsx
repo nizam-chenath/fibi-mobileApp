@@ -227,6 +227,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import useTheme from '../hooks/useTheme.jsx';
 import { fetchUniversities } from '../api/universityApi.js';
 import Logo1 from '../assets/universitylogo/Logo1.png';
@@ -241,6 +242,7 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -290,27 +292,43 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
     const sheet = StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: colors.primary,
+        backgroundColor: '#ffffff',
         paddingTop: 80,
       },
       header: {
-        paddingTop: 60,
         paddingBottom: spacing.xxl,
         paddingHorizontal: spacing.xxl,
         backgroundColor: 'transparent',
+        alignItems: 'center',
+      },
+      headerIconWrap: {
+        alignItems: 'center',
+        marginBottom: spacing.md,
+      },
+      headerIconCircle: {
+        width: 72,
+        height: 72,
+        borderRadius: 36,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      headerIconText: {
+        fontSize: 34,
       },
       title: {
-        fontSize: 28,
+        fontSize: 18,
         fontWeight: '800',
-        color: colors.surface,
+        color: (colors && colors.text) || '#111827',
         letterSpacing: 0.5,
         marginBottom: spacing.sm,
+        textAlign: 'center',
       },
       subtitle: {
         fontSize: 14,
-        color: colors.surface,
-        opacity: 0.8,
+        color: (colors && colors.mutedText) || '#4b5563',
+        opacity: 0.95,
         fontWeight: '500',
+        textAlign: 'center',
       },
       listContent: {
         paddingHorizontal: spacing.xxl,
@@ -320,67 +338,86 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
       sectionLabel: {
         fontSize: 16,
         fontWeight: '700',
-        color: colors.surface,
+        color: (colors && colors.text) || '#111827',
         marginBottom: spacing.lg,
       },
       gridItemWrapper: {
-        width: '48%',
+        width: '100%',
         marginBottom: spacing.sm,
       },
       itemTouchable: {
         borderRadius: 14,
       },
+      gradientBorder: {
+        borderRadius: 16,
+        padding: 1.5,
+      },
+      neutralBorder: {
+        borderRadius: 16,
+        padding: 1.5,
+        borderWidth: 1,
+        borderColor: '#e5e7eb', // light grey
+      },
       item: {
         position: 'relative',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
-        minHeight: 64,
+        minHeight: 72,
         paddingVertical: spacing.md,
         paddingHorizontal: spacing.lg,
-        borderRadius: 14,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.15)',
+        borderRadius: 16,
+        backgroundColor: '#ffffff',
       },
       itemSelected: {
-        backgroundColor: 'rgba(52, 211, 153, 0.18)',
-        borderColor: '#34d399',
-        borderWidth: 1,
+        backgroundColor: 'rgba(38, 166, 153, 0.06)',
       },
       logoWrapper: {
-        width: 56,
-        height: 56,
-        borderRadius: 12,
-        backgroundColor: colors.surface,
+        width: 48,
+        height: 48,
+        borderRadius: 10,
+        backgroundColor: (colors && colors.card) || '#f3f4f6',
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: spacing.sm,
+        marginRight: spacing.md,
       },
       logoImage: {
         borderRadius: 8,
       },
       itemLabel: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '600',
-        color: colors.surface,
-        textAlign: 'center',
-        paddingHorizontal: spacing.sm,
+        color: (colors && colors.text) || '#111827',
+        flex: 1,
+        textTransform: 'capitalize',
       },
-      checkIcon: {
-        position: 'absolute',
-        top: 6,
-        right: 6,
-        width: 22,
-        height: 22,
-        borderRadius: 11,
-        backgroundColor: '#34d399',
+      rightCheck: {
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: 'rgba(38, 166, 153, 0.55)',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'rgba(134, 255, 255, 0.08)',
       },
-      checkText: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        color: '#1f2937',
+      rightCheckText: {
+        color: 'rgba(38, 166, 153, 0.9)',
+        fontWeight: '900',
+      },
+      footer: {
+        paddingHorizontal: spacing.xxl,
+        paddingBottom: spacing.xxxl,
+        paddingTop: spacing.md,
+      },
+      continueBtn: {
+        borderRadius: 24,
+      },
+      continueText: {
+        textAlign: 'center',
+        color: '#ffffff',
+        fontWeight: '800',
+        fontSize: 16,
+        paddingVertical: spacing.md,
       },
     });
 
@@ -422,21 +459,22 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
 
   const handleSelect = (item) => {
     setSelectedId(item.id);
-    onSelectUniversity({
-      universityUid: item.id,
-      name: item.name,
-      themeColor: item.themeColor,
-    });
+    setSelectedItem(item);
   };
 
   return (
-    <LinearGradient
-      colors={['#48bd92', '#26a699']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.header}>
+        <View style={styles.headerIconWrap} accessible accessibilityRole="image" accessibilityLabel="Globe">
+          <LinearGradient
+            colors={['#48bd92', '#26a699']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.headerIconCircle}
+          >
+            <FontAwesome5 name="university" size={28} color="#ffffff" />
+          </LinearGradient>
+        </View>
         <Text style={styles.title}>Select a University</Text>
         <Text style={styles.subtitle}>Choose your institution to continue</Text>
       </View>
@@ -444,22 +482,21 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
       <FlatList
         data={tiles}
         keyExtractor={(item) => String(item.id)}
-        numColumns={2}
+        numColumns={1}
         contentContainerStyle={styles.listContent}
-        columnWrapperStyle={{ justifyContent: 'space-between' }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={<Text style={styles.sectionLabel}>Universities</Text>}
         ListEmptyComponent={
           loading ? (
             <View style={{ paddingVertical: theme.spacing.xl, alignItems: 'center' }}>
-              <ActivityIndicator color={theme.colors.surface} />
+              <ActivityIndicator color={(theme.colors && theme.colors.primary) || '#26a699'} />
             </View>
           ) : error ? (
-            <Text style={[styles.subtitle, { color: theme.colors.error }]}>
+            <Text style={[styles.subtitle, { color: (theme.colors && theme.colors.error) || '#dc2626' }]}>
               {error}
             </Text>
           ) : (
-            <Text style={[styles.subtitle, { color: theme.colors.surface }]}>
+            <Text style={[styles.subtitle]}>
               No universities found
             </Text>
           )
@@ -474,37 +511,73 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
               accessibilityLabel={`Select ${item.name}`}
               accessibilityState={{ selected: selectedId === item.id }}
             >
-              <View
-                style={[
-                  styles.item,
-                  {
-                    backgroundColor: item.themeColor
-                      ? applyOpacity(item.themeColor, selectedId === item.id ? 0.35 : 0.18)
-                      : styles.item.backgroundColor,
-                    borderColor: item.themeColor || styles.item.borderColor,
-                  },
-                  selectedId === item.id && styles.itemSelected,
-                ]}
-              >
-                {selectedId === item.id && (
-                  <View style={styles.checkIcon}>
-                    <Text style={styles.checkText}>✓</Text>
+              {selectedId === item.id ? (
+                <LinearGradient
+                  colors={['#48bd92', '#26a699']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.gradientBorder}
+                >
+                  <LinearGradient
+                  colors={['rgba(247, 255, 252, 1)', 'rgba(245, 255, 255, 1)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[styles.item, styles.itemSelected]}
+                  >
+                    <View style={styles.logoWrapper}>
+                      {renderLogo(item.logoAsset)}
+                    </View>
+                    <Text style={styles.itemLabel} numberOfLines={1}>
+                      {item.name}
+                    </Text>
+                    <View style={styles.rightCheck}>
+                      <Text style={styles.rightCheckText}>✓</Text>
+                    </View>
+                  </LinearGradient>
+                </LinearGradient>
+              ) : (
+                <View style={styles.neutralBorder}>
+                  <View style={styles.item}>
+                    <View style={styles.logoWrapper}>
+                      {renderLogo(item.logoAsset)}
+                    </View>
+                    <Text style={styles.itemLabel} numberOfLines={1}>
+                      {item.name}
+                    </Text>
                   </View>
-                )}
-                <View style={styles.logoWrapper}>
-                  {renderLogo(item.logoAsset)}
                 </View>
-                <Text style={styles.itemLabel} numberOfLines={2}>
-                  {item.name}
-                </Text>
-              </View>
+              )}
             </TouchableOpacity>
           </View>
         )}
       />
 
-      {/* selection info / confirm button removed per request */}
-    </LinearGradient>
+      <View style={styles.footer}>
+        <TouchableOpacity
+          disabled={!selectedItem}
+          onPress={() => {
+            if (!selectedItem) return;
+            onSelectUniversity({
+              universityUid: selectedItem.id,
+              name: selectedItem.name,
+              themeColor: selectedItem.themeColor,
+            });
+          }}
+          activeOpacity={0.9}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !selectedItem }}
+        >
+          <LinearGradient
+            colors={selectedItem ? ['#48bd92', '#26a699'] : ['#b8c2cc', '#a0aec0']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.continueBtn}
+          >
+            <Text style={styles.continueText}>Continue</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 

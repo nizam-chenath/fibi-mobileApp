@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Platform } from 'react-native';
+import { Platform, PermissionsAndroid, Alert, Linking } from 'react-native';
 import {
   AuthorizationStatus,
   getMessaging,
@@ -11,33 +11,63 @@ import {
   requestPermission,
 } from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-import { useNavigation } from '@react-navigation/native';
 import { navigate } from './navigationService';
 import { useSelector } from 'react-redux';
 import { saveUserFcmDetails } from '../api/notificationApi.js';
 
 const NotificationManager = ({ phone }) => {
-  const navigation = useNavigation();
-  const currentUniversityUid = useSelector((state) => state.tenant?.currentUniversityUid) ;
-  const personId = useSelector((state) => state.user?.personId);
-  const personName =
-    useSelector((state) => state.user?.displayName || state.user?.name || state.user?.username) ||
-    'user';
+  const currentUniversityUid = useSelector((state) => state.tenant?.currentUniversityUid);
+  const authUser = useSelector((state) => state.auth?.user);
+  const personId = authUser?.id;
+  const personName = (
+    [authUser?.firstName, authUser?.lastName].filter(Boolean).join(' ') ||
+    authUser?.email ||
+    'user'
+  );
 
   useEffect(() => {
     const messagingInstance = getMessaging();
 
     // ✅ 1️⃣ Request notification permission
     async function requestNotificationPermission() {
-      const authStatus = await requestPermission(messagingInstance);
-      const enabled =
-        authStatus === AuthorizationStatus.AUTHORIZED ||
-        authStatus === AuthorizationStatus.PROVISIONAL;
-      if (enabled) {
-        console.log('✅ Notification permission granted');
-        await registerDeviceToken();
-      } else {
-        console.warn('❌ Notification permission denied');
+      try {
+        if (Platform.OS === 'android') {
+          // Android 13+ needs POST_NOTIFICATIONS runtime permission
+          if (Platform.Version >= 33) {
+            const result = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+            );
+            if (result !== PermissionsAndroid.RESULTS.GRANTED) {
+              console.warn('❌ Notification permission denied on Android');
+              return;
+            }
+          }
+          console.log('✅ Notification permission granted (Android)');
+          await registerDeviceToken();
+          return;
+        }
+
+        // iOS: request APNs authorization (provisional allowed)
+        const authStatus = await requestPermission(messagingInstance);
+        const enabled =
+          authStatus === AuthorizationStatus.AUTHORIZED ||
+          authStatus === AuthorizationStatus.PROVISIONAL;
+        if (enabled) {
+          console.log('✅ Notification permission granted (iOS)');
+          await registerDeviceToken();
+        } else {
+          console.warn('❌ Notification permission denied on iOS');
+          Alert.alert(
+            'Enable Notifications',
+            'Notifications are disabled. Turn them on in Settings to receive alerts.',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Open Settings', onPress: () => Linking.openSettings() },
+            ],
+          );
+        }
+      } catch (err) {
+        console.warn('Notification permission flow failed:', err?.message || err);
       }
     }
 
@@ -46,13 +76,20 @@ const NotificationManager = ({ phone }) => {
       try {
         const token = await getToken(messagingInstance);
         console.log('🔹 FCM Token:', token);
-        await saveUserFcmDetails({
-          uid: currentUniversityUid,
-          person_id: personId,
-          person_name: personName,
-          fcm_token: token,
-        });
-        console.log('✅ Device token registered successfully (saved to server)');
+        if (!currentUniversityUid || !personId) {
+          console.warn('⚠️ Missing uid or personId; skip saving FCM to server', {
+            currentUniversityUid,
+            personId,
+          });
+        } else {
+          await saveUserFcmDetails({
+            uid: currentUniversityUid,
+            person_id: personId,
+            person_name: personName,
+            fcm_token: token,
+          });
+          console.log('✅ Device token registered successfully (saved to server)');
+        }
       } catch (error) {
         console.error('❌ Failed to register device token:', error);
       }
@@ -62,12 +99,19 @@ const NotificationManager = ({ phone }) => {
     const unsubscribeTokenRefresh = onTokenRefresh(messagingInstance, async (token) => {
       try {
         console.log('🔄 Token refreshed:', token);
-        await saveUserFcmDetails({
-          uid: currentUniversityUid,
-          person_id: personId,
-          person_name: personName,
-          fcm_token: token,
-        });
+        if (!currentUniversityUid || !personId) {
+          console.warn('⚠️ Missing uid or personId on refresh; skip saving token', {
+            currentUniversityUid,
+            personId,
+          });
+        } else {
+          await saveUserFcmDetails({
+            uid: currentUniversityUid,
+            person_id: personId,
+            person_name: personName,
+            fcm_token: token,
+          });
+        }
       } catch (error) {
         console.error('❌ Failed to refresh token:', error);
       }
@@ -173,7 +217,7 @@ const NotificationManager = ({ phone }) => {
       unsubscribeForeground();
       unsubscribeBackground();
     };
-  }, [phone, navigation, currentUniversityUid, personId, personName]);
+  }, [phone, currentUniversityUid, personId, personName]);
 
   return null;
 };
