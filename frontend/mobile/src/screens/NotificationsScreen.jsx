@@ -24,19 +24,18 @@ const NotificationsScreen = ({ notifications = [], onClose }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.screenTitle}>Notifications</Text>
+        <TouchableOpacity style={styles.backButton} onPress={onClose} activeOpacity={0.8}>
+          <Icon name="chevron-back" size={22} color={theme.colors.text} />
+        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.screenTitle}>Notification Hub</Text>
           <Text style={styles.subtitle}>
             {notifications.length > 0
               ? `${notifications.length} notification${notifications.length === 1 ? '' : 's'}`
               : 'No new notifications'}
           </Text>
         </View>
-        {onClose && (
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Icon name="close" size={22} color={theme.colors.text} />
-          </TouchableOpacity>
-        )}
+        <View style={{ width: 22 }} />
       </View>
 
       {notifications.length === 0 ? (
@@ -69,6 +68,10 @@ const getStyles = (theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: theme.spacing.lg,
+    },
+    backButton: {
+      padding: theme.spacing.sm,
+      marginRight: theme.spacing.sm,
     },
     screenTitle: {
       fontSize: 24,
@@ -104,10 +107,6 @@ const getStyles = (theme) =>
       padding: theme.spacing.md,
       borderRadius: theme.borderRadius.lg,
       backgroundColor: theme.colors.surface,
-      shadowColor: '#000',
-      shadowOpacity: 0.08,
-      shadowRadius: 6,
-      elevation: 2,
     },
     unreadCard: {
       borderWidth: 1,

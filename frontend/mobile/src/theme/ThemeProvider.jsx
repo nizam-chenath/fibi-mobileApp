@@ -23,12 +23,13 @@ export const ThemeProvider = ({ children }) => {
       success: BRAND_GREEN,
       warning: '#FFC107',
       error: '#E74C3C',
-      background: BRAND_GREEN,
+      background: '#F2F3F8',
       surface: '#FFFFFF',
       text: '#1C1C1C',
       textSecondary: '#555555',
       border: '#DDDDDD',
       brandPrimary: BRAND_GREEN,
+      Lightbackground: '#f2f3f8',
     };
 
     const fallbackConfig = getTenantById(DEFAULT_TENANT_ID);
@@ -41,7 +42,9 @@ export const ThemeProvider = ({ children }) => {
     combinedColors.primary = combinedColors.primary || baseColors.primary;
     combinedColors.accent = combinedColors.accent || combinedColors.primary;
     combinedColors.success = combinedColors.success || combinedColors.primary;
-    combinedColors.background = combinedColors.background || combinedColors.primary;
+    // Prefer Lightbackground as the app-wide background if provided
+    combinedColors.background =
+      combinedColors.Lightbackground || combinedColors.background || baseColors.background;
     combinedColors.surface = combinedColors.surface || baseColors.surface;
     combinedColors.brandPrimary = combinedColors.brandPrimary || combinedColors.primary;
 

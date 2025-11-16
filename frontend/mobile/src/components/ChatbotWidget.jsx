@@ -388,8 +388,8 @@ const createStyles = (theme) =>
   StyleSheet.create({
     fabWrapper: {
       position: 'absolute',
-      top: 0,
-      left: 40,
+      top: -14,
+      left: 28,
       zIndex: 1000,
     },
     fabGradient: {

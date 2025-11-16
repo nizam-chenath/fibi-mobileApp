@@ -29,6 +29,7 @@ import AgreementSummaryTable from '../components/AgreementSummaryTable.jsx';
 import ServiceTrackerScreen from './ServiceTrackerScreen.jsx';
 import AwardsScreen from './AwardsScreen.jsx';
 import NotificationsScreen from './NotificationsScreen.jsx';
+import EmailHubScreen from './EmailHubScreen.jsx';
 
 const DashboardScreen = ({ onLogout }) => {
   const theme = useTheme();
@@ -85,7 +86,7 @@ const DashboardScreen = ({ onLogout }) => {
   const bottomTabs = [
     { id: 'home', label: 'Dashboard', icon: 'home-outline' },
     { id: 'service', label: 'Tracker', icon: 'construct-outline' },
-    { id: 'awards', label: 'Awards', icon: 'trophy-outline' },
+    { id: 'awards', label: 'Proposals', icon: 'document-text-outline' },
     { id: 'Email', label: 'Email', icon: 'mail-outline' },
   ];
   const [activeBottomTab, setActiveBottomTab] = useState(bottomTabs[0]?.id);
@@ -321,7 +322,7 @@ const DashboardScreen = ({ onLogout }) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.Lightbackground,
     },
     shell: {
       flex: 1,
@@ -336,6 +337,7 @@ const DashboardScreen = ({ onLogout }) => {
     },
     scrollContent: {
       paddingBottom: theme.spacing.xxl,
+      backgroundColor: theme.colors.Lightbackground,
     },
     welcomeSection: {
       backgroundColor: theme.colors.primary,
@@ -461,6 +463,10 @@ const DashboardScreen = ({ onLogout }) => {
           onClose={() => setNotificationsVisible(false)}
         />
       );
+    }
+
+    if (activeBottomTab === 'Email') {
+      return <EmailHubScreen onClose={() => setActiveBottomTab('home')} />;
     }
 
     if (activeBottomTab === 'service') {

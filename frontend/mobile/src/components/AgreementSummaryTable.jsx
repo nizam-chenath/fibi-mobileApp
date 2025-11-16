@@ -14,6 +14,8 @@ const AgreementSummaryTable = ({
   containerStyle,
   maxHeight = 360,
   primaryFieldIndex = 0,
+	numColumns = 2,
+	maxFieldsPerCard = 3,
 }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -55,35 +57,39 @@ const AgreementSummaryTable = ({
 
 		// Card-style listing with a clear title and friendly key-value rows.
 		return (
-			<ScrollView style={{ maxHeight }} showsVerticalScrollIndicator={false}>
-				<View style={styles.cardList}>
-					{safeRows.map((row) => {
-						const cells = Array.isArray(row.cells) ? row.cells : [];
-						const titleValue =
-							row.title ||
-							cells?.[primaryFieldIndex] ||
-							`#${row.id}`;
-						return (
-							<View key={row.id} style={styles.itemCard}>
-								<Text style={styles.itemTitle}>{String(titleValue || '—')}</Text>
-								<View style={styles.itemBody}>
-									{cells.map((value, index) => {
-										if (index === primaryFieldIndex) return null;
-										const label = safeHeaders[index] ?? `Field ${index + 1}`;
-										return (
-											<View key={`${row.id}-${index}`} style={styles.itemRow}>
-												<Text style={styles.itemLabel}>{label}</Text>
-												<Text style={styles.itemValue}>
-													{value === null || value === undefined || value === '' ? '—' : String(value)}
-												</Text>
-											</View>
-										);
-									})}
-								</View>
+			<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+				<ScrollView
+					style={{ maxHeight }}
+					nestedScrollEnabled
+					showsVerticalScrollIndicator={false}
+				>
+					<View style={styles.table}>
+						{safeHeaders.length > 0 && (
+							<View style={[styles.tableRow, styles.tableHeader]}>
+								{safeHeaders.map((header, index) => (
+									<Text
+										key={`${header}-${index}`}
+										style={[styles.cell, styles.headerCell, index === 0 && styles.primaryCell]}
+									>
+										{header}
+									</Text>
+								))}
 							</View>
-						);
-					})}
-				</View>
+						)}
+						{safeRows.map((row) => (
+							<View key={row.id} style={styles.tableRow}>
+								{(row.cells || []).map((value, index) => (
+									<Text
+										key={`${row.id}-${index}`}
+										style={[styles.cell, index === 0 && styles.primaryCell]}
+									>
+										{value === null || value === undefined || value === '' ? '—' : String(value)}
+									</Text>
+								))}
+							</View>
+						))}
+					</View>
+				</ScrollView>
 			</ScrollView>
 		);
   };
@@ -154,8 +160,8 @@ const getStyles = (theme) =>
       fontWeight: '600',
       color: theme.colors.primary,
     },
-			cardList: {
-				gap: theme.spacing.sm,
+			table: {
+				minWidth: '100%',
 			},
 			itemCard: {
 				borderWidth: 1,
@@ -164,6 +170,30 @@ const getStyles = (theme) =>
 				padding: theme.spacing.md,
 				backgroundColor: theme.colors.background,
 			},
+			tableRow: {
+                flexDirection: 'row',
+                borderBottomWidth: 1,
+                borderBottomColor: theme.colors.border,
+                paddingVertical: theme.spacing.sm,
+            },
+            tableHeader: {
+                borderBottomWidth: 2,
+                borderBottomColor: theme.colors.primary + '55',
+            },
+            cell: {
+                minWidth: 120,
+                paddingRight: theme.spacing.lg,
+                fontSize: 14,
+                color: theme.colors.text,
+                fontWeight: '500',
+            },
+            headerCell: {
+                fontWeight: '700',
+                color: theme.colors.primary,
+            },
+            primaryCell: {
+                minWidth: 180,
+            },
 			itemTitle: {
 				fontSize: 16,
 				fontWeight: '700',
