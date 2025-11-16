@@ -244,12 +244,12 @@ const AwardsScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.title, { color: heroTextColor }]}>Proposals</Text>
-      <Text style={[styles.subtitle, { color: heroMutedColor }]}>
+      <Text style={[styles.title, { color: '#000000' }]}>Proposals</Text>
+      <Text style={[styles.subtitle, { color: '#000000' }]}>
         Track submissions, review stages, and sponsor deadlines in one place.
       </Text>
 
-      <View style={[styles.tabRowContainer, { borderBottomColor: heroBorderColor }]}>
+      <View style={[styles.tabRowContainer, { borderBottomColor: '#E5E7EB' }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -262,7 +262,7 @@ const AwardsScreen = () => {
                 key={tab.id}
                 style={[
                   styles.tabButton,
-                  isActive && { borderBottomColor: heroTextColor },
+                  isActive && { borderBottomColor: '#000000' },
                 ]}
                 onPress={() => setActiveTab(tab.id)}
               >
@@ -270,7 +270,7 @@ const AwardsScreen = () => {
                   style={[
                     styles.tabLabel,
                     {
-                      color: isActive ? heroTextColor : heroMutedColor,
+                      color: '#000000',
                     },
                   ]}
                 >
@@ -286,7 +286,7 @@ const AwardsScreen = () => {
           style={[
             styles.dropdownButton,
             {
-              borderColor: heroBorderColor,
+              borderColor: '#E5E7EB',
               backgroundColor: theme.colors.surface,
             },
           ]}
@@ -294,12 +294,12 @@ const AwardsScreen = () => {
           activeOpacity={0.85}
         >
           <View>
-            <Text style={[styles.dropdownLabel, { color: heroMutedColor }]}>Sort by</Text>
-            <Text style={[styles.dropdownValue, { color: heroTextColor }]}>
+            <Text style={[styles.dropdownLabel, { color: '#000000' }]}>Sort by</Text>
+            <Text style={[styles.dropdownValue, { color: '#000000' }]}>
               {activeSortOption.label}
             </Text>
           </View>
-          <Icon name="chevron-down" size={16} color={heroTextColor} />
+          <Icon name="chevron-down" size={16} color={'#000000'} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.clearButton, { borderColor: heroBorderColor }]}
@@ -312,8 +312,8 @@ const AwardsScreen = () => {
           }}
           activeOpacity={0.8}
         >
-          <Icon name="close-circle-outline" size={16} color={heroMutedColor} />
-          <Text style={[styles.clearText, { color: heroMutedColor }]}>Clear</Text>
+          <Icon name="close-circle-outline" size={16} color={'#000000'} />
+          <Text style={[styles.clearText, { color: '#000000' }]}>Clear</Text>
         </TouchableOpacity>
       </View>
 
@@ -322,17 +322,17 @@ const AwardsScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         {loading && (
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+          <Text style={[styles.subtitle, { color: '#000000' }]}>
             Loading proposals...
           </Text>
         )}
         {error && (
-          <Text style={[styles.subtitle, { color: theme.colors.error }]}>
+          <Text style={[styles.subtitle, { color: '#000000' }]}>
             {error}
           </Text>
         )}
         {!loading && !error && proposals.length === 0 && (
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+          <Text style={[styles.subtitle, { color: '#000000' }]}>
             No proposals found.
           </Text>
         )}
@@ -343,18 +343,18 @@ const AwardsScreen = () => {
               styles.proposalCard,
               {
                 backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
+                borderColor: '#E5E7EB',
               },
             ]}
           >
             <View style={styles.cardHeader}>
               <View style={{ flex: 1 }}>
                 <Text
-                  style={[styles.proposalId, { color: theme.colors.textSecondary }]}
+                  style={[styles.proposalId, { color: '#000000' }]}
                 >
                   Proposal #{proposal.id}
                 </Text>
-                <Text style={[styles.proposalTitle, { color: theme.colors.text }]}>
+                <Text style={[styles.proposalTitle, { color: '#000000' }]}>
                   {proposal.title}
                 </Text>
               </View>
@@ -362,7 +362,7 @@ const AwardsScreen = () => {
                 <View
                   style={[
                     styles.typeBadge,
-                    { borderColor: theme.colors.border, backgroundColor: theme.colors.background },
+                    { borderColor: '#E5E7EB', backgroundColor: theme.colors.background },
                   ]}
                 >
                   <Text style={[styles.badgeText, { color: theme.colors.text }]}>
@@ -390,7 +390,7 @@ const AwardsScreen = () => {
             <View style={styles.metaGrid}>
             {proposal.sponsorDeadline !== '—' && (
               <View style={styles.metaItem}>
-                  <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>
+                <Text style={[styles.metaLabel, { color: '#000000' }]}>
                     Sponsor Deadline
                   </Text>
                   <Text style={[styles.metaValue, { color: theme.colors.text }]}>
@@ -401,7 +401,7 @@ const AwardsScreen = () => {
             
               {proposal.internalDeadline !== '—' && (
                 <View style={styles.metaItem}>
-                  <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>
+                  <Text style={[styles.metaLabel, { color: '#000000' }]}>
                     Internal Deadline
                   </Text>
                   <Text style={[styles.metaValue, { color: theme.colors.text }]}>
@@ -410,7 +410,7 @@ const AwardsScreen = () => {
                 </View>
               )}
               <View style={styles.metaItem}>
-                <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>
+                <Text style={[styles.metaLabel, { color: '#000000' }]}>
                   Sponsor
                 </Text>
                 <Text style={[styles.metaValue, { color: theme.colors.text }]}>
@@ -447,7 +447,7 @@ const AwardsScreen = () => {
               <TouchableOpacity
                 style={[
                   styles.viewButton,
-                  { borderColor: theme.colors.border, backgroundColor: theme.colors.background },
+                  { borderColor: '#E5E7EB', backgroundColor: theme.colors.background },
                 ]}
                 activeOpacity={0.9}
                 onPress={() => {
@@ -455,8 +455,8 @@ const AwardsScreen = () => {
                   setViewModalVisible(true);
                 }}
               >
-                <Icon name="eye-outline" size={14} color={theme.colors.text} />
-                <Text style={[styles.viewButtonText, { color: theme.colors.text }]}>View</Text>
+                <Icon name="eye-outline" size={14} color={'#000000'} />
+                <Text style={[styles.viewButtonText, { color: '#000000' }]}>View</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -474,7 +474,7 @@ const AwardsScreen = () => {
               <View
                 style={[
                   styles.dropdownList,
-                  { backgroundColor: theme.colors.surface, borderColor: heroBorderColor },
+                  { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' },
                 ]}
               >
                 {sortOptions.map((option) => {
@@ -492,7 +492,7 @@ const AwardsScreen = () => {
                         style={[
                           styles.dropdownItemLabel,
                           {
-                            color: isActive ? heroTextColor : theme.colors.text,
+                            color: '#000000',
                             fontWeight: isActive ? '700' : '500',
                           },
                         ]}
@@ -507,7 +507,7 @@ const AwardsScreen = () => {
                               : 'arrow-down-outline'
                           }
                           size={16}
-                          color={heroTextColor}
+                          color={'#000000'}
                         />
                       )}
                     </TouchableOpacity>

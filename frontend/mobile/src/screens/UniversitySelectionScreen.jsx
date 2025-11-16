@@ -226,6 +226,7 @@ import {
   useWindowDimensions,
   ActivityIndicator,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import useTheme from '../hooks/useTheme.jsx';
 import { fetchUniversities } from '../api/universityApi.js';
 import Logo1 from '../assets/universitylogo/Logo1.png';
@@ -296,7 +297,7 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         paddingTop: 60,
         paddingBottom: spacing.xxl,
         paddingHorizontal: spacing.xxl,
-        backgroundColor: colors.primary,
+        backgroundColor: 'transparent',
       },
       title: {
         fontSize: 28,
@@ -429,7 +430,12 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#48bd92', '#26a699']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={styles.container}
+    >
       <View style={styles.header}>
         <Text style={styles.title}>Select a University</Text>
         <Text style={styles.subtitle}>Choose your institution to continue</Text>
@@ -498,7 +504,7 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
       />
 
       {/* selection info / confirm button removed per request */}
-    </View>
+    </LinearGradient>
   );
 };
 

@@ -1,5 +1,6 @@
 // app/RootNavigator.jsx
 import React, { useState, useCallback, useMemo } from 'react';
+import { View, StatusBar } from 'react-native';
 import { useDispatch } from 'react-redux';
 import UniversitySelectionScreen from '../screens/UniversitySelectionScreen.jsx';
 import LoginScreen from '../screens/LoginScreen.jsx';
@@ -74,10 +75,11 @@ const RootNavigator = () => {
   const shouldShowChatbot = !showAnimatedSplash && isAuthenticated;
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: '#F2F3F8' }}>
+      <StatusBar translucent={false} backgroundColor="#F2F3F8" barStyle="dark-content" />
       {content}
       {shouldShowChatbot && <ChatbotWidget />}
-    </>
+    </View>
   );
 };
 

@@ -250,14 +250,14 @@ const ServiceTrackerScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
-      <Text style={[styles.title, { color: heroTextColor }]}>Service Tracker</Text>
-      <Text style={[styles.subtitle, { color: heroMutedColor }]}>Track service requests, priorities and assignment in one place.</Text>
+      <Text style={[styles.title, { color: '#000000' }]}>Service Tracker</Text>
+      <Text style={[styles.subtitle, { color: '#000000' }]}>Track service requests, priorities and assignment in one place.</Text>
 
       <View style={[styles.searchRow, { marginBottom: 12 }]}> 
         <TextInput
-          style={[styles.searchInput, { borderColor: heroBorderColor, backgroundColor: theme.colors.surface, color: heroTextColor }]}
+          style={[styles.searchInput, { borderColor: '#E5E7EB', backgroundColor: theme.colors.surface, color: '#000000' }]}
           placeholder="Search requests"
-          placeholderTextColor={heroMutedColor}
+          placeholderTextColor={'#000000'}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -265,30 +265,30 @@ const ServiceTrackerScreen = () => {
 
       <View style={styles.sortControls}>
         <TouchableOpacity
-          style={[styles.dropdownButton, { borderColor: heroBorderColor, backgroundColor: theme.colors.surface }]}
+          style={[styles.dropdownButton, { borderColor: '#E5E7EB', backgroundColor: theme.colors.surface }]}
           onPress={() => setSortMenuVisible(true)}
           activeOpacity={0.85}
         >
           <View>
-            <Text style={[styles.dropdownLabel, { color: heroMutedColor }]}>Sort by</Text>
-            <Text style={[styles.dropdownValue, { color: heroTextColor }]}>{activeSortLabel}</Text>
+            <Text style={[styles.dropdownLabel, { color: '#000000' }]}>Sort by</Text>
+            <Text style={[styles.dropdownValue, { color: '#000000' }]}>{activeSortLabel}</Text>
           </View>
-          <Icon name="chevron-down" size={16} color={heroTextColor} />
+          <Icon name="chevron-down" size={16} color={'#000000'} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.dropdownButton, { borderColor: heroBorderColor, backgroundColor: theme.colors.surface, marginLeft: 8 }]}
+          style={[styles.dropdownButton, { borderColor: '#E5E7EB', backgroundColor: theme.colors.surface, marginLeft: 8 }]}
           onPress={() => setStatusMenuVisible(true)}
           activeOpacity={0.85}
         >
           <View>
-            <Text style={[styles.dropdownLabel, { color: heroMutedColor }]}>Status</Text>
-            <Text style={[styles.dropdownValue, { color: heroTextColor }]}>{selectedStatus}</Text>
+            <Text style={[styles.dropdownLabel, { color: '#000000' }]}>Status</Text>
+            <Text style={[styles.dropdownValue, { color: '#000000' }]}>{selectedStatus}</Text>
           </View>
-          <Icon name="chevron-down" size={16} color={heroTextColor} />
+          <Icon name="chevron-down" size={16} color={'#000000'} />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.clearButton, { borderColor: heroBorderColor }]} onPress={() => { setSortConfig({ key: 'createDate', direction: 'desc' }); setSearchQuery(''); setSelectedStatus('All'); }} activeOpacity={0.8}>
-          <Icon name="close-circle-outline" size={16} color={heroMutedColor} />
-          <Text style={[styles.clearText, { color: heroMutedColor }]}>Clear</Text>
+        <TouchableOpacity style={[styles.clearButton, { borderColor: '#E5E7EB' }]} onPress={() => { setSortConfig({ key: 'createDate', direction: 'desc' }); setSearchQuery(''); setSelectedStatus('All'); }} activeOpacity={0.8}>
+          <Icon name="close-circle-outline" size={16} color={'#000000'} />
+          <Text style={[styles.clearText, { color: '#000000' }]}>Clear</Text>
         </TouchableOpacity>
       </View>
 
@@ -297,7 +297,7 @@ const ServiceTrackerScreen = () => {
         <TouchableWithoutFeedback onPress={() => setStatusMenuVisible(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: heroBorderColor }]}>
+              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' }]}>
                 {(() => {
                   const preset = ['All', 'Inactive', 'Review In Progress', 'Approval In Progress', 'In Progress'];
                   const combined = Array.from(new Set([...preset, ...(statuses || [])]));
@@ -305,8 +305,8 @@ const ServiceTrackerScreen = () => {
                     const isActive = opt === selectedStatus;
                     return (
                       <TouchableOpacity key={opt} style={styles.dropdownItem} onPress={() => { setSelectedStatus(opt); setStatusMenuVisible(false); }}>
-                        <Text style={[styles.dropdownItemLabel, { color: isActive ? heroTextColor : theme.colors.text }]}>{opt}</Text>
-                        {isActive && <Icon name={sortConfig.direction === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'} size={16} color={heroTextColor} />}
+                        <Text style={[styles.dropdownItemLabel, { color: '#000000' }]}>{opt}</Text>
+                        {isActive && <Icon name={sortConfig.direction === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'} size={16} color={'#000000'} />}
                       </TouchableOpacity>
                     );
                   });
@@ -320,14 +320,14 @@ const ServiceTrackerScreen = () => {
       {/* status chips removed — dropdown filter is used instead */}
 
       {loading && <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 8 }} />}
-      {error && <Text style={[styles.subtitle, { color: theme.colors.error }]}>{error}</Text>}
+      {error && <Text style={[styles.subtitle, { color: '#000000' }]}>{error}</Text>}
 
       <ScrollView contentContainerStyle={styles.cardList} showsVerticalScrollIndicator={false}>
         {!loading && !error && filteredData.length === 0 && (
-          <Text style={[styles.subtitle, { color: heroMutedColor }]}>No requests found.</Text>
+          <Text style={[styles.subtitle, { color: '#000000' }]}>No requests found.</Text>
         )}
         {!loading && !error && filteredData.map((it) => (
-          <View key={it.id} style={[styles.proposalCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <View key={it.id} style={[styles.proposalCard, { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' }]}>
             {renderItem({ item: it })}
           </View>
         ))}
@@ -338,14 +338,14 @@ const ServiceTrackerScreen = () => {
         <TouchableWithoutFeedback onPress={() => setSortMenuVisible(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: heroBorderColor }]}>
+              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' }]}>
                 {sortOptions.map((option) => {
                   const isActive = option.key === sortConfig.key;
                   return (
                     <TouchableOpacity key={option.key} style={styles.dropdownItem} onPress={() => { setSortConfig((prev) => ({ key: option.key, direction: prev.key === option.key ? (prev.direction === 'asc' ? 'desc' : 'asc') : 'asc' })); setSortMenuVisible(false); }}>
-                      <Text style={[styles.dropdownItemLabel, { color: isActive ? heroTextColor : theme.colors.text, fontWeight: isActive ? '700' : '500' }]}>{option.label}</Text>
+                      <Text style={[styles.dropdownItemLabel, { color: '#000000', fontWeight: isActive ? '700' : '500' }]}>{option.label}</Text>
                       {isActive && (
-                        <Icon name={sortConfig.direction === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'} size={16} color={heroTextColor} />
+                        <Icon name={sortConfig.direction === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'} size={16} color={'#000000'} />
                       )}
                     </TouchableOpacity>
                   );

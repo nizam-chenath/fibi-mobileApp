@@ -156,8 +156,8 @@ const EmailHubScreen = ({ onClose }) => {
             accessibilityRole="button"
             accessibilityLabel="View full message"
           >
-            <Icon name="eye-outline" size={14} color={theme.colors.text} />
-            <Text style={[styles.viewButtonText, { color: theme.colors.text }]}>View</Text>
+            <Icon name="eye-outline" size={14} color={'#000000'} />
+            <Text style={[styles.viewButtonText, { color: '#000000' }]}>View</Text>
           </TouchableOpacity>
         </View>
   
@@ -169,7 +169,7 @@ const EmailHubScreen = ({ onClose }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onClose} style={styles.backButton} activeOpacity={0.85}>
-          <Icon name="chevron-back" size={22} color={theme.colors.text} />
+          <Icon name="chevron-back" size={22} color={'#000000'} />
         </TouchableOpacity>
         <Text style={styles.screenTitle}>Email Hub</Text>
         <TouchableOpacity
@@ -177,7 +177,7 @@ const EmailHubScreen = ({ onClose }) => {
           style={styles.refreshButton}
           activeOpacity={0.85}
         >
-          <Icon name="refresh" size={18} color={theme.colors.text} />
+          <Icon name="refresh" size={18} color={'#000000'} />
         </TouchableOpacity>
       </View>
 
@@ -193,10 +193,10 @@ const EmailHubScreen = ({ onClose }) => {
               <Text style={styles.dropdownValue}>
                 {selectedType || 'Inbox'}
               </Text>
-              <Icon name={dropdownOpen ? 'chevron-up' : 'chevron-down'} size={16} color={theme.colors.text} />
+              <Icon name={dropdownOpen ? 'chevron-up' : 'chevron-down'} size={16} color={'#000000'} />
             </TouchableOpacity>
             {dropdownOpen && (
-              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' }]}>
                 <TouchableOpacity
                   style={styles.dropdownItem}
                   onPress={() => {
@@ -325,7 +325,7 @@ const getStyles = (theme) =>
     screenTitle: {
       fontSize: 22,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
     },
     refreshButton: {
       padding: theme.spacing.sm,
@@ -348,7 +348,7 @@ const getStyles = (theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       borderRadius: 12,
       paddingHorizontal: 12,
       paddingVertical: 10,
@@ -357,7 +357,7 @@ const getStyles = (theme) =>
     dropdownValue: {
       fontSize: 14,
       fontWeight: '600',
-      color: theme.colors.text,
+      color: '#000000',
     },
     dropdownList: {
       marginTop: 6,
@@ -373,7 +373,7 @@ const getStyles = (theme) =>
     },
     dropdownItemText: {
       fontSize: 14,
-      color: theme.colors.text,
+      color: '#000000',
     },
     listContent: {
       paddingBottom: theme.spacing.xxl,
@@ -384,7 +384,7 @@ const getStyles = (theme) =>
       borderRadius: theme.borderRadius.lg,
       backgroundColor: theme.colors.surface,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
     },
     unreadCard: {
       borderColor: theme.colors.primary,
@@ -399,18 +399,18 @@ const getStyles = (theme) =>
     title: {
       fontSize: 16,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
       flex: 1,
       marginRight: 24,
     },
     timeAgo: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: '#000000',
       marginLeft: 20,
     },
     message: {
       fontSize: 14,
-      color: theme.colors.textSecondary,
+      color: '#000000',
       marginTop: 6,
     },
     cardFooter: {
@@ -426,7 +426,7 @@ const getStyles = (theme) =>
       paddingVertical: 6,
       borderRadius: 999,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       backgroundColor: theme.colors.background,
     },
     viewButtonText: {
@@ -444,7 +444,7 @@ const getStyles = (theme) =>
     pillText: {
       fontSize: 12,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
       textTransform: 'uppercase',
       letterSpacing: 0.4,
     },
@@ -456,7 +456,7 @@ const getStyles = (theme) =>
     },
     stateText: {
       fontSize: 14,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     retryButton: {
       marginTop: 8,

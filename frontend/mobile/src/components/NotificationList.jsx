@@ -46,7 +46,7 @@ const NotificationList = ({ visible, notifications = [], onClose }) => {
           textAlign: 'center',
           fontSize: 18,
           fontWeight: '700',
-          color: theme.colors.textPrimary || '#111',
+          color: '#000000',
         },
         closeButton: {
           padding: theme.spacing.xs,
@@ -56,7 +56,7 @@ const NotificationList = ({ visible, notifications = [], onClose }) => {
           alignItems: 'center',
         },
         emptyText: {
-          color: theme.colors.textMuted || '#666',
+          color: '#000000',
         },
         notificationCard: {
           borderRadius: theme.borderRadius.md,
@@ -77,18 +77,18 @@ const NotificationList = ({ visible, notifications = [], onClose }) => {
         title: {
           fontSize: 14,
           fontWeight: '600',
-          color: theme.colors.textPrimary || '#111',
+          color: '#000000',
           flex: 1,
           marginRight: theme.spacing.xs,
         },
         timeAgo: {
           fontSize: 12,
-          color: theme.colors.textMuted || '#666',
+          color: '#000000',
         },
         message: {
           marginTop: 4,
           fontSize: 13,
-          color: theme.colors.textSecondary || '#333',
+          color: '#000000',
         },
         source: {
           marginTop: 6,
@@ -132,12 +132,12 @@ const NotificationList = ({ visible, notifications = [], onClose }) => {
                   <Icon
                     name="chevron-back"
                     size={22}
-                    color={theme.colors.textPrimary || '#111'}
+                    color={'#000000'}
                   />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Notification Hub</Text>
                 <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                  <Icon name="close" size={20} color={theme.colors.textPrimary || '#111'} />
+                  <Icon name="close" size={20} color={'#000000'} />
                 </TouchableOpacity>
               </View>
               {notifications.length === 0 ? (

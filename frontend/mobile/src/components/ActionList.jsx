@@ -114,7 +114,7 @@ const ActionList = ({
     if (filteredItems.length === 0) {
       return (
         <View style={styles.stateWrapper}>
-          <Icon name="filter-circle-outline" size={22} color={theme.colors.textSecondary} />
+          <Icon name="filter-circle-outline" size={22} color="#000000" />
           <Text style={styles.stateText}>
             {statusFilter === 'pending'
               ? 'No pending actions right now'
@@ -173,7 +173,7 @@ const ActionList = ({
                 <Text
                   style={[
                     styles.filterLabel,
-                    isActive && { color: theme.colors.primary, fontWeight: '700' },
+                    isActive && { color: '#000000', fontWeight: '700' },
                   ]}
                 >
                   {filterKey === 'pending' ? 'Pending' : 'Processed'}
@@ -254,7 +254,7 @@ const getStyles = (theme) =>
       gap: theme.spacing.xs,
     },
     filterButtonActive: {
-      backgroundColor: 'transparent',
+      backgroundColor: theme.colors.primary + '15',
     },
     filterLabel: {
       fontSize: 13,

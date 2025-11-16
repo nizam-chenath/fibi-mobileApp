@@ -44,7 +44,7 @@ const BottomNavBar = ({
       style={[
         styles.wrapper,
         {
-          backgroundColor: theme.colors.text,
+          backgroundColor: "#36454F",
           shadowColor: theme.colors.text,
         },
         style,
@@ -60,7 +60,7 @@ const BottomNavBar = ({
             styles.indicator,
             {
               width: Math.max(tabWidth - 8, 0),
-              backgroundColor: theme.colors.primary,
+              backgroundColor: theme.colors.brandPrimary,
               transform: [{ translateX: indicatorAnim }],
             },
           ]}
