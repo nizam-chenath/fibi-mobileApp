@@ -50,6 +50,8 @@ async function sendPushNotificationToAllUsers(title, body) {
           body: body
         },
         android: {
+          priority: 'high',
+          ttl: 300000, // 5 minutes
           notification: {
             icon: 'ic_notification',
             color: '#FFFFFF',
