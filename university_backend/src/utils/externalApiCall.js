@@ -125,12 +125,9 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
         // Don't set Connection header - let Node.js handle it automatically
       };
 
-      // Add cookies to headers if provided (BEFORE logging)
-      console.log('Checking cookies parameter:', cookies ? 'exists' : 'null/undefined');
-      console.log('Cookies type:', typeof cookies);
-      console.log('Cookies value (first 100 chars):', cookies ? cookies.substring(0, 100) : 'N/A');
-      
-      if (cookies) {
+      // Add cookies to headers ONLY if explicitly provided and valid
+      // For notification API, cookies should be null/undefined - do not add Cookie header
+      if (cookies !== null && cookies !== undefined) {
         if (typeof cookies === 'string' && cookies.trim().length > 0) {
           headers['Cookie'] = cookies;
           console.log('✓ Cookie header added successfully');
@@ -138,14 +135,10 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
           // If array of cookie strings, join them
           headers['Cookie'] = cookies.join('; ');
           console.log('✓ Cookie header added from array');
-        } else {
-          console.log('⚠ Cookies parameter exists but is empty or invalid');
         }
-      } else {
-        console.log('⚠ No cookies provided to external API call');
+        // Silently skip if cookies is empty or invalid
       }
-      
-      console.log('External API headers (final):', JSON.stringify(headers, null, 2));
+      // When cookies is null/undefined, no Cookie header is added - this is correct for APIs that don't need cookies
 
       // Request options
       const requestOptions = {
@@ -299,8 +292,124 @@ async function callExternalApi(baseUrl, endpoint, method = 'POST', data = {}, op
   });
 }
 
+/**
+ * Call external API without cookies - simplified version for APIs that don't need cookies
+ * @param {string} baseUrl - Base URL of the external API
+ * @param {string} endpoint - API endpoint path
+ * @param {string} method - HTTP method (default: 'POST')
+ * @param {object} data - Request body data
+ * @returns {Promise<*>} - API response data or null on error
+ */
+async function callExternalApiWithoutCookies(baseUrl, endpoint, method = 'POST', data = {}) {
+  return new Promise((resolve) => {
+    try {
+      // Normalize base URL
+      let normalizedBaseUrl = baseUrl.trim();
+      if (!normalizedBaseUrl.startsWith('http://') && !normalizedBaseUrl.startsWith('https://')) {
+        if (normalizedBaseUrl.includes('localhost') || normalizedBaseUrl.startsWith('127.0.0.1')) {
+          normalizedBaseUrl = `http://${normalizedBaseUrl}`;
+        } else {
+          normalizedBaseUrl = `https://${normalizedBaseUrl}`;
+        }
+      }
+
+      const fullApiUrl = `${normalizedBaseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+      console.log(`Calling external API without cookies: ${fullApiUrl}`);
+      const url = new URL(fullApiUrl);
+      const isHttps = url.protocol === 'https:';
+      const httpModule = isHttps ? https : http;
+
+      // Prepare request data
+      const postData = JSON.stringify(data);
+      const postDataBuffer = Buffer.from(postData, 'utf8');
+      const contentLength = postDataBuffer.length;
+
+      // Prepare headers - NO cookies, only essential headers
+      const headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': contentLength.toString()
+      };
+
+      const requestOptions = {
+        hostname: url.hostname,
+        port: url.port || (isHttps ? 443 : 80),
+        path: url.pathname + url.search,
+        method: method,
+        headers: headers
+      };
+
+      const connectionTimeoutId = setTimeout(() => {
+        console.error('Connection timeout - server may not be running or unreachable');
+        resolve(null);
+      }, 10000);
+
+      let requestCompleted = false;
+
+      const req = httpModule.request(requestOptions, (res) => {
+        if (requestCompleted) return;
+        requestCompleted = true;
+        clearTimeout(connectionTimeoutId);
+        let responseData = '';
+
+        res.on('data', (chunk) => {
+          responseData += chunk;
+        });
+
+        res.on('end', () => {
+          try {
+            if (res.statusCode === 200 || res.statusCode === 201) {
+              const parsedData = JSON.parse(responseData);
+              console.log(`✓ API call successful with status ${res.statusCode}`);
+              resolve(parsedData);
+            } else {
+              console.error(`❌ API call failed with status ${res.statusCode}`);
+              console.error(`Request URL: ${fullApiUrl}`);
+              console.error(`Response: ${responseData.substring(0, 500)}`);
+              resolve(null);
+            }
+          } catch (error) {
+            console.error('Error parsing API response:', error);
+            console.error('Response data:', responseData.substring(0, 200));
+            resolve(null);
+          }
+        });
+      });
+
+      req.on('error', (error) => {
+        if (requestCompleted) return;
+        requestCompleted = true;
+        clearTimeout(connectionTimeoutId);
+        if (error.code === 'ECONNREFUSED') {
+          console.error(`Connection refused - is the server running on ${normalizedBaseUrl}?`);
+        } else if (error.code === 'ETIMEDOUT') {
+          console.error(`Connection timeout - server at ${normalizedBaseUrl} is not responding`);
+        } else {
+          console.error('Error calling external API:', error.code, error.message);
+        }
+        resolve(null);
+      });
+
+      req.setTimeout(30000, () => {
+        if (requestCompleted) return;
+        requestCompleted = true;
+        clearTimeout(connectionTimeoutId);
+        console.error('Request timeout after 30 seconds');
+        req.destroy();
+        resolve(null);
+      });
+
+      req.write(postDataBuffer);
+      req.end();
+    } catch (error) {
+      console.error('Error setting up API request:', error);
+      resolve(null);
+    }
+  });
+}
+
 module.exports = {
   callExternalApi,
+  callExternalApiWithoutCookies,
   convertKeysToLowercase,
   normalizeBaseUrl
 };
