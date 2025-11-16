@@ -1,5 +1,5 @@
 const { sendToRoom } = require('../utils/socket');
-const { broadcastMessage } = require('./pushNotificationController');
+const { broadcastMessage } = require('../services/pushNotificationService');
 
 // Common room name for all notifications
 const COMMON_ROOM_NAME = 'notifications-room';
