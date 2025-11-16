@@ -64,11 +64,21 @@ const UserRoutes = require('./src/routes/userRoutes');
 const ProposalRoutes = require('./src/routes/proposalRoutes');
 const LoginRoutes = require('./src/routes/login');
 const ServiceRequestRoutes = require('./src/routes/serviceRequestRoutes');
+const EmailHubRoutes = require('./src/routes/emailHubRoutes');
+const EmailHubMessageTypeRoutes = require('./src/routes/emailHubMessageTypeRoutes');
+const DashboardOverviewRoutes = require('./src/routes/dashboardOverviewRoutes');
 
 app.use('/api/users', UserRoutes);
 app.use('/api/proposals', ProposalRoutes);
 app.use('/api/login', LoginRoutes);
 app.use('/api/service-requests', ServiceRequestRoutes);
+app.use('/api/email-hub', EmailHubRoutes);
+app.use('/api/message_types', EmailHubMessageTypeRoutes);
+app.use('/api/dashboard-overview', DashboardOverviewRoutes);
+
+// Start inbox cron job to check for new entries every 5 minutes
+const { startInboxCronJob } = require('./src/services/inboxCronJob');
+startInboxCronJob();
 
 if (process.env.SSL_ENABLED === 'true') {
   const key = fs.readFileSync(process.env.SSL_KEY_PATH);

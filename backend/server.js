@@ -9,6 +9,7 @@ require('dotenv').config();
 const PORT_CONNECTION = process.env.PORT_CONNECTION || 5000;
 const mysqlPool = require('./src/db/mysql');
 const authenticateToken = require('./src/middleware/authenticate');
+const { initializeSocket } = require('./src/utils/socket');
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb' }));
@@ -20,18 +21,25 @@ app.use(cors({
 
 app.set('mysqlPool', mysqlPool);
 
+// Create HTTP/HTTPS server
+let server;
 if (process.env.SSL_ENABLED === 'true') {
   const key = fs.readFileSync(process.env.SSL_KEY_PATH);
   const cert = fs.readFileSync(process.env.SSL_CERT_PATH);
 
-  https.createServer({ key, cert }, app).listen(PORT_CONNECTION, () => {
+  server = https.createServer({ key, cert }, app);
+  server.listen(PORT_CONNECTION, () => {
     console.log(`Server running with SSL on port ${PORT_CONNECTION}`);
   });
 } else {
-  http.createServer(app).listen(PORT_CONNECTION, () => {
+  server = http.createServer(app);
+  server.listen(PORT_CONNECTION, () => {
     console.log(`Server running without SSL on port ${PORT_CONNECTION}`);
   });
 }
+
+// Initialize Socket.IO
+initializeSocket(server);
 
 const loginRoute = require('./src/routes/login');
 const logoutRoute = require('./src/routes/logout');
@@ -42,6 +50,8 @@ const deleteRoute = require('./src/routes/delete');
 const universitiesRoute = require('./src/routes/universities');
 const proposalRoutes = require('./src/routes/proposalRoutes');
 const serviceRequestRoutes = require('./src/routes/serviceRequestRoutes');
+const notificationRoutes = require('./src/routes/notificationRoutes');
+const emailHubRoutes = require('./src/routes/emailHubRoutes');
 
 app.use('/api/login', loginRoute);
 app.use('/api/logout', logoutRoute);
@@ -52,4 +62,6 @@ app.use('/api/delete-user', authenticateToken, deleteRoute);
 app.use('/api/universities', universitiesRoute);
 app.use('/api/proposals', authenticateToken, proposalRoutes);
 app.use('/api/service-requests', authenticateToken, serviceRequestRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/email-hub', authenticateToken, emailHubRoutes);
 
