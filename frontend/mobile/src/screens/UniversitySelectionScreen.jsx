@@ -221,9 +221,10 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
+  FlatList,
   Image,
   useWindowDimensions,
+  ActivityIndicator,
 } from 'react-native';
 import useTheme from '../hooks/useTheme.jsx';
 import { fetchUniversities } from '../api/universityApi.js';
@@ -284,11 +285,6 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
 
   const { styles, logoDimensions } = useMemo(() => {
     const { colors, spacing, borderRadius } = theme;
-    const horizontalPadding = spacing.xxl * 2;
-    const columnGap = spacing.md;
-    const availableWidth = Math.max(width - horizontalPadding - columnGap, 320);
-    const tileWidth = availableWidth / 2;
-    const tileHeight = 160;
 
     const sheet = StyleSheet.create({
       container: {
@@ -315,11 +311,10 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         opacity: 0.8,
         fontWeight: '500',
       },
-      scrollContent: {
+      listContent: {
         paddingHorizontal: spacing.xxl,
         paddingTop: spacing.lg,
         paddingBottom: spacing.xxxl,
-        backgroundColor: 'transparent',
       },
       sectionLabel: {
         fontSize: 16,
@@ -327,35 +322,33 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         color: colors.surface,
         marginBottom: spacing.lg,
       },
-      tileGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        marginBottom: spacing.xxxl,
-      },
-      tileWrapper: {
+      gridItemWrapper: {
         width: '48%',
-        marginBottom: spacing.lg,
+        marginBottom: spacing.sm,
       },
-      tile: {
-        borderRadius: 20,
-        height: tileHeight,
-        paddingVertical: spacing.md,
-        paddingHorizontal: spacing.md,
+      itemTouchable: {
+        borderRadius: 14,
+      },
+      item: {
+        position: 'relative',
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        minHeight: 64,
+        paddingVertical: spacing.md,
+        paddingHorizontal: spacing.lg,
+        borderRadius: 14,
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderWidth: 2,
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.15)',
       },
-      tileSelected: {
-        backgroundColor: 'rgba(52, 211, 153, 0.2)',
+      itemSelected: {
+        backgroundColor: 'rgba(52, 211, 153, 0.18)',
         borderColor: '#34d399',
-        borderWidth: 2,
+        borderWidth: 1,
       },
       logoWrapper: {
-        width: 60,
-        height: 60,
+        width: 56,
+        height: 56,
         borderRadius: 12,
         backgroundColor: colors.surface,
         alignItems: 'center',
@@ -363,30 +356,28 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         marginBottom: spacing.sm,
       },
       logoImage: {
-        borderRadius: 10,
+        borderRadius: 8,
       },
-      tileLabel: {
-        fontSize: 12,
+      itemLabel: {
+        fontSize: 14,
         fontWeight: '600',
         color: colors.surface,
         textAlign: 'center',
-        lineHeight: 16,
-        flex: 1,
-        textAlignVertical: 'center',
+        paddingHorizontal: spacing.sm,
       },
       checkIcon: {
         position: 'absolute',
-        top: 10,
-        right: 10,
-        width: 28,
-        height: 28,
-        borderRadius: 14,
+        top: 6,
+        right: 6,
+        width: 22,
+        height: 22,
+        borderRadius: 11,
         backgroundColor: '#34d399',
         alignItems: 'center',
         justifyContent: 'center',
       },
       checkText: {
-        fontSize: 16,
+        fontSize: 13,
         fontWeight: 'bold',
         color: '#1f2937',
       },
@@ -394,7 +385,7 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
 
     return {
       styles: sheet,
-      logoDimensions: { width: 48, height: 48 },
+      logoDimensions: { width: 40, height: 40 },
     };
   }, [theme, width]);
 
@@ -444,64 +435,67 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         <Text style={styles.subtitle}>Choose your institution to continue</Text>
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
+      <FlatList
+        data={tiles}
+        keyExtractor={(item) => String(item.id)}
+        numColumns={2}
+        contentContainerStyle={styles.listContent}
+        columnWrapperStyle={{ justifyContent: 'space-between' }}
         showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.sectionLabel}>Universities</Text>
-        {loading && (
-          <Text style={[styles.subtitle, { color: theme.colors.surface, marginBottom: theme.spacing.md }]}>
-            Loading universities...
-          </Text>
-        )}
-        {error && (
-          <Text style={[styles.subtitle, { color: theme.colors.error, marginBottom: theme.spacing.md }]}>
-            {error}
-          </Text>
-        )}
-        <View style={styles.tileGrid}>
-          {tiles.map((item) => (
-            <View key={item.id} style={styles.tileWrapper}>
-              <TouchableOpacity
-                onPress={() => handleSelect(item)}
-                activeOpacity={0.85}
-              >
+        ListHeaderComponent={<Text style={styles.sectionLabel}>Universities</Text>}
+        ListEmptyComponent={
+          loading ? (
+            <View style={{ paddingVertical: theme.spacing.xl, alignItems: 'center' }}>
+              <ActivityIndicator color={theme.colors.surface} />
+            </View>
+          ) : error ? (
+            <Text style={[styles.subtitle, { color: theme.colors.error }]}>
+              {error}
+            </Text>
+          ) : (
+            <Text style={[styles.subtitle, { color: theme.colors.surface }]}>
+              No universities found
+            </Text>
+          )
+        }
+        renderItem={({ item }) => (
+          <View style={styles.gridItemWrapper}>
+            <TouchableOpacity
+              onPress={() => handleSelect(item)}
+              activeOpacity={0.85}
+              style={styles.itemTouchable}
+              accessibilityRole="button"
+              accessibilityLabel={`Select ${item.name}`}
+              accessibilityState={{ selected: selectedId === item.id }}
+            >
               <View
                 style={[
-                  styles.tile,
+                  styles.item,
                   {
                     backgroundColor: item.themeColor
-                      ? applyOpacity(item.themeColor, 0.18)
-                      : styles.tile.backgroundColor,
-                    borderColor: item.themeColor || styles.tile.borderColor,
+                      ? applyOpacity(item.themeColor, selectedId === item.id ? 0.35 : 0.18)
+                      : styles.item.backgroundColor,
+                    borderColor: item.themeColor || styles.item.borderColor,
                   },
-                  selectedId === item.id && {
-                    backgroundColor: item.themeColor
-                      ? applyOpacity(item.themeColor, 0.35)
-                      : styles.tileSelected.backgroundColor,
-                    borderColor: item.themeColor || styles.tileSelected.borderColor,
-                  },
+                  selectedId === item.id && styles.itemSelected,
                 ]}
               >
-                  {selectedId === item.id && (
-                    <View style={styles.checkIcon}>
-                      <Text style={styles.checkText}>✓</Text>
-                    </View>
-                  )}
-
-                  <View style={styles.logoWrapper}>
-                    {renderLogo(item.logoAsset)}
+                {selectedId === item.id && (
+                  <View style={styles.checkIcon}>
+                    <Text style={styles.checkText}>✓</Text>
                   </View>
-
-                  <Text style={styles.tileLabel} numberOfLines={2}>
-                    {item.name}
-                  </Text>
+                )}
+                <View style={styles.logoWrapper}>
+                  {renderLogo(item.logoAsset)}
                 </View>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+                <Text style={styles.itemLabel} numberOfLines={2}>
+                  {item.name}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
 
       {/* selection info / confirm button removed per request */}
     </View>

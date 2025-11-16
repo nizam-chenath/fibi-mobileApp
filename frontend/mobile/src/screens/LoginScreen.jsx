@@ -46,7 +46,7 @@ const LoginScreen = () => {
     return theme.branding.logo;
   }, [theme.branding]);
 
-  const secondaryBackground = theme.colors?.background || '#48BD92';
+  const secondaryBackground = theme.colors?.Lightbackground || theme.colors?.background;
   const mutedText = 'rgba(28, 28, 28, 0.65)';
 
   const handleLogin = async () => {
@@ -92,7 +92,7 @@ const LoginScreen = () => {
       flex: 1,
     },
     scrollContent: {
-      marginTop: 90,
+      marginTop: 150,
       // backgroundColor: 'red',
       paddingHorizontal: theme.spacing.xl,
       paddingVertical: theme.spacing.xxxl,
@@ -285,7 +285,7 @@ const LoginScreen = () => {
       ...StyleSheet.absoluteFillObject,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.Lightbackground || theme.colors.background,
       zIndex: 999,
     },
   });
@@ -355,7 +355,7 @@ const LoginScreen = () => {
               </View>
             </View>
 
-            <View style={styles.tenantSummary}>
+            {/* <View style={styles.tenantSummary}>
               <View style={styles.tenantSummaryLogoWrapper}>
                 <Image source={brandingLogoSource} style={styles.tenantSummaryLogo} />
               </View>
@@ -365,7 +365,7 @@ const LoginScreen = () => {
                   {hasSelectedUniversity ? selectedUniversityName : 'Please choose a university'}
                 </Text>
               </View>
-            </View>
+            </View> */}
 
             {error && <Text style={styles.errorText}>❌ {error}</Text>}
 

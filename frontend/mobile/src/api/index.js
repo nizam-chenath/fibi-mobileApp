@@ -5,6 +5,7 @@ import * as proposalsApi from './proposalsApi.js';
 import * as universityApi from './universityApi.js';
 import * as agreementsApi from './agreementsApi.js';
 import * as researchSummaryApi from './researchSummaryApi.js';
+import * as logoutApi from './logoutApi.js';
 
 export {
   apiClient,
@@ -14,6 +15,7 @@ export {
   universityApi,
   agreementsApi,
   researchSummaryApi,
+  logoutApi,
 };
 
 const api = {
@@ -24,6 +26,7 @@ const api = {
   universities: universityApi,
   agreements: agreementsApi,
   researchSummary: researchSummaryApi,
+  logout: logoutApi,
 };
 
 export default api;
