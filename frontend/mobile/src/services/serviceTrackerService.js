@@ -1,75 +1,87 @@
-import { CHATBOT_BASE_URL } from '../config/config.js';
-import { tokenManager } from './tokenManager.jsx';
+import apiClient from '../api/apiClient.js';
+import { API_BASE_URL } from '../config/config.js';
 
-export const fetchServiceTrackerData = async (payload) => {
-  console.log("called");
-  const url = `${CHATBOT_BASE_URL}/loadDashBoardData`;
-  console.log('API Request URL:', url);
-  console.log('payload:', payload);
+const DEFAULT_SERVICE_TRACKER_PAYLOAD = {
+  uid: 'u100',
+  advancedSearch: 'L',
+  currentPage: 1,
+  pageNumber: 20,
+  sortBy: 'updateTimeStamp',
+  tabName: 'MY_REQUEST',
+  moduleCodes: [],
+  reverse: 'DESC',
+  serviceRequestId: '',
+  serviceRequestSubject: '',
+  sort: {},
+  srPriorities: [],
+  srStatusCodes: [],
+  srTypeCodes: [],
+};
 
-  // Call real backend endpoint similar to proposals API
-  const endpoint = `${CHATBOT_BASE_URL}/loadDashBoardData`;
-  const cookieToken = await tokenManager.getToken();
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-  if (cookieToken) {
-    headers.Cookie = `Cookie_Token=${cookieToken}`;
-  }
-
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Unable to fetch service tracker data (${response.status})`);
-  }
-
-  const data = await response.json();
-  if (!data || typeof data !== 'object') {
-    throw new Error('Unexpected service tracker response format');
-  }
-
-  // return the dashboard data object
-  return data;
-
-  // Get fresh token from tokenManager
-//   const token = await tokenManager.getToken();
-//   console.log('Using Cookie_Token:', token);
-
+export const fetchServiceTrackerData = async (overrides = {}) => {
+  const endpoint = `${API_BASE_URL}/api/service-requests/my-requests`;
+  const payload = { ...DEFAULT_SERVICE_TRACKER_PAYLOAD, ...overrides };
+  console.log('[ServiceTracker] POST', endpoint);
+  console.log('[ServiceTracker] Payload:', payload);
+  let data;
   try {
-    // Build headers; only include Cookie_Token if available to avoid undefined errors
-    const headers = {
-      Accept: 'application/json, text/plain, */*',
-      'Accept-Encoding': 'gzip, deflate',
-      'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7',
-      Connection: 'keep-alive',
-      'Content-Type': 'application/json',
-      Origin: 'http://192.168.1.252:9000',
-      Referer: 'http://192.168.1.252:9000/fibi/',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0',
-    };
-
-    if (typeof CHATBOT_COOKIE_TOKEN !== 'undefined' && CHATBOT_COOKIE_TOKEN) {
-      headers.Cookie = `usetiful-visitor-ident=4717c5a4-72a2-4f05-3bf3-e1fd3a91d08f; Cookie_Token=${CHATBOT_COOKIE_TOKEN}`;
-    } else {
-      console.warn('CHATBOT_COOKIE_TOKEN is undefined — request will be sent without Cookie_Token');
-    }
-
-    const response = await axios.post(url, payload, {
-      headers,
-      withCredentials: true,
+    data = await apiClient.post(endpoint, payload);
+    console.log('[ServiceTracker] Response:', data);
+  } catch (err) {
+    console.error('[ServiceTracker] Error:', {
+      endpoint,
+      payload,
+      message: err?.message,
     });
-    console.log('API Request Headers:', response.config.headers);
-    console.log('API Response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('API Call Error:', error.message);
-    console.error('Error Details:', error.response?.data || error);
-    throw error;
+    throw err;
   }
+  // Normalize to expected shape { dashboardList: [...] }
+  let list = [];
+  if (Array.isArray(data)) {
+    list = data;
+  } else if (data && Array.isArray(data.results)) {
+    list = data.results;
+  } else if (data && Array.isArray(data.dashboardList)) {
+    list = data.dashboardList;
+  } else if (data && Array.isArray(data.items)) {
+    list = data.items;
+  } else if (data && data.servicerequests && Array.isArray(data.servicerequests.servicerequestlist)) {
+    // New shape (all lowercase keys)
+    list = data.servicerequests.servicerequestlist;
+  } else if (data && data.serviceRequests && Array.isArray(data.serviceRequests.serviceRequestList)) {
+    // CamelCase variant
+    list = data.serviceRequests.serviceRequestList;
+  } else if (
+    data &&
+    data.serviceRequests &&
+    data.serviceRequests.servicerequests &&
+    Array.isArray(data.serviceRequests.servicerequests.servicerequestlist)
+  ) {
+    // Nested: serviceRequests.servicerequests.servicerequestlist
+    list = data.serviceRequests.servicerequests.servicerequestlist;
+  } else if (
+    data &&
+    data.serviceRequests &&
+    Array.isArray(data.serviceRequests.servicerequestlist)
+  ) {
+    // Nested variant without inner camel: serviceRequests.servicerequestlist
+    list = data.serviceRequests.servicerequestlist;
+  }
+
+  // Map backend fields to UI-expected keys so the screen displays values
+  const normalized = (list || []).map((it) => ({
+    serviceRequestId: it.serviceRequestId ?? it.servicerequestid ?? it.COL_SR_ID,
+    subject: it.subject ?? it.COL_SR_SUBJECT,
+    type: it.type ?? it.servicerequesttype ?? it.COL_SR_TYPE,
+    category: it.category ?? it.servicerequestcategory ?? it.COL_SR_CATEGORY,
+    priority: it.priority ?? it.srpriority ?? it.COL_SR_PRIORITY,
+    status: it.status ?? it.servicerequeststatusdata ?? it.servicerequeststatus ?? it.COL_SR_STATUS,
+    assignee: it.assignee ?? it.assigneepersonname ?? it.COL_SR_ASSI_PERSON,
+    department: it.department ?? it.unitname ?? it.COL_SR_DEPARTMENT,
+    createDate: Number(it.createDate ?? it.createtimestamp ?? it.updatetimestamp ?? it.COL_SR_CREATE_DATE) || 0,
+    // Keep original fields as well to avoid losing data consumed elsewhere
+    ...it,
+  }));
+
+  return { dashboardList: normalized };
 };

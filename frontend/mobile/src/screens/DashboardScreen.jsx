@@ -30,6 +30,9 @@ import ServiceTrackerScreen from './ServiceTrackerScreen.jsx';
 import AwardsScreen from './AwardsScreen.jsx';
 import NotificationsScreen from './NotificationsScreen.jsx';
 import EmailHubScreen from './EmailHubScreen.jsx';
+import ScanHubScreen from './ScanHubScreen.jsx';
+import CameraScanScreen from './CameraScanScreen.jsx';
+import SignaturePadScreen from './SignaturePadScreen.jsx';
 
 const DashboardScreen = ({ onLogout }) => {
   const theme = useTheme();
@@ -101,6 +104,7 @@ const DashboardScreen = ({ onLogout }) => {
   );
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
+  const [scanRoute, setScanRoute] = useState(null); // null | 'hub' | 'camera' | 'signature'
   const [sponsorWidgetData, setSponsorWidgetData] = useState([]);
   const [widgetError, setWidgetError] = useState(null);
   const [widgetLoading, setWidgetLoading] = useState(false);
@@ -468,6 +472,21 @@ const DashboardScreen = ({ onLogout }) => {
     if (activeBottomTab === 'Email') {
       return <EmailHubScreen onClose={() => setActiveBottomTab('home')} />;
     }
+    if (scanRoute === 'hub') {
+      return (
+        <ScanHubScreen
+          onBack={() => setScanRoute(null)}
+          onOpenCamera={() => setScanRoute('camera')}
+          onOpenSignature={() => setScanRoute('signature')}
+        />
+      );
+    }
+    if (scanRoute === 'camera') {
+      return <CameraScanScreen onBack={() => setScanRoute('hub')} />;
+    }
+    if (scanRoute === 'signature') {
+      return <SignaturePadScreen onBack={() => setScanRoute('hub')} />;
+    }
 
     if (activeBottomTab === 'service') {
       return <ServiceTrackerScreen />;
@@ -620,6 +639,7 @@ const DashboardScreen = ({ onLogout }) => {
         onSidebarToggle={handleLogoPress}
         notificationCount={notificationCount}
         onNotificationPress={() => setNotificationsVisible(true)}
+        onScanPress={() => setScanRoute('hub')}
       />
       <View style={styles.shell}>
         {sidebarVisible && (

@@ -13,6 +13,7 @@ import {
   Pressable,
   TextInput,
   TouchableWithoutFeedback,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import useTheme from '../hooks/useTheme.jsx';
@@ -80,9 +81,13 @@ const ServiceTrackerScreen = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetchServiceTrackerData(initialPayload);
-        setRawData(res.dashboardList || []);
+        const res = await fetchServiceTrackerData();
+        console.log('[ServiceTrackerScreen] Response object:', res);
+        const list = res?.dashboardList || [];
+        console.log('[ServiceTrackerScreen] Items received:', Array.isArray(list) ? list.length : 'n/a');
+        setRawData(list);
       } catch (err) {
+        console.error('[ServiceTrackerScreen] Load failed:', err?.message || err);
         setError(err.message || 'Failed to load data');
         setRawData([]);
       } finally {
@@ -150,10 +155,7 @@ const ServiceTrackerScreen = () => {
             <Text style={[styles.proposalTitle, { color: theme.colors.text }]} numberOfLines={2}>{item.title}</Text>
           </View>
           <View style={styles.badgeColumn}>
-            <View style={[styles.typeBadge, { borderColor: theme.colors.border, backgroundColor: theme.colors.background }]}>
-              <Text style={[styles.badgeText, { color: theme.colors.text }]}>{item.type}</Text>
-            </View>
-            <View style={[styles.statusBadge, { backgroundColor: `${statusColor(item.status)}26` }]}>
+            <View style={[styles.statusBadge, { backgroundColor: `${statusColor(item.status)}26` }]}> 
               <Text style={[styles.badgeText, { color: statusColor(item.status) }]}>{item.status}</Text>
             </View>
           </View>
@@ -279,7 +281,7 @@ const ServiceTrackerScreen = () => {
           activeOpacity={0.85}
         >
           <View>
-            <Text style={[styles.dropdownLabel, { color: heroMutedColor }]}>Filter status</Text>
+            <Text style={[styles.dropdownLabel, { color: heroMutedColor }]}>Status</Text>
             <Text style={[styles.dropdownValue, { color: heroTextColor }]}>{selectedStatus}</Text>
           </View>
           <Icon name="chevron-down" size={16} color={heroTextColor} />
@@ -356,19 +358,24 @@ const ServiceTrackerScreen = () => {
 
       {/* Detail modal */}
       <Modal visible={!!selectedItem} animationType="slide" onRequestClose={() => setSelectedItem(null)}>
-        <View style={[styles.modalOverlay, { backgroundColor: theme.colors.background }]}> 
-          <ScrollView contentContainerStyle={{ padding: 18, alignItems: 'center' }}>
+        <SafeAreaView style={[styles.modalWrapper, { backgroundColor: theme.colors.background }]}> 
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ padding: 18, flexGrow: 1 }}
+            nestedScrollEnabled
+            showsVerticalScrollIndicator
+          >
             <View style={[styles.detailCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}> 
               <View style={styles.modalHeader}>
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.modalId, { color: theme.colors.primary }]}>{selectedItem?.COL_SR_ID}</Text>
-                  <Text style={[styles.modalSubtitle, { color: theme.colors.placeholder }]}>{selectedItem?.COL_SR_SUBJECT}</Text>
+                  <Text style={[styles.modalId, { color: theme.colors.primary }]}>{selectedItem?.serviceRequestId || selectedItem?.COL_SR_ID || selectedItem?.id}</Text>
+                  <Text style={[styles.modalSubtitle, { color: theme.colors.placeholder }]}>{selectedItem?.COL_SR_SUBJECT || selectedItem?.subject || selectedItem?.title}</Text>
                 </View>
                 <View style={{ alignItems: 'flex-end' }}>
                   <View style={styles.headerBadgesRow}>
-                    <PriorityBadge priority={selectedItem?.COL_SR_PRIORITY} />
-                    <View style={[styles.statusBadge, { backgroundColor: statusColor(selectedItem?.COL_SR_STATUS) }]}> 
-                      <Text style={styles.statusBadgeText}>{selectedItem?.COL_SR_STATUS || 'Unknown'}</Text>
+                    <PriorityBadge priority={selectedItem?.COL_SR_PRIORITY || selectedItem?.priority} />
+                    <View style={[styles.statusBadge, { backgroundColor: statusColor(selectedItem?.COL_SR_STATUS || selectedItem?.status) }]}> 
+                      <Text style={styles.statusBadgeText}>{selectedItem?.COL_SR_STATUS || selectedItem?.status || 'Unknown'}</Text>
                     </View>
                   </View>
                   <TouchableOpacity onPress={() => setSelectedItem(null)} style={[styles.clearButton, { marginTop: 6 }]}>
@@ -381,9 +388,9 @@ const ServiceTrackerScreen = () => {
               <View style={styles.modalBody}>
                 {/* Meta chips */}
                 <View style={styles.metaChipsRow}>
-                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_TYPE}</Text></View>
-                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_CATEGORY}</Text></View>
-                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_DEPARTMENT}</Text></View>
+                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_TYPE || selectedItem?.type}</Text></View>
+                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_CATEGORY || selectedItem?.category}</Text></View>
+                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_DEPARTMENT || selectedItem?.department}</Text></View>
                 </View>
 
                 {/* Key fields */}
@@ -398,7 +405,7 @@ const ServiceTrackerScreen = () => {
                     {renderField('Assigned To', selectedItem.COL_SR_ASSI_PERSON || 'Unassigned')}
                     {renderField('Admin Group', selectedItem.COL_SR_ADMIN_GROUP || '-')}
                     {renderField('Unit', selectedItem.unitNumber || '-')}
-                    {renderField('Created', formatDate(selectedItem.COL_SR_CREATE_DATE))}
+                    {renderField('Created', formatDate(selectedItem.COL_SR_CREATE_DATE || selectedItem.createDate))}
                     {renderField('Is System Generated', selectedItem.isSystemGenerated || '-')}
                     {renderField('Header ID', selectedItem.HEADER_ID || '-')}
                     {Object.keys(selectedItem).filter(k => !['serviceRequestId','COL_SR_ID','COL_SR_SUBJECT','COL_SR_TYPE','COL_SR_CATEGORY','COL_SR_PRIORITY','COL_SR_STATUS','COL_SR_ASSI_PERSON','COL_SR_ADMIN_GROUP','unitNumber','COL_SR_CREATE_DATE','isSystemGenerated','HEADER_ID'].includes(k)).map((k) => (
@@ -409,7 +416,7 @@ const ServiceTrackerScreen = () => {
               </View>
             </View>
           </ScrollView>
-        </View>
+        </SafeAreaView>
       </Modal>
     </View>
   );
@@ -582,11 +589,14 @@ const styles = StyleSheet.create({
   modalSubtitle: {
     fontSize: 14,
     marginTop: 4,
+    flexShrink: 1,
   },
   headerBadgesRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
   },
   statusBadge: {
     paddingVertical: 6,
@@ -608,6 +618,7 @@ const styles = StyleSheet.create({
   metaChipsRow: {
     flexDirection: 'row',
     marginBottom: 12,
+    flexWrap: 'wrap',
   },
   metaChip: {
     backgroundColor: '#f0f4ff',
