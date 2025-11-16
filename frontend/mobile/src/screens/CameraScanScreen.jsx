@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import useTheme from '../hooks/useTheme.jsx';
 import { launchCamera } from 'react-native-image-picker';
 
-const CameraScanScreen = ({ onBack }) => {
+const CameraScanScreen = ({ onBack, onUsePhoto }) => {
   const theme = useTheme();
   const [photo, setPhoto] = useState(null);
   const [error, setError] = useState(null);
@@ -223,7 +223,16 @@ const CameraScanScreen = ({ onBack }) => {
                 <Icon name="refresh-outline" size={18} color={theme.colors.text} />
                 <Text style={styles.actionLabel}>Retake</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionBtn} onPress={onBack}>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => {
+                  if (onUsePhoto && photo) {
+                    onUsePhoto(photo);
+                  } else if (onBack) {
+                    onBack();
+                  }
+                }}
+              >
                 <Icon name="checkmark-outline" size={18} color={theme.colors.text} />
                 <Text style={styles.actionLabel}>Use Photo</Text>
               </TouchableOpacity>

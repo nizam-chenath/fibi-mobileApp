@@ -32,6 +32,7 @@ import NotificationsScreen from './NotificationsScreen.jsx';
 import EmailHubScreen from './EmailHubScreen.jsx';
 import ScanHubScreen from './ScanHubScreen.jsx';
 import CameraScanScreen from './CameraScanScreen.jsx';
+import PdfAnnotatorScreen from './PdfAnnotatorScreen.jsx';
 import SignaturePadScreen from './SignaturePadScreen.jsx';
 
 const DashboardScreen = ({ onLogout }) => {
@@ -104,7 +105,8 @@ const DashboardScreen = ({ onLogout }) => {
   );
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
-  const [scanRoute, setScanRoute] = useState(null); // null | 'hub' | 'camera' | 'signature'
+  const [scanRoute, setScanRoute] = useState(null); // null | 'hub' | 'camera' | 'signature' | 'pdf'
+  const [capturedPhoto, setCapturedPhoto] = useState(null);
   const [sponsorWidgetData, setSponsorWidgetData] = useState([]);
   const [widgetError, setWidgetError] = useState(null);
   const [widgetLoading, setWidgetLoading] = useState(false);
@@ -482,7 +484,23 @@ const DashboardScreen = ({ onLogout }) => {
       );
     }
     if (scanRoute === 'camera') {
-      return <CameraScanScreen onBack={() => setScanRoute('hub')} />;
+      return (
+        <CameraScanScreen
+          onBack={() => setScanRoute('hub')}
+          onUsePhoto={(photo) => {
+            setCapturedPhoto(photo);
+            setScanRoute('pdf');
+          }}
+        />
+      );
+    }
+    if (scanRoute === 'pdf') {
+      return (
+        <PdfAnnotatorScreen
+          photo={capturedPhoto}
+          onBack={() => setScanRoute('hub')}
+        />
+      );
     }
     if (scanRoute === 'signature') {
       return <SignaturePadScreen onBack={() => setScanRoute('hub')} />;
