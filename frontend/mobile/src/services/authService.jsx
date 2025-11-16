@@ -1,6 +1,7 @@
 // services/authService.jsx
 import { loginRequest } from '../api/authApi.js';
 import { getAuthenticatedUser, registerUser } from '../mockData/users.jsx';
+import { logoutRequest } from '../api/logoutApi.js';
 
 class AuthService {
   async login(username, password, tenantId, universityUid) {
@@ -66,7 +67,7 @@ class AuthService {
 
   async logout() {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await logoutRequest();
       return { success: true };
     } catch (error) {
       console.error('Logout error:', error);

@@ -1,5 +1,6 @@
 import { API_BASE_URL, PROPOSALS_BASE_URL } from '../config/config.js';
 import apiClient from './apiClient.js';
+import { universityManager } from '../services/universityManager.jsx';
 
 const PROPOSALS_ENDPOINT = '/api/proposals';
 const RESEARCH_SUMMARY_ENDPOINT = '/getResearchSummaryDatasByWidget';
@@ -20,7 +21,7 @@ export const fetchProposalsDashboard = async (overrides = {}) => {
   };
 
   if (!payload.uid) {
-    payload.uid = 'u100';
+    payload.uid = (await universityManager.getUniversityUid()) || 'u100';
   }
 
   const data = await apiClient.post(`${API_BASE_URL}${PROPOSALS_ENDPOINT}`, payload);

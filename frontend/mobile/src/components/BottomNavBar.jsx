@@ -18,8 +18,9 @@ const BottomNavBar = ({
       ? tabs
       : [
           { id: 'home', label: 'Dashboard', icon: 'home-outline' },
-          { id: 'service', label: 'Tracker', icon: 'construct-outline' },
+          { id: 'tracker', label: 'Tracker', icon: 'construct-outline' },
           { id: 'awards', label: 'Awards', icon: 'trophy-outline' },
+          { id: 'Email', label: 'Email', icon: 'mail-outline' },
         ];
 
   const selectedId = activeTab || effectiveTabs[0]?.id;
@@ -83,14 +84,14 @@ const BottomNavBar = ({
               <Icon
                 name={tab.icon}
                 size={20}
-                color={isActive ? theme.colors.text : 'rgba(255,255,255,0.7)'}
+                color={isActive ? theme.colors.secondary : 'rgba(255,255,255,0.7)'}
                 style={[
                   styles.tabIcon,
                   isActive ? styles.tabIconActive : styles.tabIconInactive,
                 ]}
               />
               {isActive && (
-                <Text style={[styles.tabLabel, { color: theme.colors.text }]}>
+                <Text style={[styles.tabLabel, { color: theme.colors.secondary }]}>
                   {tab.label}
                 </Text>
               )}
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     marginRight: 0,
   },
   tabLabel: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: '600',
   },
 });

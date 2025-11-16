@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import useTheme from '../hooks/useTheme.jsx';
 import { fetchProposalsDashboard } from '../api/proposalsApi.js';
+import { stripHtmlTags } from '../utils/String.js';
 
 const proposalTabs = [
   { id: 'my', label: 'My Proposals' },
@@ -81,12 +82,12 @@ const mapProposal = (item) => {
 
   return {
     id: proposalId ? proposalId.toString() : '—',
-    title: item.title?.trim() || 'Untitled Proposal',
-    principalInvestigator: principalInvestigator || '—',
-    leadUnit: homeUnit,
-    type: applicationType,
-    status: applicationStatus,
-    sponsor: sponsorName || '—',
+    title: stripHtmlTags(item.title)?.trim() || 'Untitled Proposal',
+    principalInvestigator: stripHtmlTags(principalInvestigator) || '—',
+    leadUnit: stripHtmlTags(homeUnit) || '—',
+    type: stripHtmlTags(applicationType) || '—',
+    status: stripHtmlTags(applicationStatus) || '—',
+    sponsor: stripHtmlTags(sponsorName) || '—',
     internalDeadline,
     sponsorDeadline,
     internalDeadlineSort: Number(internalDeadlineRaw) || 0,
@@ -115,9 +116,9 @@ const filterByTab = (proposals, tabId) => {
 
 const tabNameMap = {
   my: 'MY_PROPOSAL',
-  all: 'ALL_PROPOSAL',
-  inProgress: 'REVIEW_IN_PROGRESS',
-  pending: 'PENDING_MY_REVIEW',
+  all: 'ALL_PROPOSALS',
+  inProgress: 'INPROGRESS_PROPOSAL',
+  pending: 'MY_REVIEW_PENDING_PROPOSAL',
 };
 
 const AwardsScreen = () => {
@@ -133,6 +134,8 @@ const AwardsScreen = () => {
   const [rawProposals, setRawProposals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -246,31 +249,37 @@ const AwardsScreen = () => {
         Track submissions, review stages, and sponsor deadlines in one place.
       </Text>
 
-      <View style={[styles.tabRow, { borderBottomColor: heroBorderColor }]}>
-        {proposalTabs.map((tab) => {
-          const isActive = tab.id === activeTab;
-          return (
-            <TouchableOpacity
-              key={tab.id}
-              style={[
-                styles.tabButton,
-                isActive && { borderBottomColor: heroTextColor },
-              ]}
-              onPress={() => setActiveTab(tab.id)}
-            >
-              <Text
+      <View style={[styles.tabRowContainer, { borderBottomColor: heroBorderColor }]}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabRow}
+        >
+          {proposalTabs.map((tab) => {
+            const isActive = tab.id === activeTab;
+            return (
+              <TouchableOpacity
+                key={tab.id}
                 style={[
-                  styles.tabLabel,
-                  {
-                    color: isActive ? heroTextColor : heroMutedColor,
-                  },
+                  styles.tabButton,
+                  isActive && { borderBottomColor: heroTextColor },
                 ]}
+                onPress={() => setActiveTab(tab.id)}
               >
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    {
+                      color: isActive ? heroTextColor : heroMutedColor,
+                    },
+                  ]}
+                >
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
       <View style={styles.sortControls}>
         <TouchableOpacity
@@ -379,6 +388,27 @@ const AwardsScreen = () => {
             </View>
 
             <View style={styles.metaGrid}>
+            {proposal.sponsorDeadline !== '—' && (
+              <View style={styles.metaItem}>
+                  <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>
+                    Sponsor Deadline
+                  </Text>
+                  <Text style={[styles.metaValue, { color: theme.colors.text }]}>
+                    {proposal.sponsorDeadline}
+                  </Text>
+                </View>
+            )}
+            
+              {proposal.internalDeadline !== '—' && (
+                <View style={styles.metaItem}>
+                  <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>
+                    Internal Deadline
+                  </Text>
+                  <Text style={[styles.metaValue, { color: theme.colors.text }]}>
+                    {proposal.internalDeadline}
+                  </Text>
+                </View>
+              )}
               <View style={styles.metaItem}>
                 <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>
                   Sponsor
@@ -387,26 +417,10 @@ const AwardsScreen = () => {
                   {proposal.sponsor}
                 </Text>
               </View>
-              <View style={styles.metaItem}>
-                <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>
-                  Internal Deadline
-                </Text>
-                <Text style={[styles.metaValue, { color: theme.colors.text }]}>
-                  {proposal.internalDeadline}
-                </Text>
-              </View>
-              <View style={styles.metaItem}>
-                <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>
-                  Sponsor Deadline
-                </Text>
-                <Text style={[styles.metaValue, { color: theme.colors.text }]}>
-                  {proposal.sponsorDeadline}
-                </Text>
-              </View>
             </View>
 
             <View style={styles.cardFooter}>
-              <View style={styles.footerPill}>
+              {/* <View style={styles.footerPill}>
                 <Icon
                   name="person-outline"
                   size={14}
@@ -417,8 +431,8 @@ const AwardsScreen = () => {
                 >
                   {proposal.principalInvestigator}
                 </Text>
-              </View>
-              <View style={styles.footerPill}>
+              </View> */}
+              {/* <View style={styles.footerPill}>
                 <Icon
                   name="business-outline"
                   size={14}
@@ -429,7 +443,21 @@ const AwardsScreen = () => {
                 >
                   {proposal.leadUnit}
                 </Text>
-              </View>
+              </View> */}
+              <TouchableOpacity
+                style={[
+                  styles.viewButton,
+                  { borderColor: theme.colors.border, backgroundColor: theme.colors.background },
+                ]}
+                activeOpacity={0.9}
+                onPress={() => {
+                  setSelectedProposal(proposal);
+                  setViewModalVisible(true);
+                }}
+              >
+                <Icon name="eye-outline" size={14} color={theme.colors.text} />
+                <Text style={[styles.viewButtonText, { color: theme.colors.text }]}>View</Text>
+              </TouchableOpacity>
             </View>
           </View>
         ))}
@@ -490,6 +518,107 @@ const AwardsScreen = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+      <Modal
+        visible={viewModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setViewModalVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setViewModalVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <View
+                style={[
+                  styles.modalContent,
+                  { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                ]}
+              >
+                {selectedProposal && (
+                  <>
+                    <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+                      Proposal #{selectedProposal.id}
+                    </Text>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                        Title
+                      </Text>
+                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                        {selectedProposal.title}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                        Status
+                      </Text>
+                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                        {selectedProposal.status}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                        Type
+                      </Text>
+                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                        {selectedProposal.type}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                        Sponsor
+                      </Text>
+                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                        {selectedProposal.sponsor}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                        Sponsor Deadline
+                      </Text>
+                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                        {selectedProposal.sponsorDeadline}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                        Internal Deadline
+                      </Text>
+                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                        {selectedProposal.internalDeadline}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                        PI
+                      </Text>
+                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                        {selectedProposal.principalInvestigator}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel, { color: theme.colors.textSecondary }]}>
+                        Lead Unit
+                      </Text>
+                      <Text style={[styles.modalValue, { color: theme.colors.text }]}>
+                        {selectedProposal.leadUnit}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[
+                        styles.modalCloseButton,
+                        { borderColor: theme.colors.border, backgroundColor: theme.colors.background },
+                      ]}
+                      onPress={() => setViewModalVisible(false)}
+                      activeOpacity={0.9}
+                    >
+                      <Text style={[styles.modalCloseText, { color: theme.colors.text }]}>Close</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -509,10 +638,13 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     marginBottom: 16,
   },
-  tabRow: {
-    flexDirection: 'row',
+  tabRowContainer: {
     borderBottomWidth: 1,
     marginBottom: 12,
+  },
+  tabRow: {
+    flexDirection: 'row',
+    paddingRight: 16,
   },
   tabButton: {
     paddingVertical: 12,
@@ -661,7 +793,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     flexDirection: 'row',
     gap: 8,
-    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+
   },
   footerPill: {
     flexDirection: 'row',
@@ -682,6 +815,57 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     fontSize: 14,
+  },
+  viewButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+  },
+  viewButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  modalContent: {
+    width: '100%',
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    gap: 8,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  modalRow: {
+    gap: 2,
+  },
+  modalLabel: {
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  modalValue: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  modalCloseButton: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  modalCloseText: {
+    fontSize: 13,
+    fontWeight: '700',
   },
 });
 

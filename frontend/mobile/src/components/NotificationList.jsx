@@ -28,10 +28,6 @@ const NotificationList = ({ visible, notifications = [], onClose }) => {
           backgroundColor: theme.colors.surface || '#fff',
           borderRadius: theme.borderRadius.lg,
           padding: theme.spacing.md,
-          shadowColor: '#000',
-          shadowOpacity: 0.15,
-          shadowRadius: 12,
-          elevation: 10,
         },
         header: {
           flexDirection: 'row',
@@ -39,8 +35,16 @@ const NotificationList = ({ visible, notifications = [], onClose }) => {
           justifyContent: 'space-between',
           marginBottom: theme.spacing.sm,
         },
+        backButton: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingVertical: theme.spacing.xs,
+          paddingRight: theme.spacing.xs,
+        },
         headerTitle: {
-          fontSize: 16,
+          flex: 1,
+          textAlign: 'center',
+          fontSize: 18,
           fontWeight: '700',
           color: theme.colors.textPrimary || '#111',
         },
@@ -124,7 +128,14 @@ const NotificationList = ({ visible, notifications = [], onClose }) => {
           <TouchableWithoutFeedback onPress={() => {}}>
             <View style={styles.panel}>
               <View style={styles.header}>
-                <Text style={styles.headerTitle}>Notifications</Text>
+                <TouchableOpacity style={styles.backButton} onPress={onClose}>
+                  <Icon
+                    name="chevron-back"
+                    size={22}
+                    color={theme.colors.textPrimary || '#111'}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Notification Hub</Text>
                 <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                   <Icon name="close" size={20} color={theme.colors.textPrimary || '#111'} />
                 </TouchableOpacity>

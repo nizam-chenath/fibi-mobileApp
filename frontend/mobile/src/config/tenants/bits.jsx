@@ -1,5 +1,5 @@
 // config/tenants/bits.jsx
-import bitsLogo from '../../assets/universitylogo/Logo4.png';
+import bitsLogo from '../../assets/universitylogo/logo4.webp';
 
 export const bitsConfig = {
   tenantId: 'bits-001',

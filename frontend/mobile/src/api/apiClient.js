@@ -1,5 +1,6 @@
 import { API_BASE_URL } from '../config/config.js';
 import { tokenManager } from '../services/tokenManager.jsx';
+import { universityManager } from '../services/universityManager.jsx';
 
 const isAbsoluteUrl = (path) => /^https?:\/\//i.test(path);
 const isFormData = (body) =>
@@ -47,6 +48,14 @@ class ApiClient {
         finalHeaders.Cookie = `Cookie_Token=${token}`;
       }
     }
+
+    // attach selected university UID if available
+    try {
+      const universityUid = await universityManager.getUniversityUid();
+      if (universityUid && !finalHeaders['X-University-Uid']) {
+        finalHeaders['X-University-Uid'] = universityUid;
+      }
+    } catch {}
 
     let finalBody = body;
     const shouldSerializeBody =

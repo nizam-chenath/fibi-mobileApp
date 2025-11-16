@@ -1,5 +1,5 @@
 // services/chatbotService.jsx
-import { CHATBOT_API_URL } from '../config/constants.jsx';
+import { FIBI_DEMO_BASE_URL } from '../config/config.js';
 import { tokenManager } from './tokenManager.jsx';
 
 class ChatbotService {
@@ -17,7 +17,7 @@ class ChatbotService {
       const storedCookie = await tokenManager.getToken();
       const cookieValue = storedCookie;
 
-      const response = await fetch(CHATBOT_API_URL, {
+      const response = await fetch(`${FIBI_DEMO_BASE_URL}/fibi-intelligence/chatbot/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,6 +11,7 @@ import { DEFAULT_TENANT_ID } from '../config/constants.jsx';
 import { getTenantIdForUniversity } from '../config/universityTenantMap.js';
 import useAuth from '../hooks/useAuth.jsx';
 import ChatbotWidget from '../components/ChatbotWidget.jsx';
+import { universityManager } from '../services/universityManager.jsx';
 
 const RootNavigator = () => {
   const [showAnimatedSplash, setShowAnimatedSplash] = useState(true);
@@ -26,6 +27,12 @@ const RootNavigator = () => {
     const tenantId = getTenantIdForUniversity(universityUid, DEFAULT_TENANT_ID);
     const config = getTenantById(tenantId);
     if (config) {
+      // persist selection for API layer and future sessions
+      universityManager.saveSelection({
+        universityUid,
+        universityName: name,
+        universityThemeColor: themeColor,
+      });
       dispatch(
         setCurrentTenant({
           tenantId,

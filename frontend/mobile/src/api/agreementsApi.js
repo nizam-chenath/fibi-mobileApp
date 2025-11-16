@@ -1,7 +1,7 @@
-import { AGREEMENTS_BASE_URL } from '../config/config.js';
+import { FIBI_DEMO_BASE_URL } from '../config/config.js';
 import apiClient from './apiClient.js';
 
-const AGREEMENT_STATUS_ENDPOINT = `${AGREEMENTS_BASE_URL}/getAgreementStatusCountWidget`;
+const AGREEMENT_STATUS_ENDPOINT = `${FIBI_DEMO_BASE_URL}/fibi-agreement/getAgreementStatusCountWidget`;
 
 export const fetchAgreementStatusCountWidget = async ({
   unitNumber = '000001',
