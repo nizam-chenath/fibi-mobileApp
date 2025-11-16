@@ -1,40 +1,26 @@
-const {
-  findUserByEmployeeId,
-  findUserById,
-  setLoggedInStatus
-} = require('../models/userModel');
-
 const logout = async (req, res) => {
-  const { employeeId, id } = req.body;
-  const identifier = employeeId || id;
-
-  if (!identifier) {
-    return res.status(400).json({ message: 'Employee ID is required' });
-  }
-
   try {
-    const existingUser =
-      (employeeId && (await findUserByEmployeeId(identifier))) ||
-      (await findUserById(identifier)) ||
-      (await findUserByEmployeeId(identifier));
-
-    if (!existingUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    await setLoggedInStatus(existingUser.employeeId, 'N');
-
-    // Clear the accessToken cookie
-    res.clearCookie('accessToken', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
+    // Clear all possible authentication cookies
+    const cookieNames = ['accessToken', 'token', 'Cookie_Token'];
+    
+    cookieNames.forEach(cookieName => {
+      res.clearCookie(cookieName, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
+      });
     });
 
-    return res.status(200).json({ message: 'User logged out successfully' });
+    return res.status(200).json({ 
+      message: 'User logged out successfully',
+      cookiesCleared: cookieNames
+    });
   } catch (error) {
-    console.error('Error updating MySQL:', error);
-    return res.status(500).send('Error updating MySQL');
+    console.error('Error in logout:', error);
+    return res.status(500).json({ 
+      message: 'Error during logout',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 

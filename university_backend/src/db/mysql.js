@@ -15,7 +15,7 @@ const pool = mysql.createPool({
   keepAliveInitialDelay: 0,
   connectTimeout: 10000, // 10 seconds connection timeout
   acquireTimeout: 10000, // 10 seconds to get connection from pool
-  timeout: 60000 // 60 seconds query timeout
+  timeout: 30000 // 30 seconds query timeout (reduced from 60 to fail faster)
 });
 
 // Handle pool errors
