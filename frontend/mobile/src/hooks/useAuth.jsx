@@ -3,16 +3,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginSuccess, loginFailure, logout, setLoading } from '../store/authSlice.jsx';
 import { authService } from '../services/authService.jsx';
 import { tokenManager } from '../services/tokenManager.jsx';
+import { store } from '../store/store.jsx';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-  const tenantId = useSelector((state) => state.tenant.currentTenantId);
 
   const login = async (email, password) => {
     dispatch(setLoading(true));
     try {
-      const result = await authService.login(email, password, tenantId);
+      // Read fresh values from Redux store when login is called
+      const currentState = store.getState();
+      const tenantId = currentState.tenant.currentTenantId;
+      const universityUid = currentState.tenant.currentUniversityUid;
+      
+      console.log('[useAuth] Login attempt with:', { email, tenantId, universityUid });
+      
+      if (!universityUid || (typeof universityUid === 'string' && universityUid.trim() === '')) {
+        throw new Error('University selection is required before login. Please select a university first.');
+      }
+      
+      const result = await authService.login(email, password, tenantId, universityUid);
 
       if (result.success) {
         await tokenManager.saveToken(result.token);
@@ -37,6 +48,9 @@ export const useAuth = () => {
   const register = async (payload) => {
     dispatch(setLoading(true));
     try {
+      // Read fresh values from Redux store when register is called
+      const currentState = store.getState();
+      const tenantId = currentState.tenant.currentTenantId;
       const result = await authService.register(payload, tenantId);
 
       if (result.success) {

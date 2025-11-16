@@ -8,7 +8,11 @@ import { DEFAULT_TENANT_ID } from '../config/constants.jsx';
 export const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
-  const tenantId = useSelector((state) => state.tenant?.currentTenantId);
+  const tenantState = useSelector((state) => state.tenant);
+  const tenantId = tenantState?.currentTenantId;
+  const selectedUniversityName = tenantState?.selectedUniversityName;
+  const selectedUniversityThemeColor = tenantState?.selectedUniversityThemeColor;
+  const isAuthenticated = useSelector((state) => state.auth?.isAuthenticated);
 
   const theme = useMemo(() => {
     const BRAND_GREEN = '#48BD92';
@@ -19,48 +23,60 @@ export const ThemeProvider = ({ children }) => {
       success: BRAND_GREEN,
       warning: '#FFC107',
       error: '#E74C3C',
-      background: BRAND_GREEN,
+      background: '#F2F3F8',
       surface: '#FFFFFF',
       text: '#1C1C1C',
       textSecondary: '#555555',
       border: '#DDDDDD',
       brandPrimary: BRAND_GREEN,
+      Lightbackground: '#f2f3f8',
     };
 
     const fallbackConfig = getTenantById(DEFAULT_TENANT_ID);
     const tenantConfig = getTenantById(tenantId) || fallbackConfig;
-    if (!tenantConfig) {
-      return {
-        colors: baseColors,
-        spacing: defaultSpacing,
-        borderRadius,
-        branding: {
-          appName: 'Fibi Demo',
-          universityName: 'Demo University',
-          logo: null,
-        },
-      };
-    }
-
     const combinedColors = {
       ...baseColors,
-      ...(tenantConfig.theme || {}),
+      ...(isAuthenticated ? tenantConfig?.theme : null),
     };
+
+    // If a university-specific theme color is selected, promote it to primary palette
+    if (selectedUniversityThemeColor && typeof selectedUniversityThemeColor === 'string') {
+      combinedColors.primary = selectedUniversityThemeColor;
+      combinedColors.accent = selectedUniversityThemeColor;
+      combinedColors.success = selectedUniversityThemeColor;
+      combinedColors.brandPrimary = selectedUniversityThemeColor;
+    }
 
     combinedColors.primary = combinedColors.primary || baseColors.primary;
     combinedColors.accent = combinedColors.accent || combinedColors.primary;
     combinedColors.success = combinedColors.success || combinedColors.primary;
-    combinedColors.background = combinedColors.background || combinedColors.primary;
+    // Prefer Lightbackground as the app-wide background if provided
+    combinedColors.background =
+      combinedColors.Lightbackground || combinedColors.background || baseColors.background;
     combinedColors.surface = combinedColors.surface || baseColors.surface;
     combinedColors.brandPrimary = combinedColors.brandPrimary || combinedColors.primary;
+
+    const defaultBranding = {
+      appName: 'Fibi Demo',
+      universityName: 'Demo University',
+      logo: null,
+    };
+
+    const activeBranding = {
+      ...(tenantConfig?.branding || defaultBranding),
+      universityName:
+        selectedUniversityName ||
+        tenantConfig?.branding?.universityName ||
+        defaultBranding.universityName,
+    };
 
     return {
       colors: combinedColors,
       spacing: defaultSpacing,
       borderRadius,
-      branding: tenantConfig.branding,
+      branding: activeBranding,
     };
-  }, [tenantId]);
+  }, [tenantId, isAuthenticated, selectedUniversityName, selectedUniversityThemeColor]);
 
   return (
     <ThemeContext.Provider value={theme}>

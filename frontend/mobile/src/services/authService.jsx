@@ -1,42 +1,43 @@
 // services/authService.jsx
+import { loginRequest } from '../api/authApi.js';
 import { getAuthenticatedUser, registerUser } from '../mockData/users.jsx';
+import { logoutRequest } from '../api/logoutApi.js';
 
 class AuthService {
-  async login(email, password, tenantId) {
+  async login(username, password, tenantId, universityUid) {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const user = getAuthenticatedUser(email, password, tenantId);
-
-      if (!user) {
-        return {
-          success: false,
-          error: 'Invalid email or password',
-        };
+      if (!universityUid || (typeof universityUid === 'string' && universityUid.trim() === '')) {
+        throw new Error('University selection is required before login');
       }
 
-      const token = `mock_token_${Date.now()}`;
-      const refreshToken = `mock_refresh_${Date.now()}`;
+      const payload = { username, password, uid: universityUid };
+      const { data, cookieToken } = await loginRequest(payload);
 
+      const normalizedUser = data.user
+        ? {
+            id: data.user.personid,
+            email: data.user.email,
+            firstName: data.user.firstname,
+            lastName: data.user.lastname,
+            department: data.user.unitname,
+            role: data.user.primarytitle || data.user.status,
+            avatar: null,
+          }
+        : null;
+console.log("normalizedUser", normalizedUser)
       return {
         success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          department: user.department,
-          role: user.role,
-          avatar: user.avatar,
-        },
-        token,
-        refreshToken,
+        user: normalizedUser,
+        message: data.message,
+        token: cookieToken || normalizedUser?.id || `session_${Date.now()}`,
+        refreshToken: null,
+        cookieToken,
       };
     } catch (error) {
       console.error('Login error:', error);
       return {
         success: false,
-        error: 'An error occurred during login',
+        error: error.message || 'An error occurred during login',
       };
     }
   }
@@ -66,7 +67,7 @@ class AuthService {
 
   async logout() {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await logoutRequest();
       return { success: true };
     } catch (error) {
       console.error('Logout error:', error);
