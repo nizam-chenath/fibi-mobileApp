@@ -154,11 +154,13 @@ const ServiceTrackerScreen = () => {
             <Text style={[styles.proposalId, { color: theme.colors.textSecondary }]}>Request #{item.id}</Text>
             <Text style={[styles.proposalTitle, { color: theme.colors.text }]} numberOfLines={2}>{item.title}</Text>
           </View>
-          <View style={styles.badgeColumn}>
-            <View style={[styles.statusBadge, { backgroundColor: `${statusColor(item.status)}26` }]}> 
-              <Text style={[styles.badgeText, { color: statusColor(item.status) }]}>{item.status}</Text>
+          {!!(item.status && String(item.status).trim()) && (
+            <View style={styles.badgeColumn}>
+              <View style={[styles.statusBadge, { backgroundColor: `${statusColor(item.status)}26` }]}> 
+                <Text style={[styles.badgeText, { color: statusColor(item.status) }]}>{item.status}</Text>
+              </View>
             </View>
-          </View>
+          )}
         </View>
 
         <View style={styles.metaGrid}>
@@ -374,9 +376,11 @@ const ServiceTrackerScreen = () => {
                 <View style={{ alignItems: 'flex-end' }}>
                   <View style={styles.headerBadgesRow}>
                     <PriorityBadge priority={selectedItem?.COL_SR_PRIORITY || selectedItem?.priority} />
-                    <View style={[styles.statusBadge, { backgroundColor: statusColor(selectedItem?.COL_SR_STATUS || selectedItem?.status) }]}> 
-                      <Text style={styles.statusBadgeText}>{selectedItem?.COL_SR_STATUS || selectedItem?.status || 'Unknown'}</Text>
-                    </View>
+                    {!!(selectedItem?.COL_SR_STATUS || selectedItem?.status) && (
+                      <View style={[styles.statusBadge, { backgroundColor: statusColor(selectedItem?.COL_SR_STATUS || selectedItem?.status) }]}> 
+                        <Text style={styles.statusBadgeText}>{selectedItem?.COL_SR_STATUS || selectedItem?.status}</Text>
+                      </View>
+                    )}
                   </View>
                   <TouchableOpacity onPress={() => setSelectedItem(null)} style={[styles.clearButton, { marginTop: 6 }]}>
                     <Icon name="close-circle-outline" size={16} color={theme.colors.primary} />
