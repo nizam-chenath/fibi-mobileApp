@@ -211,7 +211,7 @@ const getStyles = (theme) =>
     title: {
       fontSize: 18,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
     },
     stateWrapper: {
       alignItems: 'center',
@@ -221,7 +221,7 @@ const getStyles = (theme) =>
     },
     stateText: {
       fontSize: 14,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     retryButton: {
       marginTop: theme.spacing.xs,
@@ -234,7 +234,7 @@ const getStyles = (theme) =>
     retryText: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.primary,
+      color: '#000000',
     },
     filterBar: {
       flexDirection: 'row',
@@ -254,11 +254,11 @@ const getStyles = (theme) =>
       gap: theme.spacing.xs,
     },
     filterButtonActive: {
-      backgroundColor: theme.colors.primary + '12',
+      backgroundColor: 'transparent',
     },
     filterLabel: {
       fontSize: 13,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     filterBadge: {
       minWidth: 22,
@@ -272,7 +272,7 @@ const getStyles = (theme) =>
     filterBadgeText: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     itemCard: {
       paddingVertical: theme.spacing.md,
@@ -288,25 +288,25 @@ const getStyles = (theme) =>
     moduleBadge: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.primary,
-      backgroundColor: theme.colors.primary + '15',
+      color: '#000000',
+      backgroundColor: '#00000015',
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: 4,
       borderRadius: theme.borderRadius.full,
     },
     arrivalDate: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     itemTitle: {
       fontSize: 15,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
       marginBottom: 4,
     },
     itemSubtitle: {
       fontSize: 13,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     itemFooter: {
       flexDirection: 'row',
@@ -320,7 +320,7 @@ const getStyles = (theme) =>
     },
     metaText: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
   });
 

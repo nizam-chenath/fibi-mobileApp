@@ -46,7 +46,7 @@ const LoginScreen = () => {
     return theme.branding.logo;
   }, [theme.branding]);
 
-  const secondaryBackground = theme.colors?.Lightbackground || theme.colors?.background;
+  const secondaryBackground = theme.colors?.primary || '#48BD92';
   const mutedText = 'rgba(28, 28, 28, 0.65)';
 
   const handleLogin = async () => {
@@ -275,7 +275,7 @@ const LoginScreen = () => {
       ...StyleSheet.absoluteFillObject,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.Lightbackground || theme.colors.background,
+      backgroundColor: theme.colors.primary,
       zIndex: 999,
     },
   });
