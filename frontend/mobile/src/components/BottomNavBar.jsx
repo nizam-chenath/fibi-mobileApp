@@ -20,6 +20,7 @@ const BottomNavBar = ({
           { id: 'home', label: 'Dashboard', icon: 'home-outline' },
           { id: 'service', label: 'Tracker', icon: 'construct-outline' },
           { id: 'awards', label: 'Awards', icon: 'trophy-outline' },
+          { id: 'Email', label: 'Email', icon: 'notifications-outline' },
         ];
 
   const selectedId = activeTab || effectiveTabs[0]?.id;
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     marginRight: 0,
   },
   tabLabel: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
   },
 });

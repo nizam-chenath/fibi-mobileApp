@@ -115,9 +115,9 @@ const filterByTab = (proposals, tabId) => {
 
 const tabNameMap = {
   my: 'MY_PROPOSAL',
-  all: 'ALL_PROPOSAL',
-  inProgress: 'REVIEW_IN_PROGRESS',
-  pending: 'PENDING_MY_REVIEW',
+  all: 'ALL_PROPOSALS',
+  inProgress: 'INPROGRESS_PROPOSAL',
+  pending: 'MY_REVIEW_PENDING_PROPOSAL',
 };
 
 const AwardsScreen = () => {
@@ -246,48 +246,37 @@ const AwardsScreen = () => {
         Track submissions, review stages, and sponsor deadlines in one place.
       </Text>
 
-      <View style={[styles.tabRow, { borderBottomColor: heroBorderColor }]}>
-        {proposalTabs.map((tab) => {
-          const isActive = tab.id === activeTab;
-          return (
-            <TouchableOpacity
-              key={tab.id}
-              style={[
-                styles.tabButton,
-                isActive && { borderBottomColor: heroTextColor },
-              ]}
-              onPress={() => setActiveTab(tab.id)}
-            >
-              <Text
+      <View style={[styles.tabRowContainer, { borderBottomColor: heroBorderColor }]}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabRow}
+        >
+          {proposalTabs.map((tab) => {
+            const isActive = tab.id === activeTab;
+            return (
+              <TouchableOpacity
+                key={tab.id}
                 style={[
-                  styles.tabLabel,
-                  {
-                    color: isActive ? heroTextColor : heroMutedColor,
-                  },
+                  styles.tabButton,
+                  isActive && { borderBottomColor: heroTextColor },
                 ]}
+                onPress={() => setActiveTab(tab.id)}
               >
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      <View style={styles.searchRow}>
-        <TextInput
-          style={[
-            styles.searchInput,
-            {
-              borderColor: heroBorderColor,
-              backgroundColor: theme.colors.surface,
-              color: heroTextColor,
-            },
-          ]}
-          placeholder="Search proposals"
-          placeholderTextColor={heroMutedColor}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    {
+                      color: isActive ? heroTextColor : heroMutedColor,
+                    },
+                  ]}
+                >
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
       <View style={styles.sortControls}>
         <TouchableOpacity
@@ -526,10 +515,13 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     marginBottom: 16,
   },
-  tabRow: {
-    flexDirection: 'row',
+  tabRowContainer: {
     borderBottomWidth: 1,
     marginBottom: 12,
+  },
+  tabRow: {
+    flexDirection: 'row',
+    paddingRight: 16,
   },
   tabButton: {
     paddingVertical: 12,

@@ -230,7 +230,6 @@ import { fetchUniversities } from '../api/universityApi.js';
 import Logo1 from '../assets/universitylogo/Logo1.png';
 import Logo2 from '../assets/universitylogo/Logo2.png';
 import Logo3 from '../assets/universitylogo/logo3.png';
-import Logo4 from '../assets/universitylogo/Logo4.png';
 import Logo4Webp from '../assets/universitylogo/logo4.webp';
 import MITPng from '../assets/universitylogo/MIT.png';
 
@@ -270,10 +269,7 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
     };
   }, []);
 
-  const logoPool = useMemo(
-    () => [Logo1, Logo2, Logo3, Logo4, Logo4Webp, MITPng],
-    [],
-  );
+  const logoPool = useMemo(() => [Logo1, Logo2, Logo3, Logo4Webp, MITPng], [],);
 
   const tiles = useMemo(
     () =>
@@ -281,6 +277,7 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
         id: university.uid,
         name: university.name,
         logoAsset: logoPool[index % logoPool.length],
+        themeColor: typeof university.theme === 'string' ? university.theme : null,
       })),
     [universities, logoPool],
   );
@@ -401,6 +398,27 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
     };
   }, [theme, width]);
 
+  const applyOpacity = useCallback((hexColor, alpha = 0.2) => {
+    if (!hexColor || typeof hexColor !== 'string') {
+      return `rgba(255, 255, 255, ${alpha})`;
+    }
+    const normalized = hexColor.replace('#', '');
+    if (![3, 6].includes(normalized.length)) {
+      return hexColor;
+    }
+    const expandHex =
+      normalized.length === 3
+        ? normalized
+            .split('')
+            .map((char) => char + char)
+            .join('')
+        : normalized;
+    const r = parseInt(expandHex.slice(0, 2), 16);
+    const g = parseInt(expandHex.slice(2, 4), 16);
+    const b = parseInt(expandHex.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }, []);
+
   const renderLogo = useCallback((logoAsset) => {
     const imageStyle = [
       styles.logoImage,
@@ -412,7 +430,11 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
 
   const handleSelect = (item) => {
     setSelectedId(item.id);
-    onSelectUniversity({ universityUid: item.id });
+    onSelectUniversity({
+      universityUid: item.id,
+      name: item.name,
+      themeColor: item.themeColor,
+    });
   };
 
   return (
@@ -447,7 +469,18 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
               <View
                 style={[
                   styles.tile,
-                  selectedId === item.id && styles.tileSelected,
+                  {
+                    backgroundColor: item.themeColor
+                      ? applyOpacity(item.themeColor, 0.18)
+                      : styles.tile.backgroundColor,
+                    borderColor: item.themeColor || styles.tile.borderColor,
+                  },
+                  selectedId === item.id && {
+                    backgroundColor: item.themeColor
+                      ? applyOpacity(item.themeColor, 0.35)
+                      : styles.tileSelected.backgroundColor,
+                    borderColor: item.themeColor || styles.tileSelected.borderColor,
+                  },
                 ]}
               >
                   {selectedId === item.id && (

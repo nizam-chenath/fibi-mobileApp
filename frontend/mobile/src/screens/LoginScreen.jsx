@@ -80,6 +80,9 @@ const LoginScreen = () => {
     }
   };
 
+  const hasSelectedUniversity = Boolean(currentUniversityUid);
+  const selectedUniversityName = theme.branding?.universityName || 'No university selected';
+
   const styles = StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -212,9 +215,31 @@ const LoginScreen = () => {
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
+    tenantSummaryLogoWrapper: {
+      width: 46,
+      height: 46,
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.surface,
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'hidden',
+      marginRight: theme.spacing.md,
+    },
+    tenantSummaryLogo: {
+      width: '80%',
+      height: '80%',
+      resizeMode: 'contain',
+    },
+    tenantSummaryInfo: {
+      flex: 1,
+    },
+    tenantSummaryLabel: {
+      fontSize: 11,
+      color: mutedText,
+      marginBottom: 2,
+    },
     tenantSummaryText: {
-      marginLeft: theme.spacing.sm,
-      fontSize: 13,
+      fontSize: 14,
       color: theme.colors.text,
       fontWeight: '600',
     },
@@ -331,8 +356,15 @@ const LoginScreen = () => {
             </View>
 
             <View style={styles.tenantSummary}>
-              <Icon name="school-outline" size={20} color={theme.colors.primary} />
-              <Text style={styles.tenantSummaryText}>{theme.branding?.universityName}</Text>
+              <View style={styles.tenantSummaryLogoWrapper}>
+                <Image source={brandingLogoSource} style={styles.tenantSummaryLogo} />
+              </View>
+              <View style={styles.tenantSummaryInfo}>
+                <Text style={styles.tenantSummaryLabel}>Selected University</Text>
+                <Text style={styles.tenantSummaryText} numberOfLines={2}>
+                  {hasSelectedUniversity ? selectedUniversityName : 'Please choose a university'}
+                </Text>
+              </View>
             </View>
 
             {error && <Text style={styles.errorText}>❌ {error}</Text>}

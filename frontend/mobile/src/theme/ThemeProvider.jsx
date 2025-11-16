@@ -8,7 +8,10 @@ import { DEFAULT_TENANT_ID } from '../config/constants.jsx';
 export const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
-  const tenantId = useSelector((state) => state.tenant?.currentTenantId);
+  const tenantState = useSelector((state) => state.tenant);
+  const tenantId = tenantState?.currentTenantId;
+  const selectedUniversityName = tenantState?.selectedUniversityName;
+  const selectedUniversityThemeColor = tenantState?.selectedUniversityThemeColor;
   const isAuthenticated = useSelector((state) => state.auth?.isAuthenticated);
 
   const theme = useMemo(() => {
@@ -42,18 +45,27 @@ export const ThemeProvider = ({ children }) => {
     combinedColors.surface = combinedColors.surface || baseColors.surface;
     combinedColors.brandPrimary = combinedColors.brandPrimary || combinedColors.primary;
 
+    const defaultBranding = {
+      appName: 'Fibi Demo',
+      universityName: 'Demo University',
+      logo: null,
+    };
+
+    const activeBranding = {
+      ...(tenantConfig?.branding || defaultBranding),
+      universityName:
+        selectedUniversityName ||
+        tenantConfig?.branding?.universityName ||
+        defaultBranding.universityName,
+    };
+
     return {
       colors: combinedColors,
       spacing: defaultSpacing,
       borderRadius,
-      branding:
-        tenantConfig?.branding || {
-          appName: 'Fibi Demo',
-          universityName: 'Demo University',
-          logo: null,
-        },
+      branding: activeBranding,
     };
-  }, [tenantId, isAuthenticated]);
+  }, [tenantId, isAuthenticated, selectedUniversityName, selectedUniversityThemeColor]);
 
   return (
     <ThemeContext.Provider value={theme}>

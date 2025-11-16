@@ -22,13 +22,19 @@ const RootNavigator = () => {
     setShowAnimatedSplash(false);
   }, []);
 
-  const handleSelectUniversity = ({ universityUid }) => {
-    console.log('[RootNavigator] University selected:', universityUid);
+  const handleSelectUniversity = ({ universityUid, name, themeColor }) => {
     const tenantId = getTenantIdForUniversity(universityUid, DEFAULT_TENANT_ID);
     const config = getTenantById(tenantId);
     if (config) {
-      console.log('[RootNavigator] Dispatching setCurrentTenant with:', { tenantId, universityUid });
-      dispatch(setCurrentTenant({ tenantId, config, universityUid }));
+      dispatch(
+        setCurrentTenant({
+          tenantId,
+          config,
+          universityUid,
+          universityName: name,
+          universityThemeColor: themeColor,
+        }),
+      );
       setSelectedUniversity(universityUid);
     } else {
       console.warn('[RootNavigator] No config found for tenantId:', tenantId);
@@ -58,7 +64,7 @@ const RootNavigator = () => {
     showAnimatedSplash,
   ]);
 
-  const shouldShowChatbot = !showAnimatedSplash && !!selectedUniversity;
+  const shouldShowChatbot = !showAnimatedSplash && isAuthenticated;
 
   return (
     <>
