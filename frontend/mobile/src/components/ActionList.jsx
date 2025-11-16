@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import useTheme from '../hooks/useTheme.jsx';
+
+const inferStatus = (item = {}) => {
+  const normalizedStatus = String(
+    item.status ||
+      item.actionStatus ||
+      item.messageStatus ||
+      item?.message?.status ||
+      item?.message?.descriptionStatus ||
+      '',
+  ).toLowerCase();
+
+  if (
+    item.openedFlag === 'Y' ||
+    item.processedFlag === 'Y' ||
+    item.actionProcessedFlag === 'Y' ||
+    ['processed', 'complete', 'completed', 'done'].includes(normalizedStatus)
+  ) {
+    return 'processed';
+  }
+
+  if (
+    item.openedFlag === 'N' ||
+    ['pending', 'new', 'open', 'action required'].includes(normalizedStatus)
+  ) {
+    return 'pending';
+  }
+
+  return 'pending';
+};
 
 const formatTimestamp = (timestamp) => {
   if (!timestamp) {
@@ -29,6 +58,25 @@ const ActionList = ({
 }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
+  const [statusFilter, setStatusFilter] = useState('pending');
+
+  const statusCounts = useMemo(() => {
+    return (items || []).reduce(
+      (acc, item) => {
+        const status = inferStatus(item);
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      },
+      { pending: 0, processed: 0 },
+    );
+  }, [items]);
+
+  const filteredItems = useMemo(() => {
+    if (!items || items.length === 0) {
+      return [];
+    }
+    return items.filter((item) => inferStatus(item) === statusFilter);
+  }, [items, statusFilter]);
 
   const renderContent = () => {
     if (loading) {
@@ -63,7 +111,20 @@ const ActionList = ({
       );
     }
 
-    return items.map((item) => (
+    if (filteredItems.length === 0) {
+      return (
+        <View style={styles.stateWrapper}>
+          <Icon name="filter-circle-outline" size={22} color={theme.colors.textSecondary} />
+          <Text style={styles.stateText}>
+            {statusFilter === 'pending'
+              ? 'No pending actions right now'
+              : 'No processed actions to review'}
+          </Text>
+        </View>
+      );
+    }
+
+    return filteredItems.map((item) => (
       <View key={item.inboxId} style={styles.itemCard}>
         <View style={styles.itemHeader}>
           <Text style={styles.moduleBadge}>{item?.moduleName?.description || 'Module'}</Text>
@@ -99,6 +160,34 @@ const ActionList = ({
           )}
         </View>
       )}
+      {items?.length ? (
+        <View style={styles.filterBar}>
+          {['pending', 'processed'].map((filterKey) => {
+            const isActive = statusFilter === filterKey;
+            return (
+              <TouchableOpacity
+                key={filterKey}
+                style={[styles.filterButton, isActive && styles.filterButtonActive]}
+                onPress={() => setStatusFilter(filterKey)}
+              >
+                <Text
+                  style={[
+                    styles.filterLabel,
+                    isActive && { color: theme.colors.primary, fontWeight: '700' },
+                  ]}
+                >
+                  {filterKey === 'pending' ? 'Pending' : 'Processed'}
+                </Text>
+                <View style={styles.filterBadge}>
+                  <Text style={styles.filterBadgeText}>
+                    {statusCounts[filterKey] || 0}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ) : null}
       {renderContent()}
     </View>
   );
@@ -146,6 +235,44 @@ const getStyles = (theme) =>
       fontSize: 12,
       fontWeight: '600',
       color: theme.colors.primary,
+    },
+    filterBar: {
+      flexDirection: 'row',
+      backgroundColor: theme.colors.mutedBackground || theme.colors.surfaceAlt || '#F4F4F5',
+      borderRadius: theme.borderRadius.full,
+      padding: 4,
+      marginBottom: theme.spacing.md,
+      gap: 4,
+    },
+    filterButton: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: theme.borderRadius.full,
+      paddingVertical: theme.spacing.xs,
+      gap: theme.spacing.xs,
+    },
+    filterButtonActive: {
+      backgroundColor: theme.colors.primary + '12',
+    },
+    filterLabel: {
+      fontSize: 13,
+      color: theme.colors.textSecondary,
+    },
+    filterBadge: {
+      minWidth: 22,
+      height: 22,
+      borderRadius: 11,
+      backgroundColor: theme.colors.surface,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 6,
+    },
+    filterBadgeText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.textSecondary,
     },
     itemCard: {
       paddingVertical: theme.spacing.md,

@@ -16,6 +16,7 @@ import { getActivitiesByTenant } from '../mockData/activities.jsx';
 import { fetchResearchSummaryWidget } from '../api/proposalsApi.js';
 import { fetchActionInbox } from '../api/inboxApi.js';
 import { fetchAgreementStatusCountWidget } from '../api/agreementsApi.js';
+import { fetchResearchSummaryTable } from '../api/researchSummaryApi.js';
 import Navbar from '../components/Navbar.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import ActivityFeed from '../components/ActivityFeed.jsx';
@@ -24,9 +25,10 @@ import ProposalPerformanceSection from '../components/charts/ProposalPerformance
 import BottomNavBar from '../components/BottomNavBar.jsx';
 import ActionList from '../components/ActionList.jsx';
 import AgreementStatusChart from '../components/AgreementStatusChart.jsx';
+import AgreementSummaryTable from '../components/AgreementSummaryTable.jsx';
 import ServiceTrackerScreen from './ServiceTrackerScreen.jsx';
 import AwardsScreen from './AwardsScreen.jsx';
-import NotificationList from '../components/NotificationList.jsx';
+import NotificationsScreen from './NotificationsScreen.jsx';
 
 const DashboardScreen = ({ onLogout }) => {
   const theme = useTheme();
@@ -84,6 +86,7 @@ const DashboardScreen = ({ onLogout }) => {
     { id: 'home', label: 'Dashboard', icon: 'home-outline' },
     { id: 'service', label: 'Tracker', icon: 'construct-outline' },
     { id: 'awards', label: 'Awards', icon: 'trophy-outline' },
+    { id: 'Email', label: 'Email', icon: 'mail-outline' },
   ];
   const [activeBottomTab, setActiveBottomTab] = useState(bottomTabs[0]?.id);
   const dashboardTabs = [
@@ -110,6 +113,10 @@ const DashboardScreen = ({ onLogout }) => {
   const [agreementLoading, setAgreementLoading] = useState(false);
   const [agreementError, setAgreementError] = useState(null);
   const [agreementRefreshKey, setAgreementRefreshKey] = useState(0);
+  const [agreementSummaryRows, setAgreementSummaryRows] = useState([]);
+  const [agreementSummaryHeaders, setAgreementSummaryHeaders] = useState([]);
+  const [agreementSummaryLoading, setAgreementSummaryLoading] = useState(false);
+  const [agreementSummaryError, setAgreementSummaryError] = useState(null);
 
   useEffect(() => {
     if (resolvedModules?.length && !resolvedModules.find((m) => m.id === activeModuleId)) {
@@ -242,6 +249,54 @@ const DashboardScreen = ({ onLogout }) => {
     };
 
     loadAgreementStatuses();
+    return () => {
+      isMounted = false;
+    };
+  }, [dashboardData?.overview?.unitNumber, agreementRefreshKey]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadResearchSummary = async () => {
+      try {
+        setAgreementSummaryLoading(true);
+        setAgreementSummaryError(null);
+        const result = await fetchResearchSummaryTable({
+          unitNumber: dashboardData?.overview?.unitNumber || '000001',
+          tabName: 'RESEARCH_SUMMARY_TABLE',
+          descentFlag: 'Y',
+          isAdmin: '',
+        });
+
+        if (!isMounted) {
+          return;
+        }
+
+        const headers =
+          (Array.isArray(result?.widgetHeaders) && result.widgetHeaders.length
+            ? result.widgetHeaders
+            : []) || [];
+        const rows = Array.isArray(result?.widgetDatas)
+          ? result.widgetDatas.map((row, index) => ({
+              id: `${row?.[0] || `summary-${index}`}`,
+              cells: Array.isArray(row) ? row.map((cell) => cell ?? '—') : [],
+            }))
+          : [];
+
+        setAgreementSummaryHeaders(headers);
+        setAgreementSummaryRows(rows);
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+        setAgreementSummaryError(error.message || 'Failed to load research summary');
+      } finally {
+        if (isMounted) {
+          setAgreementSummaryLoading(false);
+        }
+      }
+    };
+
+    loadResearchSummary();
     return () => {
       isMounted = false;
     };
@@ -399,6 +454,15 @@ const DashboardScreen = ({ onLogout }) => {
   });
 
   const renderMainSection = () => {
+    if (notificationsVisible) {
+      return (
+        <NotificationsScreen
+          notifications={notifications}
+          onClose={() => setNotificationsVisible(false)}
+        />
+      );
+    }
+
     if (activeBottomTab === 'service') {
       return <ServiceTrackerScreen />;
     }
@@ -458,15 +522,28 @@ const DashboardScreen = ({ onLogout }) => {
         </View>
 
         {activeDashboardTab === 'agreements' ? (
-          <AgreementStatusChart
-            data={agreementStatuses}
-            loading={agreementLoading}
-            error={agreementError}
-            onRetry={handleReloadAgreementStatus}
-            containerStyle={styles.tabPanel}
-            title="Agreement Status by Count"
-            subtitle="Real-time counts by agreement state"
-          />
+          <>
+                    <AgreementSummaryTable
+              headers={agreementSummaryHeaders}
+              rows={agreementSummaryRows}
+              loading={agreementSummaryLoading}
+              error={agreementSummaryError}
+              onRetry={handleReloadAgreementStatus}
+              containerStyle={styles.tabPanel}
+              title="Research Summary Table"
+              subtitle="Aggregated agreement insights"
+            />
+            <AgreementStatusChart
+              data={agreementStatuses}
+              loading={agreementLoading}
+              error={agreementError}
+              onRetry={handleReloadAgreementStatus}
+              containerStyle={styles.tabPanel}
+              title="Agreement Status by Count"
+              subtitle="Real-time counts by agreement state"
+            />
+  
+          </>
         ) : (
           <>
             <View style={styles.chartWrapper}>
@@ -563,11 +640,6 @@ const DashboardScreen = ({ onLogout }) => {
           </View>
         </View>
       </View>
-      <NotificationList
-        visible={notificationsVisible}
-        notifications={notifications}
-        onClose={() => setNotificationsVisible(false)}
-      />
     </View>
   );
 };

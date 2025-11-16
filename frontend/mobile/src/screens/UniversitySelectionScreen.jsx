@@ -230,7 +230,6 @@ import { fetchUniversities } from '../api/universityApi.js';
 import Logo1 from '../assets/universitylogo/Logo1.png';
 import Logo2 from '../assets/universitylogo/Logo2.png';
 import Logo3 from '../assets/universitylogo/logo3.png';
-import Logo4 from '../assets/universitylogo/Logo4.png';
 import Logo4Webp from '../assets/universitylogo/logo4.webp';
 import MITPng from '../assets/universitylogo/MIT.png';
 
@@ -270,10 +269,7 @@ const UniversitySelectionScreen = ({ onSelectUniversity }) => {
     };
   }, []);
 
-  const logoPool = useMemo(
-    () => [Logo1, Logo2, Logo3, Logo4, Logo4Webp, MITPng],
-    [],
-  );
+  const logoPool = useMemo(() => [Logo1, Logo2, Logo3, Logo4Webp, MITPng], [],);
 
   const tiles = useMemo(
     () =>
