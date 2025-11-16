@@ -33,6 +33,9 @@ class ApiClient {
       auth = true,
       responseType = 'json',
       returnResponse = false,
+      timeoutMs = 15000,
+      retries = 2,
+      retryDelayMs = 1000,
       ...rest
     } = options;
 
@@ -77,41 +80,73 @@ class ApiClient {
       }
     });
 
-    const response = await fetch(url, {
-      method,
-      headers: finalHeaders,
-      body: finalBody,
-      credentials: 'include',
-      ...rest,
-    });
-
-    if (!response.ok) {
-      let errorMessage = '';
+    let attempt = 0;
+    let lastError = null;
+    while (attempt <= retries) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
       try {
-        errorMessage = await response.text();
-      } catch {
-        errorMessage = '';
+        const response = await fetch(url, {
+          method,
+          headers: finalHeaders,
+          body: finalBody,
+          credentials: 'include',
+          signal: controller.signal,
+          ...rest,
+        });
+        clearTimeout(id);
+        if (!response.ok) {
+          let errorMessage = '';
+          try {
+            errorMessage = await response.text();
+          } catch {
+            errorMessage = '';
+          }
+          // Retry on 5xx errors only
+          if (response.status >= 500 && attempt < retries) {
+            attempt += 1;
+            const delay = retryDelayMs * Math.pow(2, attempt - 1);
+            await new Promise((res) => setTimeout(res, delay));
+            continue;
+          }
+          throw new Error(errorMessage || `Request failed (${response.status})`);
+        }
+
+        let data = null;
+        if (responseType === 'json') {
+          const text = await response.text();
+          data = text ? JSON.parse(text) : null;
+        } else if (responseType === 'text') {
+          data = await response.text();
+        } else if (responseType === 'blob') {
+          data = await response.blob();
+        } else if (responseType === 'arrayBuffer') {
+          data = await response.arrayBuffer();
+        }
+
+        if (returnResponse) {
+          return { data, response };
+        }
+        return data;
+      } catch (err) {
+        clearTimeout(id);
+        lastError = err;
+        // Retry on abort/network errors
+        const isAbort = err?.name === 'AbortError';
+        const isNetwork = /Network request failed|Failed to fetch|timeout|ECONNRESET|ENETUNREACH|wsarecv/i.test(
+          String(err?.message || ''),
+        );
+        if ((isAbort || isNetwork) && attempt < retries) {
+          attempt += 1;
+          const delay = retryDelayMs * Math.pow(2, attempt - 1);
+          await new Promise((res) => setTimeout(res, delay));
+          continue;
+        }
+        throw err;
       }
-      throw new Error(errorMessage || `Request failed (${response.status})`);
     }
-
-    let data = null;
-    if (responseType === 'json') {
-      const text = await response.text();
-      data = text ? JSON.parse(text) : null;
-    } else if (responseType === 'text') {
-      data = await response.text();
-    } else if (responseType === 'blob') {
-      data = await response.blob();
-    } else if (responseType === 'arrayBuffer') {
-      data = await response.arrayBuffer();
-    }
-
-    if (returnResponse) {
-      return { data, response };
-    }
-
-    return data;
+    // If we reached here, all retries failed
+    throw lastError || new Error('Request failed');
   }
 
   get(path, options) {

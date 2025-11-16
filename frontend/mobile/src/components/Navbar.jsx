@@ -12,6 +12,7 @@ const Navbar = ({
   onSidebarToggle,
   notificationCount = 0,
   onNotificationPress,
+  onScanPress,
 }) => {
   const theme = useTheme();
   const logoSize = 40;
@@ -52,14 +53,14 @@ const Navbar = ({
       width: logoSize,
       height: logoSize,
     },
-    notificationButton: {
+    actionButton: {
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.sm,
       borderRadius: theme.borderRadius.full,
       backgroundColor: 'rgba(255,255,255,0.15)',
       marginLeft: theme.spacing.sm,
     },
-    notificationIcon: {
+    actionIcon: {
       color: theme.colors.secondary,
     },
     badge: {
@@ -122,15 +123,16 @@ const Navbar = ({
             </Text>
           </View>
         </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity
-            style={styles.notificationButton}
+            style={styles.actionButton}
             onPress={onNotificationPress || (() => {})}
             activeOpacity={0.85}
           >
             <Icon
               name="notifications-outline"
               size={22}
-              style={styles.notificationIcon}
+              style={styles.actionIcon}
             />
             {notificationCount > 0 && (
               <View style={styles.badge}>
@@ -140,6 +142,14 @@ const Navbar = ({
               </View>
             )}
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={onScanPress || (() => {})}
+            activeOpacity={0.85}
+          >
+            <Icon name="scan-outline" size={22} style={styles.actionIcon} />
+          </TouchableOpacity>
+          </View>
       </View>
     </LinearGradient>
   );

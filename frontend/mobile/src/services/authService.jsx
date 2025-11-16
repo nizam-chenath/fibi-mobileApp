@@ -6,7 +6,7 @@ import { logoutRequest } from '../api/logoutApi.js';
 class AuthService {
   async login(username, password, tenantId, universityUid) {
     try {
-      if (!universityUid) {
+      if (!universityUid || (typeof universityUid === 'string' && universityUid.trim() === '')) {
         throw new Error('University selection is required before login');
       }
 

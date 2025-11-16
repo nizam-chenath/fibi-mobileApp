@@ -43,6 +43,8 @@ const RootNavigator = () => {
         }),
       );
       setSelectedUniversity(universityUid);
+    } else {
+      console.warn('[RootNavigator] No config found for tenantId:', tenantId);
     }
   };
 
