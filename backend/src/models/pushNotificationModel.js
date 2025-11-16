@@ -20,7 +20,26 @@ async function sendPushNotificationToAllUsers(title, body) {
       AND fcm_tocken <> ''
   `;
 
-  const [rows] = await pool.query(selectTokensSql);
+  let rows = [];
+  try {
+    const qres = await pool.query(selectTokensSql);
+    rows = qres[0] || [];
+  } catch (err) {
+    console.error('Error fetching FCM tokens from DB:', err);
+    // Do not throw to avoid breaking broadcast; return a graceful result
+    return {
+      success: false,
+      message: 'Database error while fetching FCM tokens',
+      summary: {
+        title,
+        body,
+        totalTokens: 0,
+        successCount: 0,
+        failureCount: 0,
+        errorCode: err?.code || null
+      }
+    };
+  }
 
   // Extract unique tokens
   const tokens = [...new Set((rows || []).map(r => r.fcm_tocken).filter(Boolean))];
