@@ -268,7 +268,7 @@ const AwardedProposalsChart = ({
           <TouchableOpacity
             style={[
               styles.showMoreButton,
-              { borderColor: theme.colors.border, backgroundColor: theme.colors.surface },
+              { borderColor: '#cccccc', backgroundColor: theme.colors.surface },
             ]}
             onPress={() => {
               setVisibleCount((prev) =>
@@ -296,14 +296,14 @@ const AwardedProposalsChart = ({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
-    padding: 20,
+    padding: 15,
     // elevation: 2,
     // shadowColor: '#000000',
     // shadowOpacity: 0.08,
     // shadowRadius: 12,
     // shadowOffset: { width: 0, height: 4 },
     marginHorizontal: 16,
-    marginTop: 16,
+    // marginTop: 16,
   },
   header: {
     marginBottom: 16,

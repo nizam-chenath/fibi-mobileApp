@@ -17,7 +17,7 @@ const BottomNavBar = ({
     tabs.length > 0
       ? tabs
       : [
-          { id: 'home', label: 'Dashboard', icon: 'home-outline' },
+          { id: 'home', label: 'Home', icon: 'home-outline' },
           { id: 'tracker', label: 'Tracker', icon: 'construct-outline' },
           { id: 'awards', label: 'Awards', icon: 'trophy-outline' },
           { id: 'Email', label: 'Email', icon: 'mail-outline' },
@@ -31,7 +31,7 @@ const BottomNavBar = ({
     if (tabWidth === 0 || activeIndex < 0) return;
 
     Animated.spring(indicatorAnim, {
-      toValue: activeIndex * tabWidth,
+      toValue: activeIndex * tabWidth + 4, // add small horizontal inset so pill has side space
       useNativeDriver: true,
       damping: 18,
       stiffness: 180,
@@ -59,7 +59,8 @@ const BottomNavBar = ({
           style={[
             styles.indicator,
             {
-              width: tabWidth,
+              // subtract inset on both sides to create visible left/right spacing
+              width: Math.max(0, tabWidth - 8),
               backgroundColor: theme.colors.brandPrimary,
               transform: [{ translateX: indicatorAnim }],
             },
@@ -80,7 +81,11 @@ const BottomNavBar = ({
             onPress={() => onTabPress?.(tab)}
             activeOpacity={0.85}
           >
-            <View style={styles.tabContent}>
+            <View
+              style={[
+                styles.tabContent,
+              ]}
+            >
               <Icon
                 name={tab.icon}
                 size={20}
@@ -109,6 +114,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 40,
+    backgroundColor:"red",
     padding: 6,
     width: '100%',
     position: 'relative',
@@ -142,11 +148,10 @@ const styles = StyleSheet.create({
     marginRight: 0,
   },
   tabLabel: {
+   paddingRight: 2,
     fontSize: 11,
     fontWeight: '600',
   },
 });
 
 export default BottomNavBar;
-
-

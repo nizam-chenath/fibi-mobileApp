@@ -55,6 +55,7 @@ const ActionList = ({
   onRetry,
   showHeader = true,
   containerStyle,
+  onShowMore,
 }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -113,18 +114,29 @@ const ActionList = ({
 
     if (filteredItems.length === 0) {
       return (
-        <View style={styles.stateWrapper}>
-          <Icon name="filter-circle-outline" size={22} color="#000000" />
-          <Text style={styles.stateText}>
-            {statusFilter === 'pending'
-              ? 'No pending actions right now'
-              : 'No processed actions to review'}
-          </Text>
-        </View>
+        <>
+          <View style={styles.stateWrapper}>
+            <Icon name="filter-circle-outline" size={22} color="#000000" />
+            <Text style={styles.stateText}>
+              {statusFilter === 'pending'
+                ? 'No pending actions right now'
+                : 'No processed actions to review'}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.showMoreButton}
+            onPress={onShowMore}
+            activeOpacity={0.9}
+          >
+            <Text style={styles.showMoreText}>View more</Text>
+          </TouchableOpacity>
+        </>
       );
     }
 
-    return filteredItems.map((item) => (
+    const visibleItems = filteredItems.slice(0, 5);
+
+    const listNodes = visibleItems.map((item) => (
       <View key={item.inboxId} style={styles.itemCard}>
         <View style={styles.itemHeader}>
           <Text style={styles.moduleBadge}>{item?.moduleName?.description || 'Module'}</Text>
@@ -146,6 +158,19 @@ const ActionList = ({
         </View>
       </View>
     ));
+
+    return (
+      <>
+        {listNodes}
+        <TouchableOpacity
+          style={styles.showMoreButton}
+          onPress={onShowMore}
+          activeOpacity={0.9}
+        >
+          <Text style={styles.showMoreText}>View more</Text>
+        </TouchableOpacity>
+      </>
+    );
   };
 
   return (
@@ -277,7 +302,7 @@ const getStyles = (theme) =>
     itemCard: {
       paddingVertical: theme.spacing.md,
       borderTopWidth: 1,
-      borderTopColor: theme.colors.border,
+      borderTopColor: '#cccccc',
     },
     itemHeader: {
       flexDirection: 'row',
@@ -321,6 +346,20 @@ const getStyles = (theme) =>
     metaText: {
       fontSize: 12,
       color: '#000000',
+    },
+    showMoreButton: {
+      alignSelf: 'center',
+      marginTop: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.borderRadius.full,
+      borderWidth: 1,
+      borderColor: theme.colors.primary + '55',
+    },
+    showMoreText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.primary,
     },
   });
 

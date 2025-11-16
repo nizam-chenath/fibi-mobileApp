@@ -12,11 +12,17 @@ import {
 } from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import { useNavigation } from '@react-navigation/native';
-import API from '../api/api-instance';
 import { navigate } from './navigationService';
+import { useSelector } from 'react-redux';
+import { saveUserFcmDetails } from '../api/notificationApi.js';
 
 const NotificationManager = ({ phone }) => {
   const navigation = useNavigation();
+  const currentUniversityUid = useSelector((state) => state.tenant?.currentUniversityUid) ;
+  const personId = useSelector((state) => state.user?.personId);
+  const personName =
+    useSelector((state) => state.user?.displayName || state.user?.name || state.user?.username) ||
+    'user';
 
   useEffect(() => {
     const messagingInstance = getMessaging();
@@ -40,11 +46,13 @@ const NotificationManager = ({ phone }) => {
       try {
         const token = await getToken(messagingInstance);
         console.log('🔹 FCM Token:', token);
-        await API.post('/api/auth/register-device', {
-          phone: phone,
-          fcmToken: token
+        await saveUserFcmDetails({
+          uid: currentUniversityUid,
+          person_id: personId,
+          person_name: personName,
+          fcm_token: token,
         });
-        console.log('✅ Device token registered successfully');
+        console.log('✅ Device token registered successfully (saved to server)');
       } catch (error) {
         console.error('❌ Failed to register device token:', error);
       }
@@ -54,9 +62,11 @@ const NotificationManager = ({ phone }) => {
     const unsubscribeTokenRefresh = onTokenRefresh(messagingInstance, async (token) => {
       try {
         console.log('🔄 Token refreshed:', token);
-        await API.post('/api/auth/register-device', {
-          phone: phone,
-          fcmToken: token
+        await saveUserFcmDetails({
+          uid: currentUniversityUid,
+          person_id: personId,
+          person_name: personName,
+          fcm_token: token,
         });
       } catch (error) {
         console.error('❌ Failed to refresh token:', error);
@@ -163,7 +173,7 @@ const NotificationManager = ({ phone }) => {
       unsubscribeForeground();
       unsubscribeBackground();
     };
-  }, [phone, navigation]);
+  }, [phone, navigation, currentUniversityUid, personId, personName]);
 
   return null;
 };

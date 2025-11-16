@@ -22,6 +22,7 @@ import useTheme from '../hooks/useTheme.jsx';
 import useTenant from '../hooks/useTenant.jsx';
 import useAuth from '../hooks/useAuth.jsx';
 import { chatbotService } from '../services/chatbotService.jsx';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HEADER_GRADIENT = ['#18C391', '#338AAA'];
 const DEFAULT_WELCOME_MESSAGE =
@@ -54,25 +55,69 @@ const ChatbotWidget = () => {
   const dot3Anim = useRef(new Animated.Value(0)).current;
 
   const fabSize = 68;
-  const defaultX = width - fabSize - 24;
-  const defaultY = height - fabSize - 48;
+  const SAFE_MARGIN = 16;
+  const defaultX = width - fabSize - SAFE_MARGIN;
+  const defaultY = height - fabSize - (SAFE_MARGIN * 3);
   const pan = useRef(new Animated.ValueXY({ x: defaultX, y: defaultY })).current;
+  const dragStartRef = useRef({ x: 0, y: 0 });
+  const hasMovedRef = useRef(false);
   const panResponder = useMemo(
     () =>
       PanResponder.create({
         onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onStartShouldSetPanResponderCapture: () => true,
         onPanResponderGrant: () => {
+          hasMovedRef.current = false;
+          dragStartRef.current = {
+            x: pan.x.__getValue(),
+            y: pan.y.__getValue(),
+          };
           pan.setOffset({
             x: pan.x.__getValue(),
             y: pan.y.__getValue(),
           });
           pan.setValue({ x: 0, y: 0 });
         },
-        onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
-          useNativeDriver: false,
-        }),
-        onPanResponderRelease: () => {
+        onPanResponderMove: (evt, gestureState) => {
+          if (Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2) {
+            hasMovedRef.current = true;
+          }
+          Animated.event([null, { dx: pan.x, dy: pan.y }], {
+            useNativeDriver: false,
+          })(evt, gestureState);
+        },
+        onPanResponderRelease: async (evt, gestureState) => {
           pan.flattenOffset();
+
+          // Treat as tap if not moved meaningfully
+          const movedEnough =
+            Math.abs(gestureState.dx) > 6 || Math.abs(gestureState.dy) > 6;
+          if (!movedEnough) {
+            handleToggle();
+            return;
+          }
+
+          const current = { x: pan.x.__getValue(), y: pan.y.__getValue() };
+          const maxX = Math.max(0, width - fabSize - SAFE_MARGIN);
+          const maxY = Math.max(0, height - fabSize - SAFE_MARGIN);
+          const clampedX = Math.min(Math.max(current.x, SAFE_MARGIN), maxX);
+          const clampedY = Math.min(Math.max(current.y, SAFE_MARGIN), maxY);
+          // Do not snap to edges; keep exact released position within bounds
+          const targetX = clampedX;
+          const targetY = clampedY;
+          Animated.spring(pan, {
+            toValue: { x: targetX, y: targetY },
+            useNativeDriver: false,
+            bounciness: 6,
+          }).start(async () => {
+            try {
+              await AsyncStorage.setItem(
+                'chatbot_fab_position',
+                JSON.stringify({ x: targetX, y: targetY })
+              );
+            } catch {}
+          });
         },
       }),
     [pan],
@@ -104,6 +149,31 @@ const ChatbotWidget = () => {
   }, []);
 
   const resolvedPersonId = user?.personId || user?.id || '10000000001';
+
+  // Load saved FAB position on mount / dimension change
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const saved = await AsyncStorage.getItem('chatbot_fab_position');
+        if (saved && isMounted) {
+          const { x, y } = JSON.parse(saved);
+          const maxX = Math.max(0, width - fabSize - SAFE_MARGIN);
+          const maxY = Math.max(0, height - fabSize - SAFE_MARGIN);
+          const clampedX = Math.min(Math.max(x, SAFE_MARGIN), maxX);
+          const clampedY = Math.min(Math.max(y, SAFE_MARGIN), maxY);
+          pan.setValue({ x: clampedX, y: clampedY });
+          return;
+        }
+      } catch {}
+      if (isMounted) {
+        pan.setValue({ x: defaultX, y: defaultY });
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, [width, height, defaultX, defaultY, pan]);
 
   // WhatsApp-style typing animation
   useEffect(() => {
@@ -388,8 +458,8 @@ const createStyles = (theme) =>
   StyleSheet.create({
     fabWrapper: {
       position: 'absolute',
-      top: -14,
-      left: 28,
+      top: 0,
+      left: 0,
       zIndex: 1000,
     },
     fabGradient: {
