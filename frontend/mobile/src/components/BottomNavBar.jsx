@@ -31,7 +31,7 @@ const BottomNavBar = ({
     if (tabWidth === 0 || activeIndex < 0) return;
 
     Animated.spring(indicatorAnim, {
-      toValue: activeIndex * tabWidth + 4,
+      toValue: activeIndex * tabWidth,
       useNativeDriver: true,
       damping: 18,
       stiffness: 180,
@@ -59,7 +59,7 @@ const BottomNavBar = ({
           style={[
             styles.indicator,
             {
-              width: Math.max(tabWidth - 8, 0),
+              width: tabWidth,
               backgroundColor: theme.colors.brandPrimary,
               transform: [{ translateX: indicatorAnim }],
             },

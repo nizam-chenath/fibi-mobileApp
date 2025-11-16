@@ -272,28 +272,31 @@ const EmailHubScreen = ({ onClose }) => {
                 {selectedNotification && (
                   <>
                     <View style={styles.modalHeader}>
-                      <Text style={[styles.modalTitle, { color: theme.colors.text }]} numberOfLines={2}>
+                      <Text style={[styles.modalTitle, { color: "black" }]} numberOfLines={2}>
                         {selectedNotification.subject}
                       </Text>
-                      <TouchableOpacity
-                        onPress={() => setViewModalVisible(false)}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                        accessibilityRole="button"
-                        accessibilityLabel="Close"
-                      >
-                        <Icon name="close" size={20} color={theme.colors.textSecondary} />
-                      </TouchableOpacity>
                     </View>
                     {!!selectedNotification.date && (
-                      <Text style={[styles.modalSubTitle, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalSubTitle]}>
                         {selectedNotification.date}
                       </Text>
                     )}
                     <ScrollView style={styles.modalScroll} contentContainerStyle={{ paddingBottom: 8 }}>
-                      <Text style={[styles.modalMessage, { color: theme.colors.textSecondary }]} selectable>
+                      <Text style={[styles.modalMessage]} selectable>
                         {selectedNotification.message || ''}
                       </Text>
                     </ScrollView>
+                    <View style={styles.modalFooter}>
+                      <TouchableOpacity
+                        style={styles.closeButton}
+                        activeOpacity={0.9}
+                        onPress={() => setViewModalVisible(false)}
+                        accessibilityRole="button"
+                        accessibilityLabel="Close modal"
+                      >
+                        <Text style={styles.closeButtonText}>Close</Text>
+                      </TouchableOpacity>
+                    </View>
                   </>
                 )}
               </View>
@@ -512,6 +515,24 @@ const getStyles = (theme) =>
     modalMessage: {
       fontSize: 14,
       lineHeight: 22,
+    },
+    modalFooter: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      marginTop: 12,
+    },
+    closeButton: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: '#E5E7EB',
+      backgroundColor: theme.colors.background,
+    },
+    closeButtonText: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: '#000000',
     },
   });
 

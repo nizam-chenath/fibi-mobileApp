@@ -49,7 +49,7 @@ const AgreementSummaryTable = ({
     if (!safeRows.length) {
       return (
         <View style={styles.stateWrapper}>
-          <Icon name="information-circle-outline" size={22} color={theme.colors.textSecondary} />
+          <Icon name="information-circle-outline" size={22}  />
           <Text style={styles.stateText}>No research summary data available</Text>
         </View>
       );
@@ -130,11 +130,11 @@ const getStyles = (theme) =>
     title: {
       fontSize: 18,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
     },
     subtitle: {
       fontSize: 13,
-      color: theme.colors.textSecondary,
+      color: '#000000',
       marginTop: 4,
     },
     stateWrapper: {
@@ -145,7 +145,7 @@ const getStyles = (theme) =>
     },
     stateText: {
       fontSize: 14,
-      color: theme.colors.textSecondary,
+      color: '#000000',
       textAlign: 'center',
     },
     retryButton: {
@@ -158,7 +158,7 @@ const getStyles = (theme) =>
     retryText: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.primary,
+      color: '#000000',
     },
 			table: {
 				minWidth: '100%',
@@ -173,23 +173,23 @@ const getStyles = (theme) =>
 			tableRow: {
                 flexDirection: 'row',
                 borderBottomWidth: 1,
-                borderBottomColor: theme.colors.border,
+                borderBottomColor: '#cccccc',
                 paddingVertical: theme.spacing.sm,
             },
             tableHeader: {
                 borderBottomWidth: 2,
-                borderBottomColor: theme.colors.primary + '55',
+                borderBottomColor: '#48BD92' + '55',
             },
             cell: {
                 minWidth: 120,
                 paddingRight: theme.spacing.lg,
                 fontSize: 14,
-                color: theme.colors.text,
+                color: '#000000',
                 fontWeight: '500',
             },
             headerCell: {
                 fontWeight: '700',
-                color: theme.colors.primary,
+                color: '#000000',
             },
             primaryCell: {
                 minWidth: 180,
@@ -197,7 +197,7 @@ const getStyles = (theme) =>
 			itemTitle: {
 				fontSize: 16,
 				fontWeight: '700',
-				color: theme.colors.text,
+				color: '#000000',
 				marginBottom: 8,
 			},
 			itemBody: {
@@ -209,7 +209,7 @@ const getStyles = (theme) =>
 				alignItems: 'flex-start',
 				paddingVertical: 6,
 				borderBottomWidth: 1,
-				borderBottomColor: theme.colors.border,
+				borderBottomColor: '#cccccc',
 			},
 			itemLabel: {
 				flex: 1,
@@ -217,14 +217,14 @@ const getStyles = (theme) =>
 				fontWeight: '700',
 				textTransform: 'uppercase',
 				letterSpacing: 0.4,
-				color: theme.colors.textSecondary,
+				color: '#000000',
 				paddingRight: theme.spacing.md,
 			},
 			itemValue: {
 				flex: 1.2,
 				fontSize: 14,
 				fontWeight: '600',
-				color: theme.colors.text,
+				color: '#000000',
 			},
   });
 

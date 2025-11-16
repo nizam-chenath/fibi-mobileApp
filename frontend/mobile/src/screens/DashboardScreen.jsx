@@ -407,7 +407,7 @@ const DashboardScreen = ({ onLogout }) => {
       backgroundColor: theme.colors.surface,
       borderRadius: theme.borderRadius.full,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor:'#cccccc',
       padding: 4,
     },
     tabButton: {
@@ -423,7 +423,7 @@ const DashboardScreen = ({ onLogout }) => {
     tabButtonText: {
       fontSize: 13,
       fontWeight: '600',
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     tabButtonTextActive: {
       color: theme.colors.secondary,
