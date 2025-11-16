@@ -13,9 +13,7 @@ const pool = mysql.createPool({
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
-  connectTimeout: 10000, // 10 seconds connection timeout
-  acquireTimeout: 10000, // 10 seconds to get connection from pool
-  timeout: 60000 // 60 seconds query timeout
+  connectTimeout: 10000 // 10 seconds connection timeout
 });
 
 // Handle pool errors
@@ -37,6 +35,11 @@ async function testConnection() {
     connection.release();
   } catch (err) {
     console.error('Error connecting to MySQL Database:', err);
+    if (err.code === 'ETIMEDOUT') {
+      console.error('Connection timeout - check your DB_HOST, DB_PORT, and network connectivity');
+    } else if (err.code === 'ECONNREFUSED') {
+      console.error('Connection refused - is MySQL server running?');
+    }
     // Retry after 2 seconds
     setTimeout(testConnection, 2000);
   }

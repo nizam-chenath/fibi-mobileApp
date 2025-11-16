@@ -52,6 +52,7 @@ const proposalRoutes = require('./src/routes/proposalRoutes');
 const serviceRequestRoutes = require('./src/routes/serviceRequestRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
 const emailHubRoutes = require('./src/routes/emailHubRoutes');
+const userFcmRoutes = require('./src/routes/userFcmRoutes');
 
 app.use('/api/login', loginRoute);
 app.use('/api/logout', logoutRoute);
@@ -64,4 +65,5 @@ app.use('/api/proposals', authenticateToken, proposalRoutes);
 app.use('/api/service-requests', authenticateToken, serviceRequestRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/email-hub', authenticateToken, emailHubRoutes);
+app.use('/api/user-fcm', userFcmRoutes);
 

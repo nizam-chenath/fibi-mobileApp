@@ -68,6 +68,24 @@ const getServiceRequests = async (req, res) => {
       cookieHeader = req.headers.cookie;
     }
 
+    // If no cookies present, the external API will return 401. Fail fast with a clear message.
+    if (!cookieHeader || cookieHeader.trim() === '') {
+      return res.status(401).json({
+        message: 'Unauthorized: authentication cookie is required for service requests. Please login first.'
+      });
+    }
+
+    // Log limited cookie info for debugging (do not log full values)
+    try {
+      const cookieNames = (cookieHeader || '')
+        .split(';')
+        .map(p => p.split('=')[0]?.trim())
+        .filter(Boolean);
+      console.log('Forwarding cookies to external service request API:', cookieNames);
+    } catch (e) {
+      // ignore logging errors
+    }
+
     // Prepare payload with defaults and values from request body
     const payload = {
       advancedSearch: advancedSearch !== undefined ? advancedSearch : "L",
