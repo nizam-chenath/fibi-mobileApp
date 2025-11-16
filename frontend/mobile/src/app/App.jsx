@@ -5,6 +5,8 @@ import { Provider } from 'react-redux';
 import store from '../store/store.jsx';
 import ThemeProvider from '../theme/ThemeProvider.jsx';
 import RootNavigator from './RootNavigator.jsx';
+import NotificationManager from '../utils/NotificationHandler.js';
+import { NotificationSocketProvider } from '../context/NotificationSocketContext.jsx';
 
 const DEFAULT_FONT_STACK =
   '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif';
@@ -37,7 +39,10 @@ const App = () => {
   return (
     <Provider store={store}>
       <ThemeProvider>
-        <RootNavigator />
+        <NotificationSocketProvider>
+          <RootNavigator />
+          <NotificationManager />
+        </NotificationSocketProvider>
       </ThemeProvider>
     </Provider>
   );

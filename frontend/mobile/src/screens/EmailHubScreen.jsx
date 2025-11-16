@@ -131,7 +131,6 @@ const EmailHubScreen = ({ onClose }) => {
       <View style={[styles.card, item.isUnread ? styles.unreadCard : null]}>
         <View style={styles.cardHeader}>
           <Text style={styles.title}>{cleanSubject}</Text>
-          {!!displayDate && <Text style={styles.timeAgo}>{displayDate}</Text>}
         </View>
         {item.message_type ? (
           <View style={styles.pill}>
@@ -140,6 +139,7 @@ const EmailHubScreen = ({ onClose }) => {
         ) : null}
         {cleanMessage ? <Text style={styles.message} numberOfLines={1}>{cleanMessage}</Text> : null}
         <View style={styles.cardFooter}>
+        {!!displayDate && <Text style={styles.timeAgo}>{displayDate}</Text>}
           <TouchableOpacity
             style={styles.viewButton}
             activeOpacity={0.9}
@@ -156,8 +156,8 @@ const EmailHubScreen = ({ onClose }) => {
             accessibilityRole="button"
             accessibilityLabel="View full message"
           >
-            <Icon name="eye-outline" size={14} color={theme.colors.text} />
-            <Text style={[styles.viewButtonText, { color: theme.colors.text }]}>View</Text>
+            <Icon name="eye-outline" size={14} color={'#000000'} />
+            <Text style={[styles.viewButtonText, { color: '#000000' }]}>View</Text>
           </TouchableOpacity>
         </View>
   
@@ -169,7 +169,7 @@ const EmailHubScreen = ({ onClose }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onClose} style={styles.backButton} activeOpacity={0.85}>
-          <Icon name="chevron-back" size={22} color={theme.colors.text} />
+          <Icon name="chevron-back" size={22} color={'#000000'} />
         </TouchableOpacity>
         <Text style={styles.screenTitle}>Email Hub</Text>
         <TouchableOpacity
@@ -177,7 +177,7 @@ const EmailHubScreen = ({ onClose }) => {
           style={styles.refreshButton}
           activeOpacity={0.85}
         >
-          <Icon name="refresh" size={18} color={theme.colors.text} />
+          <Icon name="refresh" size={18} color={'#000000'} />
         </TouchableOpacity>
       </View>
 
@@ -193,10 +193,10 @@ const EmailHubScreen = ({ onClose }) => {
               <Text style={styles.dropdownValue}>
                 {selectedType || 'Inbox'}
               </Text>
-              <Icon name={dropdownOpen ? 'chevron-up' : 'chevron-down'} size={16} color={theme.colors.text} />
+              <Icon name={dropdownOpen ? 'chevron-up' : 'chevron-down'} size={16} color={'#000000'} />
             </TouchableOpacity>
             {dropdownOpen && (
-              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' }]}>
                 <TouchableOpacity
                   style={styles.dropdownItem}
                   onPress={() => {
@@ -272,28 +272,31 @@ const EmailHubScreen = ({ onClose }) => {
                 {selectedNotification && (
                   <>
                     <View style={styles.modalHeader}>
-                      <Text style={[styles.modalTitle, { color: theme.colors.text }]} numberOfLines={2}>
+                      <Text style={[styles.modalTitle, { color: "black" }]} numberOfLines={2}>
                         {selectedNotification.subject}
                       </Text>
-                      <TouchableOpacity
-                        onPress={() => setViewModalVisible(false)}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                        accessibilityRole="button"
-                        accessibilityLabel="Close"
-                      >
-                        <Icon name="close" size={20} color={theme.colors.textSecondary} />
-                      </TouchableOpacity>
                     </View>
                     {!!selectedNotification.date && (
-                      <Text style={[styles.modalSubTitle, { color: theme.colors.textSecondary }]}>
+                      <Text style={[styles.modalSubTitle]}>
                         {selectedNotification.date}
                       </Text>
                     )}
                     <ScrollView style={styles.modalScroll} contentContainerStyle={{ paddingBottom: 8 }}>
-                      <Text style={[styles.modalMessage, { color: theme.colors.textSecondary }]} selectable>
+                      <Text style={[styles.modalMessage]} selectable>
                         {selectedNotification.message || ''}
                       </Text>
                     </ScrollView>
+                    <View style={styles.modalFooter}>
+                      <TouchableOpacity
+                        style={styles.closeButton}
+                        activeOpacity={0.9}
+                        onPress={() => setViewModalVisible(false)}
+                        accessibilityRole="button"
+                        accessibilityLabel="Close modal"
+                      >
+                        <Text style={styles.closeButtonText}>Close</Text>
+                      </TouchableOpacity>
+                    </View>
                   </>
                 )}
               </View>
@@ -325,7 +328,7 @@ const getStyles = (theme) =>
     screenTitle: {
       fontSize: 22,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
     },
     refreshButton: {
       padding: theme.spacing.sm,
@@ -348,7 +351,7 @@ const getStyles = (theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       borderRadius: 12,
       paddingHorizontal: 12,
       paddingVertical: 10,
@@ -357,7 +360,7 @@ const getStyles = (theme) =>
     dropdownValue: {
       fontSize: 14,
       fontWeight: '600',
-      color: theme.colors.text,
+      color: '#000000',
     },
     dropdownList: {
       marginTop: 6,
@@ -373,7 +376,7 @@ const getStyles = (theme) =>
     },
     dropdownItemText: {
       fontSize: 14,
-      color: theme.colors.text,
+      color: '#000000',
     },
     listContent: {
       paddingBottom: theme.spacing.xxl,
@@ -384,7 +387,7 @@ const getStyles = (theme) =>
       borderRadius: theme.borderRadius.lg,
       backgroundColor: theme.colors.surface,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
     },
     unreadCard: {
       borderColor: theme.colors.primary,
@@ -394,28 +397,29 @@ const getStyles = (theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: 14,
+      marginBottom: 6,
     },
     title: {
       fontSize: 16,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
       flex: 1,
       marginRight: 24,
     },
     timeAgo: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: '#000000',
       marginLeft: 20,
     },
     message: {
       fontSize: 14,
-      color: theme.colors.textSecondary,
+      color: '#000000',
       marginTop: 6,
     },
     cardFooter: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginTop: 10,
     },
     viewButton: {
@@ -426,7 +430,7 @@ const getStyles = (theme) =>
       paddingVertical: 6,
       borderRadius: 999,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: '#E5E7EB',
       backgroundColor: theme.colors.background,
     },
     viewButtonText: {
@@ -434,8 +438,8 @@ const getStyles = (theme) =>
       fontWeight: '700',
     },
     pill: {
+      marginBottom: 4,
       alignSelf: 'flex-start',
-      marginTop: 8,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 999,
@@ -444,7 +448,7 @@ const getStyles = (theme) =>
     pillText: {
       fontSize: 12,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
       textTransform: 'uppercase',
       letterSpacing: 0.4,
     },
@@ -456,7 +460,7 @@ const getStyles = (theme) =>
     },
     stateText: {
       fontSize: 14,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     retryButton: {
       marginTop: 8,
@@ -512,6 +516,24 @@ const getStyles = (theme) =>
     modalMessage: {
       fontSize: 14,
       lineHeight: 22,
+    },
+    modalFooter: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      marginTop: 12,
+    },
+    closeButton: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: '#E5E7EB',
+      backgroundColor: theme.colors.background,
+    },
+    closeButtonText: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: '#000000',
     },
   });
 

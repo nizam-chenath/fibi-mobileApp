@@ -14,7 +14,6 @@ const inferStatus = (item = {}) => {
   ).toLowerCase();
 
   if (
-    item.openedFlag === 'Y' ||
     item.processedFlag === 'Y' ||
     item.actionProcessedFlag === 'Y' ||
     ['processed', 'complete', 'completed', 'done'].includes(normalizedStatus)
@@ -55,6 +54,7 @@ const ActionList = ({
   onRetry,
   showHeader = true,
   containerStyle,
+  onShowMore,
 }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -113,32 +113,43 @@ const ActionList = ({
 
     if (filteredItems.length === 0) {
       return (
-        <View style={styles.stateWrapper}>
-          <Icon name="filter-circle-outline" size={22} color={theme.colors.textSecondary} />
-          <Text style={styles.stateText}>
-            {statusFilter === 'pending'
-              ? 'No pending actions right now'
-              : 'No processed actions to review'}
-          </Text>
-        </View>
+        <>
+          <View style={styles.stateWrapper}>
+            <Icon name="filter-circle-outline" size={22} color="#000000" />
+            <Text style={styles.stateText}>
+              {statusFilter === 'pending'
+                ? 'No pending actions right now'
+                : 'No processed actions to review'}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.showMoreButton}
+            onPress={onShowMore}
+            activeOpacity={0.9}
+          >
+            <Text style={styles.showMoreText}>View more</Text>
+          </TouchableOpacity>
+        </>
       );
     }
 
-    return filteredItems.map((item) => (
+    const visibleItems = filteredItems.slice(0, 5);
+
+    const listNodes = visibleItems.map((item) => (
       <View key={item.inboxId} style={styles.itemCard}>
         <View style={styles.itemHeader}>
-          <Text style={styles.moduleBadge}>{item?.moduleName?.description || 'Module'}</Text>
+          <Text style={[styles.itemTitle, { flex: 1 }]} numberOfLines={2}>
+            {item.message?.description || 'Action Required'}
+          </Text>
           <Text style={styles.arrivalDate}>{formatTimestamp(item.arrivalDate)}</Text>
         </View>
-        <Text style={styles.itemTitle} numberOfLines={2}>
-          {item.message?.description || 'Action Required'}
-        </Text>
         <Text style={styles.itemSubtitle} numberOfLines={3}>
           {item.userMessage || 'Tap to view details'}
         </Text>
         <View style={styles.itemFooter}>
+          <Text style={styles.moduleBadge}>{item?.moduleName?.description || 'Module'}</Text>
           <View style={styles.metaGroup}>
-          <Icon name="person-outline" size={14} color={theme.colors.textSecondary} />
+          <Icon name="person-outline" size={14}  />
             <Text style={styles.metaText}>
               {item.subjectType === 'R' ? 'Research' : item.subjectType === 'P' ? 'Proposal' : 'General'}
             </Text>
@@ -146,6 +157,19 @@ const ActionList = ({
         </View>
       </View>
     ));
+
+    return (
+      <>
+        {listNodes}
+        <TouchableOpacity
+          style={styles.showMoreButton}
+          onPress={onShowMore}
+          activeOpacity={0.9}
+        >
+          <Text style={styles.showMoreText}>View more</Text>
+        </TouchableOpacity>
+      </>
+    );
   };
 
   return (
@@ -173,7 +197,7 @@ const ActionList = ({
                 <Text
                   style={[
                     styles.filterLabel,
-                    isActive && { color: theme.colors.primary, fontWeight: '700' },
+                    isActive && { color: '#000000', fontWeight: '700' },
                   ]}
                 >
                   {filterKey === 'pending' ? 'Pending' : 'Processed'}
@@ -211,7 +235,7 @@ const getStyles = (theme) =>
     title: {
       fontSize: 18,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
     },
     stateWrapper: {
       alignItems: 'center',
@@ -221,20 +245,20 @@ const getStyles = (theme) =>
     },
     stateText: {
       fontSize: 14,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     retryButton: {
       marginTop: theme.spacing.xs,
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.xs,
       borderWidth: 1,
-      borderColor: theme.colors.primary,
+      borderColor: "#F4F4F5",
       borderRadius: theme.borderRadius.full,
     },
     retryText: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.primary,
+      color: '#000000',
     },
     filterBar: {
       flexDirection: 'row',
@@ -254,15 +278,16 @@ const getStyles = (theme) =>
       gap: theme.spacing.xs,
     },
     filterButtonActive: {
-      backgroundColor: theme.colors.primary + '12',
+      backgroundColor: theme.colors.primary + '15',
     },
     filterLabel: {
       fontSize: 13,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     filterBadge: {
-      minWidth: 22,
-      height: 22,
+      minWidth: 16,
+      height: 16,
+      borderRadius: 8,
       borderRadius: 11,
       backgroundColor: theme.colors.surface,
       justifyContent: 'center',
@@ -270,14 +295,14 @@ const getStyles = (theme) =>
       paddingHorizontal: 6,
     },
     filterBadgeText: {
-      fontSize: 12,
+      fontSize: 10,
       fontWeight: '600',
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     itemCard: {
       paddingVertical: theme.spacing.md,
       borderTopWidth: 1,
-      borderTopColor: theme.colors.border,
+      borderTopColor: '#F4F4F5',
     },
     itemHeader: {
       flexDirection: 'row',
@@ -288,30 +313,30 @@ const getStyles = (theme) =>
     moduleBadge: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.primary,
-      backgroundColor: theme.colors.primary + '15',
+      color: '#000000',
+      backgroundColor: '#F4F4F5',
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: 4,
       borderRadius: theme.borderRadius.full,
     },
     arrivalDate: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     itemTitle: {
       fontSize: 15,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
       marginBottom: 4,
     },
     itemSubtitle: {
       fontSize: 13,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     itemFooter: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
-      marginTop: theme.spacing.sm,
+      justifyContent: 'space-between',
+      marginTop:15,
     },
     metaGroup: {
       flexDirection: 'row',
@@ -320,7 +345,21 @@ const getStyles = (theme) =>
     },
     metaText: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: '#000000',
+    },
+    showMoreButton: {
+      alignSelf: 'center',
+      marginTop: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.borderRadius.full,
+      borderWidth: 1,
+      borderColor: theme.colors.primary + '55',
+    },
+    showMoreText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.primary,
     },
   });
 

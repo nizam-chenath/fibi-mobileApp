@@ -19,16 +19,15 @@ import { fetchAgreementStatusCountWidget } from '../api/agreementsApi.js';
 import { fetchResearchSummaryTable } from '../api/researchSummaryApi.js';
 import Navbar from '../components/Navbar.jsx';
 import Sidebar from '../components/Sidebar.jsx';
-import ActivityFeed from '../components/ActivityFeed.jsx';
 import AwardedProposalsChart from '../components/charts/AwardedProposalsChart.jsx';
-import ProposalPerformanceSection from '../components/charts/ProposalPerformanceSection.jsx';
 import BottomNavBar from '../components/BottomNavBar.jsx';
 import ActionList from '../components/ActionList.jsx';
 import AgreementStatusChart from '../components/AgreementStatusChart.jsx';
 import AgreementSummaryTable from '../components/AgreementSummaryTable.jsx';
 import ServiceTrackerScreen from './ServiceTrackerScreen.jsx';
 import AwardsScreen from './AwardsScreen.jsx';
-import NotificationsScreen from './NotificationsScreen.jsx';
+import NotificationList from '../components/NotificationList.jsx';
+import { useNotificationSocket } from '../context/NotificationSocketContext.jsx';
 import EmailHubScreen from './EmailHubScreen.jsx';
 import ScanHubScreen from './ScanHubScreen.jsx';
 import CameraScanScreen from './CameraScanScreen.jsx';
@@ -86,9 +85,9 @@ const DashboardScreen = ({ onLogout }) => {
     'Awarded Sponsors';
 
   const notifications = dashboardData.notifications?.items || [];
-  const notificationCount = notifications.length > 0 ? 1 : 0;
+  const { unreadCount: notificationCount } = useNotificationSocket();
   const bottomTabs = [
-    { id: 'home', label: 'Dashboard', icon: 'home-outline' },
+    { id: 'home', label: 'Home', icon: 'home-outline' },
     { id: 'service', label: 'Tracker', icon: 'construct-outline' },
     { id: 'awards', label: 'Proposals', icon: 'document-text-outline' },
     { id: 'Email', label: 'Email', icon: 'mail-outline' },
@@ -107,6 +106,7 @@ const DashboardScreen = ({ onLogout }) => {
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const [scanRoute, setScanRoute] = useState(null); // null | 'hub' | 'camera' | 'signature' | 'pdf'
   const [capturedPhoto, setCapturedPhoto] = useState(null);
+  const [savedSignature, setSavedSignature] = useState(null);
   const [sponsorWidgetData, setSponsorWidgetData] = useState([]);
   const [widgetError, setWidgetError] = useState(null);
   const [widgetLoading, setWidgetLoading] = useState(false);
@@ -324,6 +324,9 @@ const DashboardScreen = ({ onLogout }) => {
   const handleReloadAgreementStatus = useCallback(() => {
     setAgreementRefreshKey((prev) => prev + 1);
   }, []);
+  const handleShowMoreActions = useCallback(() => {
+    setNotificationsVisible(true);
+  }, []);
 
   const styles = StyleSheet.create({
     container: {
@@ -411,7 +414,7 @@ const DashboardScreen = ({ onLogout }) => {
       backgroundColor: theme.colors.surface,
       borderRadius: theme.borderRadius.full,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor:'#cccccc',
       padding: 4,
     },
     tabButton: {
@@ -427,7 +430,7 @@ const DashboardScreen = ({ onLogout }) => {
     tabButtonText: {
       fontSize: 13,
       fontWeight: '600',
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     tabButtonTextActive: {
       color: theme.colors.secondary,
@@ -463,17 +466,11 @@ const DashboardScreen = ({ onLogout }) => {
 
   const renderMainSection = () => {
     if (notificationsVisible) {
-      return (
-        <NotificationsScreen
-          notifications={notifications}
-          onClose={() => setNotificationsVisible(false)}
-        />
-      );
+      return <NotificationList onBack={() => setNotificationsVisible(false)} />;
     }
 
-    if (activeBottomTab === 'Email') {
-      return <EmailHubScreen onClose={() => setActiveBottomTab('home')} />;
-    }
+    // Always give scan flow precedence over bottom tabs (including Email)
+    // so that the scan icon in the navbar works from any tab.
     if (scanRoute === 'hub') {
       return (
         <ScanHubScreen
@@ -494,16 +491,33 @@ const DashboardScreen = ({ onLogout }) => {
         />
       );
     }
+
+    if (activeBottomTab === 'Email') {
+      return <EmailHubScreen onClose={() => setActiveBottomTab('home')} />;
+    }
     if (scanRoute === 'pdf') {
       return (
         <PdfAnnotatorScreen
           photo={capturedPhoto}
+          signature={savedSignature}
           onBack={() => setScanRoute('hub')}
         />
       );
     }
     if (scanRoute === 'signature') {
-      return <SignaturePadScreen onBack={() => setScanRoute('hub')} />;
+      return (
+        <SignaturePadScreen
+          onBack={() => setScanRoute('hub')}
+          onSave={(data) => {
+            try {
+              setSavedSignature(data);
+              console.log('[SignaturePad] Saved paths:', Array.isArray(data?.paths) ? data.paths.length : 0);
+            } finally {
+              setScanRoute('pdf');
+            }
+          }}
+        />
+      );
     }
 
     if (activeBottomTab === 'service') {
@@ -638,6 +652,7 @@ const DashboardScreen = ({ onLogout }) => {
               error={actionsError}
               onRetry={handleReloadActions}
               containerStyle={styles.actionListWrapper}
+              onShowMore={handleShowMoreActions}
             />
           </>
         )}
@@ -677,6 +692,8 @@ const DashboardScreen = ({ onLogout }) => {
               tabs={bottomTabs}
               activeTab={activeBottomTab}
               onTabPress={(tab) => {
+                setNotificationsVisible(false);
+                setScanRoute(null);
                 setActiveBottomTab(tab.id);
                 console.log('Bottom tab pressed:', tab.id);
               }}

@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import useTheme from '../hooks/useTheme.jsx';
 import useAuth from '../hooks/useAuth.jsx';
 import useTenant from '../hooks/useTenant.jsx';
@@ -46,7 +47,7 @@ const LoginScreen = () => {
     return theme.branding.logo;
   }, [theme.branding]);
 
-  const secondaryBackground = theme.colors?.Lightbackground || theme.colors?.background;
+  const secondaryBackground = theme.colors?.primary || '#48BD92';
   const mutedText = 'rgba(28, 28, 28, 0.65)';
 
   const handleLogin = async () => {
@@ -86,16 +87,17 @@ const LoginScreen = () => {
   const styles = StyleSheet.create({
     safeArea: {
       flex: 1,
-      backgroundColor: secondaryBackground,
+      backgroundColor: 'transparent',
     },
     keyboardView: {
       flex: 1,
     },
     scrollContent: {
-      marginTop: 150,
+      marginTop: 90,
       // backgroundColor: 'red',
       paddingHorizontal: theme.spacing.xl,
       paddingVertical: theme.spacing.xxxl,
+      alignItems: 'center',
     },
     pageHeader: {
       alignItems: 'center',
@@ -141,6 +143,9 @@ const LoginScreen = () => {
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },
       elevation: 4,
+      width: '100%',
+      maxWidth: 520,
+      alignSelf: 'center',
     },
     badge: {
       alignSelf: 'flex-start',
@@ -285,7 +290,7 @@ const LoginScreen = () => {
       ...StyleSheet.absoluteFillObject,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.Lightbackground || theme.colors.background,
+      backgroundColor: '#48BD92',
       zIndex: 999,
     },
   });
@@ -297,100 +302,116 @@ const LoginScreen = () => {
   ];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+    <LinearGradient
+      colors={['#48bd92', '#26a699']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <View style={styles.pageHeader}>
-            <View style={styles.logoWrapper}>
-              <Image source={brandingLogoSource} style={styles.logoImage} />
-            </View>
-            {/* <Text style={styles.brandName}>{theme.branding?.appName}</Text> */}
-            <Text style={styles.universityName}>{theme.branding?.universityName}</Text>
-          </View>
-
-          <View style={styles.formCard}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Username</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your username"
-                placeholderTextColor={theme.colors.textSecondary}
-                value={username}
-                onChangeText={setUsername}
-                editable={!loading}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.pageHeader}>
+              <View style={styles.logoWrapper}>
+                <Image source={brandingLogoSource} style={styles.logoImage} />
+              </View>
+              {/* <Text style={styles.brandName}>{theme.branding?.appName}</Text> */}
+              <Text style={styles.universityName}>{theme.branding?.universityName}</Text>
             </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
-              <View style={styles.passwordRow}>
+            <View style={styles.formCard}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Username</Text>
                 <TextInput
-                  style={styles.passwordInput}
-                  placeholder="Enter your password"
+                  style={styles.input}
+                  placeholder="Enter your username"
                   placeholderTextColor={theme.colors.textSecondary}
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
+                  value={username}
+                  onChangeText={setUsername}
                   editable={!loading}
+                  autoCapitalize="none"
+                  autoCorrect={false}
                 />
-                <TouchableOpacity
-                  style={styles.togglePasswordButton}
-                  onPress={() => setShowPassword((prev) => !prev)}
-                >
-                  <Icon
-                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                    size={20}
-                    color={theme.colors.textSecondary}
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.passwordRow}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="Enter your password"
+                    placeholderTextColor={theme.colors.textSecondary}
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                    editable={!loading}
                   />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.togglePasswordButton}
+                    onPress={() => setShowPassword((prev) => !prev)}
+                  >
+                    <Icon
+                      name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                      size={20}
+                      color={theme.colors.textSecondary}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* <View style={styles.tenantSummary}>
+                <View style={styles.tenantSummaryLogoWrapper}>
+                  <Image source={brandingLogoSource} style={styles.tenantSummaryLogo} />
+                </View>
+                <View style={styles.tenantSummaryInfo}>
+                  <Text style={styles.tenantSummaryLabel}>Selected University</Text>
+                  <Text style={styles.tenantSummaryText} numberOfLines={2}>
+                    {hasSelectedUniversity ? selectedUniversityName : 'Please choose a university'}
+                  </Text>
+                </View>
+              </View> */}
+
+              {error && <Text style={styles.errorText}>❌ {error}</Text>}
+
+              <View style={styles.loginButton}>
+                <Button
+                  title="Sign In"
+                  onPress={handleLogin}
+                  loading={loading}
+                  disabled={loading}
+                  gradientColors={['#48bd92', '#26a699']}
+                  gradientStart={{ x: 0, y: 0 }}
+                  gradientEnd={{ x: 1, y: 0 }}
+                />
+              </View>
+
+              <Text style={styles.socialDivider}>or continue with</Text>
+              <View style={styles.socialRow}>
+                {/* {socialProviders.map((provider) => (
+                  <TouchableOpacity key={provider.key} style={styles.socialButton} activeOpacity={0.8}>
+                    <Icon name={provider.icon} size={22} color={theme.colors.text} />
+                  </TouchableOpacity>
+                ))} */}
+                <Text>Sign in with SSO</Text>
               </View>
             </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
 
-            {/* <View style={styles.tenantSummary}>
-              <View style={styles.tenantSummaryLogoWrapper}>
-                <Image source={brandingLogoSource} style={styles.tenantSummaryLogo} />
-              </View>
-              <View style={styles.tenantSummaryInfo}>
-                <Text style={styles.tenantSummaryLabel}>Selected University</Text>
-                <Text style={styles.tenantSummaryText} numberOfLines={2}>
-                  {hasSelectedUniversity ? selectedUniversityName : 'Please choose a university'}
-                </Text>
-              </View>
-            </View> */}
-
-            {error && <Text style={styles.errorText}>❌ {error}</Text>}
-
-            <View style={styles.loginButton}>
-              <Button title="Sign In" onPress={handleLogin} loading={loading} disabled={loading} />
-            </View>
-
-            <Text style={styles.socialDivider}>or continue with</Text>
-            <View style={styles.socialRow}>
-              {socialProviders.map((provider) => (
-                <TouchableOpacity key={provider.key} style={styles.socialButton} activeOpacity={0.8}>
-                  <Icon name={provider.icon} size={22} color={theme.colors.text} />
-                </TouchableOpacity>
-              ))}
-            </View>
+        {loading && (
+          <View style={styles.loaderOverlay} pointerEvents="none">
+            <SplashScreen />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-
-      {loading && (
-        <View style={styles.loaderOverlay} pointerEvents="none">
-          <SplashScreen />
-        </View>
-      )}
-    </SafeAreaView>
+        )}
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 

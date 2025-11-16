@@ -147,11 +147,11 @@ const getStyles = (theme) =>
     title: {
       fontSize: 18,
       fontWeight: '700',
-      color: theme.colors.text,
+      color: '#000000',
     },
     subtitle: {
       fontSize: 13,
-      color: theme.colors.textSecondary,
+      color: '#000000',
       marginTop: 4,
     },
     stateWrapper: {
@@ -162,7 +162,7 @@ const getStyles = (theme) =>
     },
     stateText: {
       fontSize: 14,
-      color: theme.colors.textSecondary,
+      color: '#000000',
       textAlign: 'center',
     },
     retryButton: {
@@ -170,17 +170,17 @@ const getStyles = (theme) =>
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.borderRadius.full,
       borderWidth: 1,
-      borderColor: theme.colors.primary,
+      borderColor: '#48BD92',
     },
     retryText: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.primary,
+      color: '#000000',
     },
     row: {
       paddingVertical: theme.spacing.sm,
       borderTopWidth: 1,
-      borderTopColor: theme.colors.border,
+      borderTopColor: '#cccccc',
       gap: theme.spacing.sm,
     },
     labelGroup: {
@@ -191,12 +191,12 @@ const getStyles = (theme) =>
     labelText: {
       fontSize: 15,
       fontWeight: '600',
-      color: theme.colors.text,
+      color: '#000000',
       flexShrink: 1,
     },
     codeText: {
       fontSize: 12,
-      color: theme.colors.textSecondary,
+      color: '#000000',
     },
     barGroup: {
       flexDirection: 'row',
@@ -206,7 +206,7 @@ const getStyles = (theme) =>
     barTrack: {
       flex: 1,
       height: 12,
-      backgroundColor: theme.colors.border,
+      backgroundColor: '#cccccc',
       borderRadius: theme.borderRadius.full,
       overflow: 'hidden',
     },
@@ -229,12 +229,12 @@ const getStyles = (theme) =>
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.borderRadius.full,
       borderWidth: 1,
-      borderColor: theme.colors.primary + '55',
+      borderColor: '#000000' + '55',
     },
     showMoreText: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.primary,
+      color: '#000000',
     },
   });
 

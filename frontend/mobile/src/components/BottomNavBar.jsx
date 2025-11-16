@@ -1,6 +1,6 @@
 // components/BottomNavBar.jsx
 import React, { useRef, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import useTheme from '../hooks/useTheme.jsx';
 
@@ -13,11 +13,13 @@ const BottomNavBar = ({
   const theme = useTheme();
   const indicatorAnim = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
+  const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
+
   const effectiveTabs =
     tabs.length > 0
       ? tabs
       : [
-          { id: 'home', label: 'Dashboard', icon: 'home-outline' },
+          { id: 'home', label: 'Home', icon: 'home-outline' },
           { id: 'tracker', label: 'Tracker', icon: 'construct-outline' },
           { id: 'awards', label: 'Awards', icon: 'trophy-outline' },
           { id: 'Email', label: 'Email', icon: 'mail-outline' },
@@ -26,6 +28,14 @@ const BottomNavBar = ({
   const selectedId = activeTab || effectiveTabs[0]?.id;
   const activeIndex = effectiveTabs.findIndex((tab) => tab.id === selectedId);
   const tabWidth = containerWidth > 0 ? containerWidth / effectiveTabs.length : 0;
+
+  // Handle screen dimension changes
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setScreenWidth(window.width);
+    });
+    return () => subscription?.remove();
+  }, []);
 
   useEffect(() => {
     if (tabWidth === 0 || activeIndex < 0) return;
@@ -44,7 +54,7 @@ const BottomNavBar = ({
       style={[
         styles.wrapper,
         {
-          backgroundColor: theme.colors.text,
+          backgroundColor: "#36454F",
           shadowColor: theme.colors.text,
         },
         style,
@@ -59,8 +69,8 @@ const BottomNavBar = ({
           style={[
             styles.indicator,
             {
-              width: Math.max(tabWidth - 8, 0),
-              backgroundColor: theme.colors.primary,
+              width: Math.max(0, tabWidth - 8),
+              backgroundColor: theme.colors.brandPrimary,
               transform: [{ translateX: indicatorAnim }],
             },
           ]}
@@ -83,7 +93,7 @@ const BottomNavBar = ({
             <View style={styles.tabContent}>
               <Icon
                 name={tab.icon}
-                size={20}
+                size={isActive ? 22 : 20}
                 color={isActive ? theme.colors.secondary : 'rgba(255,255,255,0.7)'}
                 style={[
                   styles.tabIcon,
@@ -91,7 +101,18 @@ const BottomNavBar = ({
                 ]}
               />
               {isActive && (
-                <Text style={[styles.tabLabel, { color: theme.colors.secondary }]}>
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    {
+                      color: theme.colors.secondary,
+                      fontSize: screenWidth < 360 ? 10 : 11,
+                    },
+                  ]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.75}
+                >
                   {tab.label}
                 </Text>
               )}
@@ -108,45 +129,54 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderRadius: 40,
-    padding: 6,
+    borderRadius: 10,
     width: '100%',
     position: 'relative',
     overflow: 'hidden',
     marginTop: 12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
   indicator: {
     position: 'absolute',
     top: 4,
     bottom: 4,
-    borderRadius: 28,
+    left: 0,
+    borderRadius: 10,
   },
   tab: {
     flex: 1,
     paddingVertical: 10,
+    paddingHorizontal: 8,
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
   },
   tabContent: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
   },
-  tabIcon: {},
+  tabIcon: {
+    marginBottom: 2,
+  },
   tabIconActive: {
-    marginRight: 4,
+    marginBottom: 4,
   },
   tabIconInactive: {
-    marginRight: 0,
+    marginBottom: 2,
   },
   tabLabel: {
     fontSize: 11,
     fontWeight: '600',
+    paddingHorizontal: 2,
+    flexShrink: 1,
+    maxWidth: '80%',
+    textAlign: 'center',
   },
 });
 
 export default BottomNavBar;
-
-

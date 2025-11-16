@@ -229,7 +229,13 @@ const Sidebar = ({
           <View style={styles.footer}>
             <TouchableOpacity
               style={styles.logoutButton}
-              onPress={onLogout}
+              onPress={() => {
+                try {
+                  onLogout && onLogout();
+                } finally {
+                  onClose && onClose();
+                }
+              }}
               activeOpacity={0.9}
             >
               <Text style={styles.logoutText}>Sign out</Text>

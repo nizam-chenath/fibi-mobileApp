@@ -83,8 +83,8 @@ android {
         applicationId "com.fibi"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 400
-        versionName "4.0.00"
+        versionCode 1
+        versionName "1.0.00"
     }
     signingConfigs {
         debug {

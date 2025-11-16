@@ -24,7 +24,7 @@ class AuthService {
             avatar: null,
           }
         : null;
-
+console.log("normalizedUser", normalizedUser)
       return {
         success: true,
         user: normalizedUser,

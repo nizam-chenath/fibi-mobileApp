@@ -151,8 +151,8 @@ const ServiceTrackerScreen = () => {
       >
         <View style={styles.cardHeader}>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.proposalId, { color: theme.colors.textSecondary }]}>Request #{item.id}</Text>
-            <Text style={[styles.proposalTitle, { color: theme.colors.text }]} numberOfLines={2}>{item.title}</Text>
+            <Text style={[styles.proposalId, { color: '#000000' }]}>Request #{item.id}</Text>
+            <Text style={[styles.proposalTitle, { color: '#000000' }]} numberOfLines={2}>{item.title}</Text>
           </View>
           {!!(item.status && String(item.status).trim()) && (
             <View style={styles.badgeColumn}>
@@ -165,28 +165,39 @@ const ServiceTrackerScreen = () => {
 
         <View style={styles.metaGrid}>
           <View style={styles.metaItem}>
-            <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>Category</Text>
-            <Text style={[styles.metaValue, { color: theme.colors.text }]}>{item.category}</Text>
+            <Text style={[styles.metaLabel, { color: '#000000' }]}>Category</Text>
+            <Text style={[styles.metaValue, { color: '#000000' }]}>{item.category}</Text>
           </View>
           <View style={styles.metaItem}>
-            <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>Priority</Text>
-            <Text style={[styles.metaValue, { color: theme.colors.text }]}>{item.priority}</Text>
+            <Text style={[styles.metaLabel, { color: '#000000' }]}>Priority</Text>
+            <Text style={[styles.metaValue, { color: '#000000' }]}>{item.priority}</Text>
           </View>
           <View style={styles.metaItem}>
-            <Text style={[styles.metaLabel, { color: theme.colors.textSecondary }]}>Department</Text>
-            <Text style={[styles.metaValue, { color: theme.colors.text }]}>{item.department}</Text>
+            <Text style={[styles.metaLabel, { color: '#000000' }]}>Department</Text>
+            <Text style={[styles.metaValue, { color: '#000000' }]}>{item.department}</Text>
           </View>
         </View>
 
         <View style={styles.cardFooter}>
           <View style={styles.footerPill}>
-            <Icon name="person-outline" size={14} color={theme.colors.textSecondary} />
-            <Text style={[styles.footerText, { color: theme.colors.textSecondary }]}>{item.assignee}</Text>
+            <Icon name="person-outline" size={14} />
+            <Text style={[styles.footerText, { color: '#000000' }]}>{item.assignee}</Text>
           </View>
           <View style={styles.footerPill}>
-            <Icon name="time-outline" size={14} color={theme.colors.textSecondary} />
-            <Text style={[styles.footerText, { color: theme.colors.textSecondary }]}>{formatDate(item.createDate)}</Text>
+            <Icon name="time-outline" size={14} />
+            <Text style={[styles.footerText, { color: '#000000' }]}>{formatDate(item.createDate)}</Text>
           </View>
+          <TouchableOpacity
+            style={[
+              styles.viewButton,
+              { borderColor: '#E5E7EB', backgroundColor: theme.colors.background },
+            ]}
+            activeOpacity={0.9}
+            onPress={() => setSelectedItem(item.raw)}
+          >
+            <Icon name="eye-outline" size={14} color={'#000000'} />
+            <Text style={[styles.viewButtonText, { color: '#000000' }]}>View</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>
@@ -252,14 +263,14 @@ const ServiceTrackerScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
-      <Text style={[styles.title, { color: heroTextColor }]}>Service Tracker</Text>
-      <Text style={[styles.subtitle, { color: heroMutedColor }]}>Track service requests, priorities and assignment in one place.</Text>
+      <Text style={[styles.title, { color: '#000000' }]}>Service Tracker</Text>
+      <Text style={[styles.subtitle, { color: '#000000' }]}>Track service requests, priorities and assignment in one place.</Text>
 
       <View style={[styles.searchRow, { marginBottom: 12 }]}> 
         <TextInput
-          style={[styles.searchInput, { borderColor: heroBorderColor, backgroundColor: theme.colors.surface, color: heroTextColor }]}
+          style={[styles.searchInput, { borderColor: '#E5E7EB', backgroundColor: theme.colors.surface, color: '#000000' }]}
           placeholder="Search requests"
-          placeholderTextColor={heroMutedColor}
+          placeholderTextColor={'#000000'}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -267,30 +278,30 @@ const ServiceTrackerScreen = () => {
 
       <View style={styles.sortControls}>
         <TouchableOpacity
-          style={[styles.dropdownButton, { borderColor: heroBorderColor, backgroundColor: theme.colors.surface }]}
+          style={[styles.dropdownButton, { borderColor: '#E5E7EB', backgroundColor: theme.colors.surface }]}
           onPress={() => setSortMenuVisible(true)}
           activeOpacity={0.85}
         >
           <View>
-            <Text style={[styles.dropdownLabel, { color: heroMutedColor }]}>Sort by</Text>
-            <Text style={[styles.dropdownValue, { color: heroTextColor }]}>{activeSortLabel}</Text>
+            <Text style={[styles.dropdownLabel, { color: '#000000' }]}>Sort by</Text>
+            <Text style={[styles.dropdownValue, { color: '#000000' }]}>{activeSortLabel}</Text>
           </View>
-          <Icon name="chevron-down" size={16} color={heroTextColor} />
+          <Icon name="chevron-down" size={16} color={'#000000'} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.dropdownButton, { borderColor: heroBorderColor, backgroundColor: theme.colors.surface, marginLeft: 8 }]}
+          style={[styles.dropdownButton, { borderColor: '#E5E7EB', backgroundColor: theme.colors.surface, marginLeft: 8 }]}
           onPress={() => setStatusMenuVisible(true)}
           activeOpacity={0.85}
         >
           <View>
-            <Text style={[styles.dropdownLabel, { color: heroMutedColor }]}>Status</Text>
-            <Text style={[styles.dropdownValue, { color: heroTextColor }]}>{selectedStatus}</Text>
+            <Text style={[styles.dropdownLabel, { color: '#000000' }]}>Status</Text>
+            <Text style={[styles.dropdownValue, { color: '#000000' }]}>{selectedStatus}</Text>
           </View>
-          <Icon name="chevron-down" size={16} color={heroTextColor} />
+          <Icon name="chevron-down" size={16} color={'#000000'} />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.clearButton, { borderColor: heroBorderColor }]} onPress={() => { setSortConfig({ key: 'createDate', direction: 'desc' }); setSearchQuery(''); setSelectedStatus('All'); }} activeOpacity={0.8}>
-          <Icon name="close-circle-outline" size={16} color={heroMutedColor} />
-          <Text style={[styles.clearText, { color: heroMutedColor }]}>Clear</Text>
+        <TouchableOpacity style={[styles.clearButton, { borderColor: '#E5E7EB' }]} onPress={() => { setSortConfig({ key: 'createDate', direction: 'desc' }); setSearchQuery(''); setSelectedStatus('All'); }} activeOpacity={0.8}>
+          <Icon name="close-circle-outline" size={16} color={'#000000'} />
+          <Text style={[styles.clearText, { color: '#000000' }]}>Clear</Text>
         </TouchableOpacity>
       </View>
 
@@ -299,7 +310,7 @@ const ServiceTrackerScreen = () => {
         <TouchableWithoutFeedback onPress={() => setStatusMenuVisible(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: heroBorderColor }]}>
+              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' }]}>
                 {(() => {
                   const preset = ['All', 'Inactive', 'Review In Progress', 'Approval In Progress', 'In Progress'];
                   const combined = Array.from(new Set([...preset, ...(statuses || [])]));
@@ -307,8 +318,8 @@ const ServiceTrackerScreen = () => {
                     const isActive = opt === selectedStatus;
                     return (
                       <TouchableOpacity key={opt} style={styles.dropdownItem} onPress={() => { setSelectedStatus(opt); setStatusMenuVisible(false); }}>
-                        <Text style={[styles.dropdownItemLabel, { color: isActive ? heroTextColor : theme.colors.text }]}>{opt}</Text>
-                        {isActive && <Icon name={sortConfig.direction === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'} size={16} color={heroTextColor} />}
+                        <Text style={[styles.dropdownItemLabel, { color: '#000000' }]}>{opt}</Text>
+                        {isActive && <Icon name={sortConfig.direction === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'} size={16} color={'#000000'} />}
                       </TouchableOpacity>
                     );
                   });
@@ -322,14 +333,14 @@ const ServiceTrackerScreen = () => {
       {/* status chips removed — dropdown filter is used instead */}
 
       {loading && <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 8 }} />}
-      {error && <Text style={[styles.subtitle, { color: theme.colors.error }]}>{error}</Text>}
+      {error && <Text style={[styles.subtitle, { color: '#000000' }]}>{error}</Text>}
 
       <ScrollView contentContainerStyle={styles.cardList} showsVerticalScrollIndicator={false}>
         {!loading && !error && filteredData.length === 0 && (
-          <Text style={[styles.subtitle, { color: heroMutedColor }]}>No requests found.</Text>
+          <Text style={[styles.subtitle, { color: '#000000' }]}>No requests found.</Text>
         )}
         {!loading && !error && filteredData.map((it) => (
-          <View key={it.id} style={[styles.proposalCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <View key={it.id} style={[styles.proposalCard, { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' }]}>
             {renderItem({ item: it })}
           </View>
         ))}
@@ -340,14 +351,14 @@ const ServiceTrackerScreen = () => {
         <TouchableWithoutFeedback onPress={() => setSortMenuVisible(false)}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: heroBorderColor }]}>
+              <View style={[styles.dropdownList, { backgroundColor: theme.colors.surface, borderColor: '#E5E7EB' }]}>
                 {sortOptions.map((option) => {
                   const isActive = option.key === sortConfig.key;
                   return (
                     <TouchableOpacity key={option.key} style={styles.dropdownItem} onPress={() => { setSortConfig((prev) => ({ key: option.key, direction: prev.key === option.key ? (prev.direction === 'asc' ? 'desc' : 'asc') : 'asc' })); setSortMenuVisible(false); }}>
-                      <Text style={[styles.dropdownItemLabel, { color: isActive ? heroTextColor : theme.colors.text, fontWeight: isActive ? '700' : '500' }]}>{option.label}</Text>
+                      <Text style={[styles.dropdownItemLabel, { color: '#000000', fontWeight: isActive ? '700' : '500' }]}>{option.label}</Text>
                       {isActive && (
-                        <Icon name={sortConfig.direction === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'} size={16} color={heroTextColor} />
+                        <Icon name={sortConfig.direction === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'} size={16} color={'#000000'} />
                       )}
                     </TouchableOpacity>
                   );
@@ -358,69 +369,107 @@ const ServiceTrackerScreen = () => {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Detail modal */}
-      <Modal visible={!!selectedItem} animationType="slide" onRequestClose={() => setSelectedItem(null)}>
-        <SafeAreaView style={[styles.modalWrapper, { backgroundColor: theme.colors.background }]}> 
-          <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ padding: 18, flexGrow: 1 }}
-            nestedScrollEnabled
-            showsVerticalScrollIndicator
-          >
-            <View style={[styles.detailCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}> 
-              <View style={styles.modalHeader}>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.modalId, { color: theme.colors.primary }]}>{selectedItem?.serviceRequestId || selectedItem?.COL_SR_ID || selectedItem?.id}</Text>
-                  <Text style={[styles.modalSubtitle, { color: theme.colors.placeholder }]}>{selectedItem?.COL_SR_SUBJECT || selectedItem?.subject || selectedItem?.title}</Text>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <View style={styles.headerBadgesRow}>
-                    <PriorityBadge priority={selectedItem?.COL_SR_PRIORITY || selectedItem?.priority} />
-                    {!!(selectedItem?.COL_SR_STATUS || selectedItem?.status) && (
-                      <View style={[styles.statusBadge, { backgroundColor: statusColor(selectedItem?.COL_SR_STATUS || selectedItem?.status) }]}> 
-                        <Text style={styles.statusBadgeText}>{selectedItem?.COL_SR_STATUS || selectedItem?.status}</Text>
-                      </View>
-                    )}
-                  </View>
-                  <TouchableOpacity onPress={() => setSelectedItem(null)} style={[styles.clearButton, { marginTop: 6 }]}>
-                    <Icon name="close-circle-outline" size={16} color={theme.colors.primary} />
-                    <Text style={[styles.clearText, { color: theme.colors.primary, marginLeft: 6 }]}>Close</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              <View style={styles.modalBody}>
-                {/* Meta chips */}
-                <View style={styles.metaChipsRow}>
-                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_TYPE || selectedItem?.type}</Text></View>
-                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_CATEGORY || selectedItem?.category}</Text></View>
-                  <View style={styles.metaChip}><Text style={styles.metaChipText}>{selectedItem?.COL_SR_DEPARTMENT || selectedItem?.department}</Text></View>
-                </View>
-
-                {/* Key fields */}
+      {/* Detail modal - aligned with AwardsScreen modal design */}
+      <Modal
+        visible={!!selectedItem}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedItem(null)}
+      >
+        <TouchableWithoutFeedback onPress={() => setSelectedItem(null)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <View
+                style={[
+                  styles.modalContent,
+                  { backgroundColor: theme.colors.surface, borderColor: '#00000033' },
+                ]}
+              >
                 {selectedItem && (
-                  <View style={styles.detailGrid}>
-                    {renderField('Service Request ID', selectedItem.serviceRequestId || selectedItem.COL_SR_ID)}
-                    {renderField('Subject', selectedItem.COL_SR_SUBJECT)}
-                    {renderField('Type', selectedItem.COL_SR_TYPE)}
-                    {renderField('Category', selectedItem.COL_SR_CATEGORY)}
-                    {renderField('Priority', selectedItem.COL_SR_PRIORITY)}
-                    {renderField('Status', selectedItem.COL_SR_STATUS)}
-                    {renderField('Assigned To', selectedItem.COL_SR_ASSI_PERSON || 'Unassigned')}
-                    {renderField('Admin Group', selectedItem.COL_SR_ADMIN_GROUP || '-')}
-                    {renderField('Unit', selectedItem.unitNumber || '-')}
-                    {renderField('Created', formatDate(selectedItem.COL_SR_CREATE_DATE || selectedItem.createDate))}
-                    {renderField('Is System Generated', selectedItem.isSystemGenerated || '-')}
-                    {renderField('Header ID', selectedItem.HEADER_ID || '-')}
-                    {Object.keys(selectedItem).filter(k => !['serviceRequestId','COL_SR_ID','COL_SR_SUBJECT','COL_SR_TYPE','COL_SR_CATEGORY','COL_SR_PRIORITY','COL_SR_STATUS','COL_SR_ASSI_PERSON','COL_SR_ADMIN_GROUP','unitNumber','COL_SR_CREATE_DATE','isSystemGenerated','HEADER_ID'].includes(k)).map((k) => (
-                      renderField(k, selectedItem[k])
-                    ))}
-                  </View>
+                  <>
+                    <Text style={[styles.modalTitle]}>
+                      Request #{selectedItem?.serviceRequestId || selectedItem?.COL_SR_ID || selectedItem?.id}
+                    </Text>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel]}>
+                        Subject
+                      </Text>
+                      <Text style={[styles.modalValue]}>
+                        {selectedItem?.COL_SR_SUBJECT || selectedItem?.subject || '—'}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel]}>
+                        Status
+                      </Text>
+                      <Text style={[styles.modalValue]}>
+                        {selectedItem?.COL_SR_STATUS || selectedItem?.status || '—'}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel]}>
+                        Priority
+                      </Text>
+                      <Text style={[styles.modalValue]}>
+                        {selectedItem?.COL_SR_PRIORITY || selectedItem?.priority || '—'}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel]}>
+                        Type
+                      </Text>
+                      <Text style={[styles.modalValue]}>
+                        {selectedItem?.COL_SR_TYPE || selectedItem?.type || '—'}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel]}>
+                        Category
+                      </Text>
+                      <Text style={[styles.modalValue]}>
+                        {selectedItem?.COL_SR_CATEGORY || selectedItem?.category || '—'}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel]}>
+                        Department
+                      </Text>
+                      <Text style={[styles.modalValue]}>
+                        {selectedItem?.COL_SR_DEPARTMENT || selectedItem?.department || '—'}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel]}>
+                        Assigned To
+                      </Text>
+                      <Text style={[styles.modalValue]}>
+                        {selectedItem?.COL_SR_ASSI_PERSON || selectedItem?.assignee || 'Unassigned'}
+                      </Text>
+                    </View>
+                    <View style={styles.modalRow}>
+                      <Text style={[styles.modalLabel]}>
+                        Created
+                      </Text>
+                      <Text style={[styles.modalValue]}>
+                        {formatDate(selectedItem?.COL_SR_CREATE_DATE || selectedItem?.createDate)}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[
+                        styles.modalCloseButton,
+                        { borderColor: '#00000033' },
+                      ]}
+                      onPress={() => setSelectedItem(null)}
+                      activeOpacity={0.9}
+                    >
+                      <Text style={[styles.modalCloseText, { color: theme.colors.text }]}>Close</Text>
+                    </TouchableOpacity>
+                  </>
                 )}
               </View>
-            </View>
-          </ScrollView>
-        </SafeAreaView>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -429,7 +478,8 @@ const ServiceTrackerScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
+    paddingHorizontal: 16,
+    paddingTop: 10,
   },
   title: {
     fontSize: 22,
@@ -645,12 +695,12 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 12,
-    color: '#666',
+    color: '#000000',
     marginBottom: 6,
   },
   fieldValue: {
     fontSize: 14,
-    color: '#111',
+    color: '#000000',
   },
   /* Proposal-like card styles */
   cardList: {
@@ -659,9 +709,7 @@ const styles = StyleSheet.create({
   },
   proposalCard: {
     borderRadius: 18,
-    padding: 16,
-    borderWidth: 1,
-    marginBottom: 12,
+    padding: 10,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -739,6 +787,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
+  viewButton: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    marginLeft: 'auto',
+  },
+  viewButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
   searchRow: {
     marginBottom: 12,
   },
@@ -795,6 +858,43 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
+  },
+  modalContent: {
+    width: '100%',
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    gap: 8,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  modalRow: {
+    gap: 2,
+  },
+  modalLabel: {
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+  modalValue: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  modalCloseButton: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  modalCloseText: {
+    fontSize: 13,
+    fontWeight: '700',
   },
   dropdownList: {
     width: '100%',

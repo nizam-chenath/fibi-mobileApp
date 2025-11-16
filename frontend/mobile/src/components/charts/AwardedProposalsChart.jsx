@@ -149,8 +149,8 @@ const AwardedProposalsChart = ({
   if (loading) {
     return (
       <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
-        <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+        <Text style={[styles.title, { color: '#000000' }]}>{title}</Text>
+        <Text style={[styles.emptyText, { color: '#000000' }]}>
           Loading sponsors...
         </Text>
       </View>
@@ -160,10 +160,10 @@ const AwardedProposalsChart = ({
   if (!normalizedData.length) {
     return (
       <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>
+        <Text style={[styles.title, { color: '#000000' }]}>
           {title}
         </Text>
-        <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+        <Text style={[styles.emptyText, { color: '#000000' }]}>
           {error || 'No sponsor data available yet.'}
         </Text>
       </View>
@@ -179,9 +179,9 @@ const AwardedProposalsChart = ({
   return (
     <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
+        <Text style={[styles.title, { color: '#000000' }]}>{title}</Text>
         {subtitle && (
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+          <Text style={[styles.subtitle, { color: '#000000' }]}>
             {subtitle}
           </Text>
         )}
@@ -218,8 +218,8 @@ const AwardedProposalsChart = ({
             />
           </Svg>
           <View style={styles.centerLabel}>
-            <Text style={[styles.total, { color: theme.colors.text }]}>{total}</Text>
-            <Text style={[styles.caption, { color: theme.colors.textSecondary }]}>
+            <Text style={[styles.total, { color: '#000000' }]}>{total}</Text>
+            <Text style={[styles.caption, { color: '#000000' }]}>
               Total awarded
             </Text>
           </View>
@@ -242,12 +242,10 @@ const AwardedProposalsChart = ({
                   ]}
                 />
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.legendLabel, { color: theme.colors.text }]}>
+                  <Text style={[styles.legendLabel, { color: '#000000' }]}>
                     {segment.id} · {segment.label}
                   </Text>
-                  <Text
-                    style={[styles.legendValue, { color: theme.colors.textSecondary }]}
-                  >
+                  <Text style={[styles.legendValue, { color: '#000000' }]}>
                     {segment.value} ({Math.round(segment.percentage * 1000) / 10}%)
                   </Text>
                 </View>
@@ -270,7 +268,7 @@ const AwardedProposalsChart = ({
           <TouchableOpacity
             style={[
               styles.showMoreButton,
-              { borderColor: theme.colors.border, backgroundColor: theme.colors.surface },
+              { borderColor: '#cccccc', backgroundColor: theme.colors.surface },
             ]}
             onPress={() => {
               setVisibleCount((prev) =>
@@ -285,7 +283,7 @@ const AwardedProposalsChart = ({
             }}
             activeOpacity={0.85}
           >
-            <Text style={[styles.showMoreText, { color: theme.colors.primary }]}>
+            <Text style={[styles.showMoreText, { color: '#000000' }]}>
               {showMoreLabel} ({hiddenCount} more)
             </Text>
           </TouchableOpacity>
@@ -298,14 +296,14 @@ const AwardedProposalsChart = ({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
-    padding: 20,
+    padding: 15,
     // elevation: 2,
     // shadowColor: '#000000',
     // shadowOpacity: 0.08,
     // shadowRadius: 12,
     // shadowOffset: { width: 0, height: 4 },
     marginHorizontal: 16,
-    marginTop: 16,
+    // marginTop: 16,
   },
   header: {
     marginBottom: 16,

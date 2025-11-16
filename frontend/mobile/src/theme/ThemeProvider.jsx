@@ -39,6 +39,14 @@ export const ThemeProvider = ({ children }) => {
       ...(isAuthenticated ? tenantConfig?.theme : null),
     };
 
+    // If a university-specific theme color is selected, promote it to primary palette
+    if (selectedUniversityThemeColor && typeof selectedUniversityThemeColor === 'string') {
+      combinedColors.primary = selectedUniversityThemeColor;
+      combinedColors.accent = selectedUniversityThemeColor;
+      combinedColors.success = selectedUniversityThemeColor;
+      combinedColors.brandPrimary = selectedUniversityThemeColor;
+    }
+
     combinedColors.primary = combinedColors.primary || baseColors.primary;
     combinedColors.accent = combinedColors.accent || combinedColors.primary;
     combinedColors.success = combinedColors.success || combinedColors.primary;

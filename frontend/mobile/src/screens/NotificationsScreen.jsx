@@ -1,11 +1,64 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import useTheme from '../hooks/useTheme.jsx';
+import useAuth from '../hooks/useAuth.jsx';
+import { fetchActionInboxPage } from '../api/inboxApi.js';
 
-const NotificationsScreen = ({ notifications = [], onClose }) => {
+const NotificationsScreen = ({ onClose }) => {
   const theme = useTheme();
   const styles = React.useMemo(() => getStyles(theme), [theme]);
+  const { user } = useAuth();
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+  const [notifications, setNotifications] = React.useState([]);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const preferredPersonId =
+          user?.personId || user?.personID || user?.personIDNumber || '10000000001';
+        const data = await fetchActionInboxPage({
+          personId: preferredPersonId,
+          currentPage: 1,
+          itemsPerPage: 50,
+          isViewAll: 'N',
+          processed: false,
+          signal: controller.signal,
+        });
+        if (!isMounted) return;
+        const rows = Array.isArray(data?.inboxDetails) ? data.inboxDetails : [];
+        const mapped = rows.map((row) => ({
+          id: String(row.inboxId ?? `${row.moduleCode || 'mod'}-${row.moduleItemKey || 'item'}`),
+          title: row?.message?.description || 'Notification',
+          message: row?.userMessage || '',
+          source: row?.moduleName?.description || '',
+          timestamp: row?.arrivalDate ? new Date(Number(row.arrivalDate)).toLocaleString() : '',
+          isUnread: row.openedFlag === 'N',
+        }));
+        setNotifications(mapped);
+      } catch (e) {
+        if (e.name === 'AbortError') return;
+        if (isMounted) {
+          setError(e.message || 'Failed to load notifications');
+          setNotifications([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [user?.personId, user?.personID, user?.personIDNumber]);
 
   const renderNotification = (item) => (
     <View
@@ -30,15 +83,27 @@ const NotificationsScreen = ({ notifications = [], onClose }) => {
         <View style={{ flex: 1 }}>
           <Text style={styles.screenTitle}>Notification Hub</Text>
           <Text style={styles.subtitle}>
-            {notifications.length > 0
-              ? `${notifications.length} notification${notifications.length === 1 ? '' : 's'}`
-              : 'No new notifications'}
+            {loading
+              ? 'Loading notifications...'
+              : notifications.length > 0
+                ? `${notifications.length} notification${notifications.length === 1 ? '' : 's'}`
+                : 'No new notifications'}
           </Text>
         </View>
         <View style={{ width: 22 }} />
       </View>
 
-      {notifications.length === 0 ? (
+      {loading ? (
+        <View style={styles.emptyState}>
+          <ActivityIndicator size="small" color={theme.colors.primary} />
+          <Text style={styles.emptyText}>Loading notifications...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.emptyState}>
+          <Icon name="warning-outline" size={24} color={theme.colors.error} />
+          <Text style={[styles.emptyText, { color: theme.colors.error }]}>{error}</Text>
+        </View>
+      ) : notifications.length === 0 ? (
         <View style={styles.emptyState}>
           <Icon name="checkmark-circle-outline" size={36} color={theme.colors.success} />
           <Text style={styles.emptyText}>You’re all caught up!</Text>
