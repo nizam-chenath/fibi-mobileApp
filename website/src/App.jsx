@@ -13,8 +13,8 @@ export default function App() {
       </nav>
       <header className="hero">
         <div className="hero-left">
-          <h1>Fibi — Your smart finance companion</h1>
-          <p className="lead">Track spending, set budgets, and reach goals with delightful insights.</p>
+          <h1>Fibi — Research Administration Suite</h1>
+          <p className="lead">Streamline proposals, awards, compliance, and service requests with real-time insights — anytime, anywhere.</p>
 
           <div className="actions">
             <a className="btn primary" href="#download">Get the app</a>
@@ -85,7 +85,13 @@ export default function App() {
           <div className="download-content-wrapper" style={{ padding: '20px'}}>
             <div className="download-text-section">
               <p className="download-tagline">Ready to transform your research management?</p>
-              <a className="download-btn-single" href="#" aria-label="Download FIBI">
+              <a
+                className="download-btn-single"
+                href="https://drive.google.com/uc?export=download&id=197VMtt_8Tl3PhzyAPp0ehn4FxaJB39qD"
+                aria-label="Download FIBI"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <svg className="download-icon" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
                 </svg>
